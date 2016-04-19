@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PoliDemonstrator</string>
+
+
+    <string name="building_prompt">Choose a smart building</string>
+
+    <string-array name="building_arrays">
+        <item name="20">Building 20</item>
+        <item name="25">Building 25</item>
+        <item name="26">Poli shelter</item>
+    </string-array>
+
+
+</resources>
