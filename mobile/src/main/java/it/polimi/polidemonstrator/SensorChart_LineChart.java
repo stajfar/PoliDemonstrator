@@ -198,6 +198,7 @@ public class SensorChart_LineChart extends AppCompatActivity {
                 return hashMapJson_results;
 
             } catch (MalformedURLException e) {
+
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
