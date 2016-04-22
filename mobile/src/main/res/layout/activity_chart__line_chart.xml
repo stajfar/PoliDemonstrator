@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+
+
+<!-- Main contents of the activity -->
+    <include
+        layout="@layout/app_bar_chart__line_chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <!-- DrawerLayout segment -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|bottom"
+        android:layout_marginTop="?android:attr/actionBarSize">
+
+
+
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:background="@color/colorNavigationDrawer"
+       >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/periods"
+            android:layout_alignParentTop="true"
+             />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Time Periods"
+                android:id="@+id/tvPeriods"
+                android:layout_alignBottom="@+id/imageView"
+                android:layout_toEndOf="@+id/tvEndDate" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/time_intervals"
+                android:id="@+id/spinnerTimeSpan"
+                android:layout_below="@+id/imageView"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Start Date"
+                android:id="@+id/tvStartDate"
+                android:layout_below="@+id/spinnerTimeSpan"
+                android:layout_alignParentStart="true" />
+
+            <DatePicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/datePickerStartDate"
+                android:layout_below="@+id/tvStartDate"
+                android:layout_alignParentStart="true"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="End Date"
+                android:id="@+id/tvEndDate"
+                android:layout_below="@+id/datePickerStartDate"
+                android:layout_alignParentStart="true" />
+
+            <DatePicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/datePickerEndDate"
+                android:layout_below="@+id/tvEndDate"
+                android:layout_alignParentStart="true"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refresh Chart"
+                android:id="@+id/btnRefresh"
+                android:layout_below="@+id/datePickerEndDate"
+                android:layout_alignParentEnd="true" />
+
+
+        </RelativeLayout>
+
+
+
+
+    </LinearLayout>
+
+    </ScrollView>
+
+</android.support.v4.widget.DrawerLayout>

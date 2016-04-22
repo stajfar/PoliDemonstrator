@@ -2,9 +2,11 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.data.Entry;
@@ -24,13 +26,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import it.polimi.polidemonstrator.R;
+
 /**
  * Created by saeed on 4/11/2016.
  */
 public class Room {
     private String roomid;
     private String roomLabel;
+    //correlated to sensor classes
     private String SensorClasseId;
+    private String sensorClassLabel;
 
     public String getSensorClassLabel() {
         return sensorClassLabel;
@@ -48,7 +54,7 @@ public class Room {
         SensorClasseId = sensorClasseId;
     }
 
-    private String sensorClassLabel;
+
 
 
 
@@ -262,5 +268,74 @@ public class Room {
         }
 
     }
+
+
+
+
+    //SpinAddapter for room sensor classes
+    //A custom adapter for spinner which makes it more flexible to work with complex data types
+    public static class AdapterSensorClasses extends ArrayAdapter<Room> {
+        private Context context;
+        private int resource;
+        private List<Room> rooms;
+
+        public AdapterSensorClasses(Context context, int resource, List<Room> rooms) {
+            super(context, resource, rooms);
+            this.context = context;
+            this.rooms=rooms;
+            this.resource=resource;
+
+        }
+
+        public int getCount(){
+            return rooms.size();
+        }
+
+        public Room getItem(int position){
+            return rooms.get(position);
+        }
+
+        public long getItemId(int position){
+            return position;
+        }
+
+
+
+        // This is for the "passive" state of the spinner
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+           View listView_row= inflater.inflate(resource,parent,false);
+            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
+            TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
+            TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
+
+            textViewSensorClass.setText(rooms.get(position).getSensorClassLabel());
+            // And finally return your dynamic (or custom) view for each spinner item
+            return listView_row;
+        }
+
+        // And here is when the "chooser" is popped up
+        // Normally is the same view, but you can customize it if you want
+        @Override
+        public View getDropDownView(int position, View convertView,ViewGroup parent) {
+            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View listView_row= inflater.inflate(resource,parent,false);
+            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
+            TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
+            TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
+
+            textViewSensorClass.setText(rooms.get(position).getSensorClassLabel());
+            // And finally return your dynamic (or custom) view for each spinner item
+            return listView_row;
+
+        }
+
+    }
+
+
+
+
+
 
 }

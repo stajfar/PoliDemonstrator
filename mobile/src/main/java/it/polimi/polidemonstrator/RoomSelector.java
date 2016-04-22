@@ -9,8 +9,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ public class RoomSelector extends Activity {
 
     private Spinner spinnerBuilding, spinnerRoom, spinnerSensor;
     private Button btnSubmit, btnRefreshBuilding;
+    private String serverUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,22 @@ public class RoomSelector extends Activity {
         setAcitivityElements();
 
         //execute a background task to fill the building spinner
+        serverUrl="";
         new BackgroundTaskGetBuildings().execute();
 
         addListenerOnButton();
         addListenerOnSpinnerItemSelection();
+
+        List<Room> arrayList=new ArrayList<>();
+        for (int i=0;i<5;i++) {
+            Room fakeroom = new Room();
+            fakeroom.setSensorClasseId(String.valueOf(i));
+            fakeroom.setSensorClassLabel("lable " + String.valueOf(i));
+            arrayList.add(fakeroom);
+        }
+        Room.AdapterSensorClasses sensorClassesAdapter=new Room.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
+        ListView listViewtest=(ListView)findViewById(R.id.listViewtest);
+        listViewtest.setAdapter(sensorClassesAdapter);
     }
 
     private void setAcitivityElements() {
@@ -91,23 +107,34 @@ public class RoomSelector extends Activity {
                 String startDateTime,endDateTime;
                 switch (sensorClassID){
                     case "1":
-                        UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add(String.valueOf(Color.BLUE));
-                        UrlsColorsExternal.add("http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
+                       // UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate());
+                        UrlsColorsInternal.add("https://api.myjson.com/bins/4hjry");
+                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
+                       // UrlsColorsExternal.add("http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
+                        UrlsColorsExternal.add("https://api.myjson.com/bins/4sham");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
                         hashMapJson_Urls.put("Internal Temperature",UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
-                        startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
-                        endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
+                        //startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
+                        //endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
+                        startDateTime="2016/04/14 00:00";
+                        endDateTime="2016/04/14  23:45";
                         break;
                     case "2":
                         UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add(String.valueOf(Color.BLUE));
+                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         UrlsColorsExternal.add("http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
                         hashMapJson_Urls.put("Internal Humidity",UrlsColorsInternal);
                         hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
 
+                        startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
+                        endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
+                        break;
+                    case "4":
+                        UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
+                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
                         startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
                         endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
                         break;
@@ -128,7 +155,7 @@ public class RoomSelector extends Activity {
 
 
 
-                Intent openChartActivity = new Intent("android.intent.action.SENSORCHART_LINECHART");
+                Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
                 openChartActivity.putExtras(basket);
                 startActivity(openChartActivity);
 
@@ -160,6 +187,8 @@ public class RoomSelector extends Activity {
                 arrayList);
 
         spinnerBuilding.setAdapter(adapter);
+
+
 
     }
 
@@ -195,17 +224,18 @@ public class RoomSelector extends Activity {
                arrayList);
 
         spinnerSensor.setAdapter(adapter);
+
     }
 
 
 
 
-    //Async Task to fetch Sensor list of a given room ID
+    //Async Task to fetch Sensors Class list of a given room ID
     public class BackgroundTaskGetSensorList extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             Room room = new Room();
-            String roomSensorlistJSON = room.getRoomSensorlist("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
+            String roomSensorlistJSON = room.getRoomSensorlist("https://api.myjson.com/bins/1lyj6");//("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
             return roomSensorlistJSON;
             //list of variables that are measured on a specific room
             //http://131.175.56.243:8080/variables/room/1/list
@@ -247,7 +277,7 @@ public class RoomSelector extends Activity {
         @Override
         protected String doInBackground(String... params) {
             Building building = new Building();
-            String roomListJSON = building.getRoomList("http://131.175.56.243:8080/rooms/building/"+params[0]);//param[0] corresponds to Building id
+            String roomListJSON = building.getRoomList("https://api.myjson.com/bins/4ep2q");//("http://131.175.56.243:8080/rooms/building/"+params[0]);//param[0] corresponds to Building id
             return roomListJSON;
         }
 
@@ -274,7 +304,7 @@ public class RoomSelector extends Activity {
         @Override
         protected String doInBackground(Void... params) {
             Building building = new Building();
-            String buildingListJSON = building.getBuildings("http://131.175.56.243:8080/buildings/");
+            String buildingListJSON = building.getBuildings("https://api.myjson.com/bins/4cjwy");//("http://131.175.56.243:8080/buildings/");
             return buildingListJSON;
         }
 

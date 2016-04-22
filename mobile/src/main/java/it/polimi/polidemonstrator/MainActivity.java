@@ -16,6 +16,10 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
+                   // Intent openmenu = new Intent("android.intent.action.CHART_LINECHART");
+                   // startActivity(openmenu);
+
+
                     Intent openmenu = new Intent("android.intent.action.ROOM_SELECTOR");
                     startActivity(openmenu);
                 }

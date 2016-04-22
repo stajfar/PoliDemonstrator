@@ -4,11 +4,20 @@
 
     <string name="building_prompt">Choose a smart building</string>
 
-    <string-array name="building_arrays">
-        <item name="20">Building 20</item>
-        <item name="25">Building 25</item>
-        <item name="26">Poli shelter</item>
+    <string-array name="time_intervals">
+        <item name="0">Today</item>
+        <item name="1">Current week</item>
+        <item name="2">Current month</item>
+        <item name="3">Current year</item>
+        <item name="4">Customized</item>
     </string-array>
+    <string name="title_activity_chart__line_chart">Sensor Line Chart</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_about">Settings</string>
 
 
 </resources>

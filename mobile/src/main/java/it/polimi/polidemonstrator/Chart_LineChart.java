@@ -1,13 +1,22 @@
 package it.polimi.polidemonstrator;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -30,31 +39,27 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
 
-public class SensorChart_LineChart extends AppCompatActivity {
+public class Chart_LineChart extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     String JSON_STRING;
-    //ruturned json output form API
-
     LineChart lineChart;
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
     String startDateTime;
     String endDateTime;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sensorchart_linechart);
+        setContentView(R.layout.activity_chart__line_chart);
 
         Bundle gotBasket=getIntent().getExtras();
         hashMapJsonUrlsLineColors=(HashMap)gotBasket.getSerializable("hashMapJsonUrls");
@@ -62,25 +67,46 @@ public class SensorChart_LineChart extends AppCompatActivity {
         endDateTime=gotBasket.getString("endDateTime");
 
 
-
-        //json_urlInternal="http://131.175.56.243:8080/measurements/15min/room/"+roomID+"/variableclass/"+sensorClassID+"/2016/04/18";
-        //json_urlExternal="http://131.175.56.243:8080/weatherreports/60min/building/"+buildingID+"/2016/04/18?var=airtemperature";
-
-
-
-        Button btngetjson=(Button)findViewById(R.id.btngetjson);
         lineChart = (LineChart) findViewById(R.id.chart);
+        lineChart.animateXY(2500, 2500);
+        lineChart.setBackgroundColor(Color.LTGRAY);
+        lineChart.setPinchZoom(true);
+        lineChart.setDescription("");
+        lineChart.setNoDataTextDescription("Refreshing Data form Server");
 
-        btngetjson.setOnClickListener(new View.OnClickListener() {
+
+        Spinner spinnerTimeSpan=(Spinner)findViewById(R.id.spinnerTimeSpan);
+        spinnerTimeSpan.setOnItemSelectedListener(new spinnerTimeSpanSelectedListener());
+
+
+
+        new BackgroudTask().execute(hashMapJsonUrlsLineColors);
+
+
+
+
+
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                    new BackgroudTask().execute(hashMapJsonUrlsLineColors);
-
+            public void onClick(View view) {
+                new BackgroudTask().execute(hashMapJsonUrlsLineColors);
+                Snackbar.make(view, "Fetching data from server...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
     }
-
-
 
     ArrayList<String> arrayTimeStamp=new ArrayList<String>();
 
@@ -162,7 +188,7 @@ public class SensorChart_LineChart extends AppCompatActivity {
 
 
     //get internal and External sensor data form API
-    public class BackgroudTask extends AsyncTask<  HashMap<String,List<String>>  ,Void,  HashMap<String,List<String>>>{
+    public class BackgroudTask extends AsyncTask<  HashMap<String,List<String>>  ,Void,  HashMap<String,List<String>>> {
         @Override
         protected void onPreExecute() {
             //json_url="http://131.175.56.243:8080/measurements/60min/sensor/variable/8/2016/04/01";
@@ -193,12 +219,11 @@ public class SensorChart_LineChart extends AppCompatActivity {
                     listUrlColor.add(stringBuilder.toString().trim());
                     listUrlColor.add(entry.getValue().get(1));//this will sepecifies the color of the line
 
-                   hashMapJson_results.put(entry.getKey(), listUrlColor);
+                    hashMapJson_results.put(entry.getKey(), listUrlColor);
                 }
                 return hashMapJson_results;
 
             } catch (MalformedURLException e) {
-
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -210,24 +235,24 @@ public class SensorChart_LineChart extends AppCompatActivity {
         @Override
         protected void onPostExecute(HashMap<String,List<String>> hashMapJson_results) {
 
-           if (hashMapJson_results != null){
-               //fill the x-Axix array list by times
-               ArrayList<Long> arrayListXAxisValues=DateTimeObj.getDateTimeMiliRange(startDateTime, endDateTime, DateTimeObj.TimeIntervals.FifteenMins);
-               ArrayList<ILineDataSet> datasets = new ArrayList<ILineDataSet>();
-               for (Map.Entry<String,List<String>> entry : hashMapJson_results.entrySet()){
-                   LinkedHashMap<Long,Float> hashMapParsedResults=parsJSON(entry.getValue().get(0));
-                   ArrayList<Entry> arrayChartEntries=addRecordsToChartData(hashMapParsedResults, arrayListXAxisValues);
-                   LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayChartEntries, entry.getKey(), Integer.valueOf(entry.getValue().get(1)));
-                   datasets.add(lineInternalDataset);
+            if (hashMapJson_results != null){
+                //fill the x-Axix array list by times
+                ArrayList<Long> arrayListXAxisValues=DateTimeObj.getDateTimeMiliRange(startDateTime, endDateTime, DateTimeObj.TimeIntervals.FifteenMins);
+                ArrayList<ILineDataSet> datasets = new ArrayList<ILineDataSet>();
+                for (Map.Entry<String,List<String>> entry : hashMapJson_results.entrySet()){
+                    LinkedHashMap<Long,Float> hashMapParsedResults=parsJSON(entry.getValue().get(0));
+                    ArrayList<Entry> arrayChartEntries=addRecordsToChartData(hashMapParsedResults, arrayListXAxisValues);
+                    LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayChartEntries, entry.getKey(), Integer.valueOf(entry.getValue().get(1)));
+                    datasets.add(lineInternalDataset);
 
-               }
+                }
 
-               populateLineChart(datasets, arrayTimeStamp);
-           }else {
-               Toast.makeText(SensorChart_LineChart.this,
-                       "Sorry, server is not Available,\n please try again!",
-                       Toast.LENGTH_SHORT).show();
-           }
+                populateLineChart(datasets, arrayTimeStamp);
+            }else {
+                Toast.makeText(Chart_LineChart.this,
+                        "Sorry, server is not Available,\n please try again!",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
 
 
@@ -240,4 +265,78 @@ public class SensorChart_LineChart extends AppCompatActivity {
 
 
 
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.chart__line_chart, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        /*Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+*/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private class spinnerTimeSpanSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Toast.makeText(parent.getContext(),
+                    "OnItemSelectedListener TimeSpan customize? : ",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
 }
