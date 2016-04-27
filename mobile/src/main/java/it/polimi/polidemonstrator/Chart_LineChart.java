@@ -1,5 +1,7 @@
 package it.polimi.polidemonstrator;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,7 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -35,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.SequenceInputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,15 +54,22 @@ import java.util.List;
 import java.util.Map;
 
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
+import it.polimi.polidemonstrator.businesslogic.MesurementClass;
+import it.polimi.polidemonstrator.businesslogic.Room;
 
 public class Chart_LineChart extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DialogInterface.OnClickListener {
 
     String JSON_STRING;
     LineChart lineChart;
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
-    String startDateTime;
+    HashMap<String, String> hashMapMeasurementClassesParsed;
+    String startDateTime,buildingID,roomID,measurementClassID;
     String endDateTime;
+    ListView listViewMeasurements;
+    AlertDialog dialog;
+    Button btnRefresh;
+    Spinner spinnerTimeSpan;
 
 
     @Override
@@ -62,9 +78,15 @@ public class Chart_LineChart extends AppCompatActivity
         setContentView(R.layout.activity_chart__line_chart);
 
         Bundle gotBasket=getIntent().getExtras();
-        hashMapJsonUrlsLineColors=(HashMap)gotBasket.getSerializable("hashMapJsonUrls");
+
+        hashMapMeasurementClassesParsed=(HashMap)gotBasket.getSerializable("hashMapMeasuremetClasses");
+        buildingID=gotBasket.getString("buildingID");
+        roomID=gotBasket.getString("roomID");
+        measurementClassID=gotBasket.getString("measuermentClassID");
         startDateTime=gotBasket.getString("startDateTime");
         endDateTime=gotBasket.getString("endDateTime");
+
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID);
 
 
         lineChart = (LineChart) findViewById(R.id.chart);
@@ -74,8 +96,10 @@ public class Chart_LineChart extends AppCompatActivity
         lineChart.setDescription("");
         lineChart.setNoDataTextDescription("Refreshing Data form Server");
 
+        btnRefresh=(Button)findViewById(R.id.btnRefresh);
+        btnRefresh.setOnClickListener(new btnRefreshOnclick());
 
-        Spinner spinnerTimeSpan=(Spinner)findViewById(R.id.spinnerTimeSpan);
+        spinnerTimeSpan=(Spinner)findViewById(R.id.spinnerTimeSpan);
         spinnerTimeSpan.setOnItemSelectedListener(new spinnerTimeSpanSelectedListener());
 
 
@@ -106,7 +130,40 @@ public class Chart_LineChart extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+
+        buildAlterDialog(hashMapMeasurementClassesParsed);
+
+
+
+
+
+
     }
+
+    private void buildAlterDialog(HashMap<String, String> hashMapMeasurementClassesParsed) {
+        ArrayList<MesurementClass> arrayList = new ArrayList<>();
+        for (Map.Entry<String,String> entry : hashMapMeasurementClassesParsed.entrySet()){
+            MesurementClass mesurementClass=new MesurementClass(Chart_LineChart.this);
+            mesurementClass.setSensorClasseId(entry.getKey());
+            mesurementClass.setSensorClassLabel(entry.getValue());
+            arrayList.add(mesurementClass);
+        }
+        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(Chart_LineChart.this,R.layout.list_singlerow,arrayList);
+
+        listViewMeasurements=new ListView(this);
+        listViewMeasurements.setAdapter(sensorClassesAdapter);
+
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("Select Measurement");
+
+        builder.setSingleChoiceItems(sensorClassesAdapter,-1,this);
+
+        dialog=builder.create();
+
+    }
+
 
     ArrayList<String> arrayTimeStamp=new ArrayList<String>();
 
@@ -184,6 +241,26 @@ public class Chart_LineChart extends AppCompatActivity
 
 
         return linedataSet;
+    }
+
+
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
+
+        measurementClassID=mesurementClass.getSensorClasseId();
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID);
+
+        new BackgroudTask().execute(hashMapJsonUrlsLineColors);
+
+        Toast.makeText(Chart_LineChart.this,
+                mesurementClass.getSensorClasseId()+" "+mesurementClass.getSensorClassLabel(),
+                Toast.LENGTH_SHORT).show();
+        dialog.cancel();
+
+
+
     }
 
 
@@ -282,7 +359,7 @@ public class Chart_LineChart extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.chart__line_chart, menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -296,10 +373,21 @@ public class Chart_LineChart extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
+        }else if (id == R.id.action_about) {
+            return true;
 
+        } else if (id == R.id.action_MeasureemntSearch) {
+            //show a list view dialog to user to select another measurement
+
+            dialog.show();
+
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -326,16 +414,43 @@ public class Chart_LineChart extends AppCompatActivity
         return true;
     }
 
+    //this event happens when user changes the Time period on the drawer's spinner
     private class spinnerTimeSpanSelectedListener implements android.widget.AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Toast.makeText(parent.getContext(),
-                    "OnItemSelectedListener TimeSpan customize? : ",
-                    Toast.LENGTH_SHORT).show();
+            RelativeLayout layout=(RelativeLayout)findViewById(R.id.relativeLayoutDatePickers);
+            if (position== 4){
+                //make the date picker section visible inside the Drawer
+                layout.setVisibility(View.VISIBLE);
+            }else{
+                layout.setVisibility(View.GONE);
+            }
+
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+
+    private class btnRefreshOnclick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int selectedTimeSpanPosition=spinnerTimeSpan.getSelectedItemPosition();
+            switch(selectedTimeSpanPosition){
+                case 0://Today
+                    //call url generator
+                    break;
+                case 1://Current Week
+                    break;
+                case 2://Current Month
+                    break;
+                case 3://current Year
+                    break;
+                case 4://custom date is selected
+                    break;
+            }
 
         }
     }

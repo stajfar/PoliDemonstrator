@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">PoliDemonstrator</string>
+    <string name="server_url">http://eis.deib.polimi.it/ScuolaPolimi/cloudsetting.json</string>
 
 
     <string name="building_prompt">Choose a smart building</string>
 
     <string-array name="time_intervals">
         <item name="0">Today</item>
-        <item name="1">Current week</item>
+        <item name="1">Last 7-days</item>
         <item name="2">Current month</item>
         <item name="3">Current year</item>
         <item name="4">Customized</item>

@@ -34,27 +34,6 @@ import it.polimi.polidemonstrator.R;
 public class Room {
     private String roomid;
     private String roomLabel;
-    //correlated to sensor classes
-    private String SensorClasseId;
-    private String sensorClassLabel;
-
-    public String getSensorClassLabel() {
-        return sensorClassLabel;
-    }
-
-    public void setSensorClassLabel(String sensorClassLabel) {
-        this.sensorClassLabel = sensorClassLabel;
-    }
-
-    public String getSensorClasseId() {
-        return SensorClasseId;
-    }
-
-    public void setSensorClasseId(String sensorClasseId) {
-        SensorClasseId = sensorClasseId;
-    }
-
-
 
 
 
@@ -214,124 +193,9 @@ public class Room {
 
     }
 
-    //SpinAddapter for room sensor classes
-    //A custom adapter for spinner which makes it more flexible to work with complex data types
-    public static class SpinAdapterSensorClasses extends ArrayAdapter<Room> {
-        private Context context;
-
-        private List<Room> rooms;
-
-        public SpinAdapterSensorClasses(Context context, int resource, List<Room> rooms) {
-            super(context, resource, rooms);
-            this.context = context;
-            this.rooms=rooms;
-
-        }
-
-        public int getCount(){
-            return rooms.size();
-        }
-
-        public Room getItem(int position){
-            return rooms.get(position);
-        }
-
-        public long getItemId(int position){
-            return position;
-        }
 
 
 
-        // This is for the "passive" state of the spinner
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-            TextView label = new TextView(context);
-            label.setTextColor(Color.BLACK);
-            // Then you can get the current item using the values array (Users array) and the current position
-            // You can NOW reference each method you has created in your bean object (User class)
-            label.setText(rooms.get(position).getSensorClassLabel());
-
-            // And finally return your dynamic (or custom) view for each spinner item
-            return label;
-        }
-
-        // And here is when the "chooser" is popped up
-        // Normally is the same view, but you can customize it if you want
-        @Override
-        public View getDropDownView(int position, View convertView,ViewGroup parent) {
-            TextView label = new TextView(context);
-            label.setTextColor(Color.BLACK);
-            label.setText(rooms.get(position).getSensorClassLabel());
-
-            return label;
-        }
-
-    }
-
-
-
-
-    //SpinAddapter for room sensor classes
-    //A custom adapter for spinner which makes it more flexible to work with complex data types
-    public static class AdapterSensorClasses extends ArrayAdapter<Room> {
-        private Context context;
-        private int resource;
-        private List<Room> rooms;
-
-        public AdapterSensorClasses(Context context, int resource, List<Room> rooms) {
-            super(context, resource, rooms);
-            this.context = context;
-            this.rooms=rooms;
-            this.resource=resource;
-
-        }
-
-        public int getCount(){
-            return rooms.size();
-        }
-
-        public Room getItem(int position){
-            return rooms.get(position);
-        }
-
-        public long getItemId(int position){
-            return position;
-        }
-
-
-
-        // This is for the "passive" state of the spinner
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-           View listView_row= inflater.inflate(resource,parent,false);
-            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
-            TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
-            TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
-
-            textViewSensorClass.setText(rooms.get(position).getSensorClassLabel());
-            // And finally return your dynamic (or custom) view for each spinner item
-            return listView_row;
-        }
-
-        // And here is when the "chooser" is popped up
-        // Normally is the same view, but you can customize it if you want
-        @Override
-        public View getDropDownView(int position, View convertView,ViewGroup parent) {
-            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View listView_row= inflater.inflate(resource,parent,false);
-            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
-            TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
-            TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
-
-            textViewSensorClass.setText(rooms.get(position).getSensorClassLabel());
-            // And finally return your dynamic (or custom) view for each spinner item
-            return listView_row;
-
-        }
-
-    }
 
 
 

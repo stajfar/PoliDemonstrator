@@ -23,6 +23,7 @@ import java.util.Map;
 
 import it.polimi.polidemonstrator.businesslogic.Building;
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
+import it.polimi.polidemonstrator.businesslogic.MesurementClass;
 import it.polimi.polidemonstrator.businesslogic.Room;
 
 
@@ -33,7 +34,8 @@ public class RoomSelector extends Activity {
 
     private Spinner spinnerBuilding, spinnerRoom, spinnerSensor;
     private Button btnSubmit, btnRefreshBuilding;
-    private String serverUrl;
+    private String serverUrl="http://eis.deib.polimi.it/ScuolaPolimi/cloudsetting.json";
+    HashMap<String, String> hashMapMeasurementClassesParesed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +50,16 @@ public class RoomSelector extends Activity {
         addListenerOnButton();
         addListenerOnSpinnerItemSelection();
 
-        List<Room> arrayList=new ArrayList<>();
+      /*  List<MesurementClass> arrayList=new ArrayList<>();
         for (int i=0;i<5;i++) {
-            Room fakeroom = new Room();
-            fakeroom.setSensorClasseId(String.valueOf(i));
-            fakeroom.setSensorClassLabel("lable " + String.valueOf(i));
-            arrayList.add(fakeroom);
+            MesurementClass fakemeasurementclass = new MesurementClass();
+            fakemeasurementclass.setSensorClasseId(String.valueOf(i));
+            fakemeasurementclass.setSensorClassLabel("lable " + String.valueOf(i));
+            arrayList.add(fakemeasurementclass);
         }
-        Room.AdapterSensorClasses sensorClassesAdapter=new Room.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
+        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
         ListView listViewtest=(ListView)findViewById(R.id.listViewtest);
-        listViewtest.setAdapter(sensorClassesAdapter);
+        listViewtest.setAdapter(sensorClassesAdapter);*/
     }
 
     private void setAcitivityElements() {
@@ -96,62 +98,28 @@ public class RoomSelector extends Activity {
                 //to next activity
                 Building selectedBuilding=(Building)spinnerBuilding.getSelectedItem();
                 Room selectedRoom=(Room)spinnerRoom.getSelectedItem();
-                Room selectedSensorClass=(Room)spinnerSensor.getSelectedItem();
+                MesurementClass selectedSensorClass=(MesurementClass)spinnerSensor.getSelectedItem();
                 String buildingID=selectedBuilding.getBuildingid();
                 String roomID=selectedRoom.getRoomid();
-                String sensorClassID=selectedSensorClass.getSensorClasseId();
+                String measurementClassID=selectedSensorClass.getSensorClasseId();
 
-                HashMap<String,List<String>> hashMapJson_Urls=new HashMap<>();
-                List<String> UrlsColorsInternal=new ArrayList<String>();
-                List<String> UrlsColorsExternal=new ArrayList<String>();
+
+
                 String startDateTime,endDateTime;
-                switch (sensorClassID){
-                    case "1":
-                       // UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/4hjry");
-                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                       // UrlsColorsExternal.add("http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
-                        UrlsColorsExternal.add("https://api.myjson.com/bins/4sham");
-                        UrlsColorsExternal.add(String.valueOf(Color.RED));
-                        hashMapJson_Urls.put("Internal Temperature",UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
-                        //startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
-                        //endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
-                        startDateTime="2016/04/14 00:00";
-                        endDateTime="2016/04/14  23:45";
-                        break;
-                    case "2":
-                        UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        UrlsColorsExternal.add("http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
-                        UrlsColorsExternal.add(String.valueOf(Color.RED));
-                        hashMapJson_Urls.put("Internal Humidity",UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                startDateTime="2016/04/14"+" 00:00";
+                endDateTime="2016/04/14"+" 23:45";
 
-                        startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
-                        endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
-                        break;
-                    case "4":
-                        UrlsColorsInternal.add("http://131.175.56.243:8080/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
-                        startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
-                        endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
-                        break;
-                    default:
-                        //later change this default to something else
-                       // hashMapJson_Urls.put("Internal Temperature", "http://131.175.56.243:8080/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                       // hashMapJson_Urls.put("External Temperature", "http://131.175.56.243:8080/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
-                        startDateTime=DateTimeObj.getCurrentDate()+" 00:00";
-                        endDateTime=DateTimeObj.getCurrentDate()+" 23:45";
 
-                }
 
 
                 Bundle basket=new Bundle();
-                basket.putSerializable("hashMapJsonUrls", hashMapJson_Urls);
+                basket.putString("buildingID", buildingID);
+                basket.putString("roomID",roomID);
+                basket.putString("measuermentClassID",measurementClassID);
+                basket.putSerializable("hashMapMeasuremetClasses", hashMapMeasurementClassesParesed);
                 basket.putString("startDateTime", startDateTime);
                 basket.putString("endDateTime",endDateTime);
+
 
 
 
@@ -211,16 +179,16 @@ public class RoomSelector extends Activity {
     }
 
     // add fetched data from API to SpinnerSensorClasses
-    public void addItemsOnSpinnerSensors(HashMap<String,String> hashMapSensorClasses) {
+    public void addItemsOnSpinnerSensors(HashMap<String,String> hashMapMeasurementClasses) {
 
-        ArrayList<Room> arrayList = new ArrayList<Room>();
-        for (Map.Entry<String,String> entry : hashMapSensorClasses.entrySet()){
-           Room room=new Room();
-            room.setSensorClasseId(entry.getKey());
-            room.setSensorClassLabel(entry.getValue());
-            arrayList.add(room);
+        ArrayList<MesurementClass> arrayList = new ArrayList<>();
+        for (Map.Entry<String,String> entry : hashMapMeasurementClasses.entrySet()){
+           MesurementClass mesurementClass=new MesurementClass(RoomSelector.this);
+            mesurementClass.setSensorClasseId(entry.getKey());
+            mesurementClass.setSensorClassLabel(entry.getValue());
+            arrayList.add(mesurementClass);
         }
-       Room.SpinAdapterSensorClasses adapter=new Room.SpinAdapterSensorClasses(RoomSelector.this,android.R.layout.simple_spinner_item,
+        MesurementClass.SpinAdapterSensorClasses adapter=new MesurementClass.SpinAdapterSensorClasses(RoomSelector.this,android.R.layout.simple_spinner_item,
                arrayList);
 
         spinnerSensor.setAdapter(adapter);
@@ -260,9 +228,9 @@ public class RoomSelector extends Activity {
         protected void onPostExecute(String results) {
             if (results != null) {
                 Room room = new Room();
-                HashMap<String, String> hashMapSensorClasses = room.parsRoomSensorClassesJSON(results);
+                hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results);
                 //Fill sensor spinner with given sensors list data
-                addItemsOnSpinnerSensors(hashMapSensorClasses);
+                addItemsOnSpinnerSensors(hashMapMeasurementClassesParesed);
             }else{
                 Toast.makeText(RoomSelector.this,
                         "Sorry, server is not Available,\n please try again!",
