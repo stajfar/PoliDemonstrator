@@ -20,7 +20,7 @@ public class DateTimeObj {
     }
     public static String getCurrentDate(){
 
-        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
         Calendar c = Calendar.getInstance();
         String date=dfDate.format(c.getTime());
         return date;
@@ -28,10 +28,27 @@ public class DateTimeObj {
 
     public static String getCurrentDateTime(){
 
-        SimpleDateFormat dfDate  = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss");
-        String dateTime="";
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         Calendar c = Calendar.getInstance();
-        dateTime=dfDate.format(c.getTime());
+        String dateTime=dfDate.format(c.getTime());
+        return dateTime;
+    }
+
+    public static String get7daysBeforeFromCurrentDateTime(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE,-7);
+        String dateTime=dfDate.format(c.getTime());
+        return dateTime;
+    }
+
+    public static String getFirstDayOfMonth(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        String dateTime=dfDate.format(c.getTime());
         return dateTime;
     }
 
@@ -61,12 +78,19 @@ public class DateTimeObj {
 
     public static String getTime(long timeStamp)
     {
-        SimpleDateFormat df = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
         df.setTimeZone(TimeZone.getDefault());
         String mTime=df.format(timeStamp);
         return  mTime;
     }
 
+    public static String getMonthDayTime(long timeStamp)
+    {
+        SimpleDateFormat df = new SimpleDateFormat("MMMM dd, HH:mm");
+        df.setTimeZone(TimeZone.getDefault());
+        String mTime=df.format(timeStamp);
+        return  mTime;
+    }
     public static Integer getMinute(long timeStamp)
     {
         Calendar calendar = Calendar.getInstance();
@@ -103,8 +127,11 @@ public class DateTimeObj {
     }
     //here define Enumerations
    public enum TimeIntervals{
-       OneHour(3600000),
-       FifteenMins(900000);;
+
+        OneDay (76400000),
+        HalfaDay(43200000),
+        OneHour(3600000),
+        FifteenMins(900000);
 
        public int getTimeInterval() {
            return timeInterval;
@@ -115,5 +142,17 @@ public class DateTimeObj {
            this.timeInterval=i;
        }
    }
+    //this will be used in generationg API Urls
+    public enum MeasurementTimeWindow{
+        Today (0),
+        Last7days (1),
+        ThisMonth (2),
+        ThisYear (3);
+
+        public int getMeasurementTimeWindow(){return  measurementTimeWindow;}
+        private int measurementTimeWindow;
+        MeasurementTimeWindow(int i) {this.measurementTimeWindow=i;}
+
+    }
 
 }
