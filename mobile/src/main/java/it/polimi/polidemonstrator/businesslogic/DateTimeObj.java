@@ -20,7 +20,40 @@ public class DateTimeObj {
     }
     public static String getCurrentDate(){
 
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd");
+        Calendar c = Calendar.getInstance();
+        String date=dfDate.format(c.getTime());
+        return date;
+    }
+
+    public static String getCurrentYear(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy");
+        Calendar c = Calendar.getInstance();
+        String dateTime=dfDate.format(c.getTime());
+        return dateTime;
+    }
+
+    public static String getCurrentMonth(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("MM");
+        Calendar c = Calendar.getInstance();
+        String dateTime=dfDate.format(c.getTime());
+        return dateTime;
+    }
+
+
+    public static String getCurrentDateBeginningMidnight(){
+
         SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
+        Calendar c = Calendar.getInstance();
+        String date=dfDate.format(c.getTime());
+        return date;
+    }
+
+    public static String getCurrentDateEndingMidnight(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 23:45");
         Calendar c = Calendar.getInstance();
         String date=dfDate.format(c.getTime());
         return date;
@@ -34,20 +67,32 @@ public class DateTimeObj {
         return dateTime;
     }
 
-    public static String get7daysBeforeFromCurrentDateTime(){
+
+
+
+    public static String get7daysBeforeCurrentDateTime(){
 
         SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE,-7);
+        c.add(Calendar.DATE, -6);
         String dateTime=dfDate.format(c.getTime());
         return dateTime;
     }
 
-    public static String getFirstDayOfMonth(){
+    public static String getFirstDayOfCurrentMonth(){
 
         SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, 1);
+        String dateTime=dfDate.format(c.getTime());
+        return dateTime;
+    }
+
+    public static String getFirstDayOfCurrentYear(){
+
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd 00:00");
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_YEAR, 1);
         String dateTime=dfDate.format(c.getTime());
         return dateTime;
     }
@@ -99,17 +144,15 @@ public class DateTimeObj {
         return  mMinute;
     }
 
-    public static ArrayList<Long> getDateTimeMiliRange(String startDateTime, String endDateTime, TimeIntervals timeInterval){
-       // startDateTime="2016/04/18 00:00";
-       // endDateTime="2016/04/18 23:45";
+    public static ArrayList<Long> getDateTimeMiliRange(MeasurementTimeWindow measurementTimeWindow, TimeIntervals timeInterval){
+
         int interval=timeInterval.getTimeInterval();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-
-
         try {
-            Date startDate = dateFormat.parse(startDateTime);
-            Date endDate=dateFormat.parse(endDateTime);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            Date endDate = dateFormat.parse(getCurrentDateTime());
+            Date startDate=dateFormat.parse(getChartStartDateTime(measurementTimeWindow));
+
+
 
             long startDateTimeMili= startDate.getTime();
             long endDateTimeMili=endDate.getTime();
@@ -125,6 +168,28 @@ public class DateTimeObj {
         }
         return  null;
     }
+
+    public static String getChartStartDateTime(MeasurementTimeWindow measurementTimeWindow) {
+        String startChartDateTime=null;
+        switch (measurementTimeWindow){
+            case Today:
+                startChartDateTime=getCurrentDateBeginningMidnight();
+                break;
+            case Last7days:
+                startChartDateTime=get7daysBeforeCurrentDateTime();
+                break;
+            case ThisMonth:
+                startChartDateTime=getFirstDayOfCurrentMonth();
+                break;
+            case ThisYear:
+                startChartDateTime=getFirstDayOfCurrentYear();
+                break;
+        }
+        return startChartDateTime;
+    }
+
+
+
     //here define Enumerations
    public enum TimeIntervals{
 

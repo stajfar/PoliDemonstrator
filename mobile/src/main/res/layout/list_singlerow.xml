@@ -6,10 +6,10 @@
 
 
     <ImageView
-        android:src="@drawable/temperaturehumidity"
+        android:src="@drawable/ic_humidity"
         android:layout_margin="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:id="@+id/imageViewlistItem"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
@@ -21,7 +21,7 @@
         android:text="Large "
         android:id="@+id/tvListSensorClass"
         android:layout_alignTop="@+id/imageViewlistItem"
-        android:layout_alignParentEnd="true" />
+        android:layout_toEndOf="@+id/imageViewlistItem" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -29,6 +29,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/tvListSensorLatestValue"
-        android:layout_alignTop="@+id/imageViewlistItem"
-        android:layout_toEndOf="@+id/imageViewlistItem" />
+        android:layout_alignTop="@+id/tvListSensorClass"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

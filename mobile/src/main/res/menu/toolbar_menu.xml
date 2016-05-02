@@ -17,10 +17,20 @@
     <item
         android:id="@+id/action_MeasureemntSearch"
         android:orderInCategory="200"
-        android:title="Search"
+        android:title="Change Measurement"
         android:icon="@drawable/pie_chart"
         app:showAsAction="ifRoom"
         ></item>
+
+    <item
+        android:id="@+id/action_MeasureemntDetails"
+        android:orderInCategory="200"
+        android:title="Go to Measurement Details"
+        android:icon="@drawable/ic_details"
+        app:showAsAction="ifRoom"
+        >
+
+    </item>
 
 
 </menu>

@@ -92,7 +92,7 @@ public class ServerURL {
             String port;
             ip=jsonObject.getString("ip");
             port=jsonObject.getString("port");
-            String parsedUrl="https://"+ip+":"+port;
+            String parsedUrl="http://"+ip+":"+port;
 
             return parsedUrl;
 

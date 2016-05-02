@@ -32,10 +32,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,8 +55,8 @@ public class Chart_LineChart extends AppCompatActivity
     LineChart lineChart;
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
     HashMap<String, String> hashMapMeasurementClassesParsed;
-    String startDateTime,buildingID,roomID,measurementClassID;
-    String endDateTime;
+    String buildingID,roomID,measurementClassID;
+
     ListView listViewMeasurements;
     AlertDialog dialog;
     Button btnRefresh;
@@ -82,8 +78,7 @@ public class Chart_LineChart extends AppCompatActivity
         buildingID=gotBasket.getString("buildingID");
         roomID=gotBasket.getString("roomID");
         measurementClassID=gotBasket.getString("measuermentClassID");
-        startDateTime=gotBasket.getString("startDateTime");
-        endDateTime=gotBasket.getString("endDateTime");
+
 
 
 
@@ -102,7 +97,7 @@ public class Chart_LineChart extends AppCompatActivity
 
         measurementTimeWindow= DateTimeObj.MeasurementTimeWindow.Today;
         timeIntervals= DateTimeObj.TimeIntervals.FifteenMins;
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_GeneratorToday(measurementClassID, buildingID, roomID, measurementTimeWindow);
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow);
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals).execute();
 
 
@@ -143,10 +138,15 @@ public class Chart_LineChart extends AppCompatActivity
     private void buildAlterDialog(HashMap<String, String> hashMapMeasurementClassesParsed) {
         ArrayList<MesurementClass> arrayList = new ArrayList<>();
         for (Map.Entry<String,String> entry : hashMapMeasurementClassesParsed.entrySet()){
-            MesurementClass mesurementClass=new MesurementClass(Chart_LineChart.this);
-            mesurementClass.setSensorClasseId(entry.getKey());
-            mesurementClass.setSensorClassLabel(entry.getValue());
-            arrayList.add(mesurementClass);
+            MesurementClass measurementClass=new MesurementClass(Chart_LineChart.this);
+            measurementClass.setSensorClasseId(entry.getKey());
+            measurementClass.setSensorClassLabel(entry.getValue());
+            String[] listViewItem=MesurementClass.getMeasurementListViewItem(entry.getKey());
+            if (listViewItem != null) {
+                measurementClass.setSensorClassLabel(listViewItem[0]);
+                measurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
+            }
+            arrayList.add(measurementClass);
         }
         MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(Chart_LineChart.this,R.layout.list_singlerow,arrayList);
 
@@ -193,30 +193,7 @@ public class Chart_LineChart extends AppCompatActivity
 
     }
 
-    private LinkedHashMap<Long,Float> parsJSON(String json_results) {
-        try {
-            JSONArray jsonArray=new JSONArray(json_results);
-            int count=0;
-            float value;
-            long timestamp;
-            LinkedHashMap<Long,Float> hashMapParsedResult=new LinkedHashMap<Long,Float>();
 
-            while (count< jsonArray.length())
-            {
-                JSONObject jsonObject=jsonArray.getJSONObject(count);
-                if (jsonObject.getString("value") != "null") {
-                    value = Float.valueOf(jsonObject.getString("value"));
-                    timestamp = Long.valueOf(jsonObject.getString("timestamp"));
-                    hashMapParsedResult.put(timestamp, value);
-                }
-                count++;
-            }
-            return hashMapParsedResult;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 
 
@@ -255,7 +232,7 @@ public class Chart_LineChart extends AppCompatActivity
         MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
 
         measurementClassID=mesurementClass.getSensorClasseId();
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_GeneratorToday(measurementClassID, buildingID, roomID, measurementTimeWindow);
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow);
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals).execute();
 
         Toast.makeText(Chart_LineChart.this,
@@ -268,6 +245,54 @@ public class Chart_LineChart extends AppCompatActivity
     }
 
 
+
+
+    public  class BackgroundTaskGetMeasurementClassVariables extends AsyncTask<Void, Void, List<LinkedHashMap<Long, Float>>> {
+        private String roomID;
+        private  String measurementClassID;
+        private  DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
+        private DateTimeObj.TimeIntervals intervals;
+        public BackgroundTaskGetMeasurementClassVariables(String roomID, String measurementClassID, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, DateTimeObj.TimeIntervals timeIntervals) {
+            this.roomID=roomID;
+            this.measurementClassID=measurementClassID;
+            this.measurementTimeWindow=measurementTimeWindow;
+            this.intervals=timeIntervals;
+        }
+
+
+        @Override
+        protected List<LinkedHashMap<Long, Float>> doInBackground(Void... params) {
+            String  measurementClassVariablesURL=MesurementClass.jsonURL_GeneratorMeasurenetClassVariables(roomID, measurementClassID);
+            HashMap<Integer, String[]> parsed_MeasurementClassVariables=MesurementClass.getListofMeasurementVariables(measurementClassVariablesURL);
+
+            List<String> measurementVariableURLs=MesurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
+            // now the measurement variable urls are ready, fetch related json data
+            List<LinkedHashMap<Long,Float>> parsed_MeasurementVariables=MesurementClass.getListofMeasurementVariableData(measurementVariableURLs);
+
+
+            return parsed_MeasurementVariables;
+        }
+
+        @Override
+        protected void onPostExecute(List<LinkedHashMap<Long, Float>> measurementClassVariablesParsed) {
+            super.onPostExecute(measurementClassVariablesParsed);
+
+            ArrayList<ILineDataSet> datasets = new ArrayList<ILineDataSet>();
+            //prepare X values in miliseconds for the x-axis of the chart
+            ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals);
+            for(int i=0;i<measurementClassVariablesParsed.size();i++)
+            {
+                ArrayList<Entry> arrayListYvalues=addRecordsToChartData(measurementClassVariablesParsed.get(i), arrayListXAxisValuesInMili, measurementTimeWindow);
+                LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayListYvalues, "lable1"+i,Color.BLUE);
+                datasets.add(lineInternalDataset);
+            }
+            populateLineChart(datasets, arrayTimeStamp);
+        }
+
+    }
+
+
+
     //get internal and External sensor data form API
     public class BackgroudTask extends AsyncTask< Void  ,Void,  HashMap<String,List<String>>> {
         DateTimeObj.TimeIntervals intervals;
@@ -278,13 +303,12 @@ public class Chart_LineChart extends AppCompatActivity
         BackgroudTask(HashMap<String, List<String>> hashMapUrlsColors, DateTimeObj.TimeIntervals intervals){
             this.intervals=intervals;
             this.hashMapUrlsColors2=hashMapUrlsColors;
-
         }
 
         @Override
         protected void onPreExecute() {
-            //prepare X values in miliseconds for the x-axis of the chart (each one hour for one day long)
-            arrayListXAxisValuesInMili=DateTimeObj.getDateTimeMiliRange(startDateTime, endDateTime, intervals);
+            //prepare X values in miliseconds for the x-axis of the chart
+            arrayListXAxisValuesInMili=DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals);
         }
 
         @Override
@@ -327,11 +351,8 @@ public class Chart_LineChart extends AppCompatActivity
 
         @Override
         protected void onPostExecute(HashMap<String,List<String>> hashMapJson_results) {
-
             if (hashMapJson_results != null){
-
                 manageAsyncTaskResults(hashMapJson_results,arrayListXAxisValuesInMili,measurementTimeWindow);
-
 
             }else {
                 Toast.makeText(Chart_LineChart.this,
@@ -382,15 +403,20 @@ public class Chart_LineChart extends AppCompatActivity
 
         } else if (id == R.id.action_MeasureemntSearch) {
             //show a list view dialog to user to select another measurement
-
             dialog.show();
-
+        }else if (id == R.id.action_MeasureemntDetails){
+            //display the activity that shows the details of a specific measurement
+            displaySelectedMeasurementDetails();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void displaySelectedMeasurementDetails() {
+
+        new BackgroundTaskGetMeasurementClassVariables(roomID,measurementClassID,measurementTimeWindow,timeIntervals).execute();
 
 
+    }
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -459,37 +485,11 @@ public class Chart_LineChart extends AppCompatActivity
         @Override
         public void onClick(View v) {
 
-            switch(measurementTimeWindow){
-                case Today://Today
-                    //call url generator
-                    hashMapJsonUrlsLineColors= MesurementClass.jsonURL_GeneratorToday(measurementClassID, buildingID, roomID,
+                    hashMapJsonUrlsLineColors= MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID,
                             measurementTimeWindow);
-                    startDateTime="2016/04/14"+" 00:00";//DateTimeObj.getCurrentDate();
-                    endDateTime="2016/04/14"+" 23:45";//DateTimeObj.getCurrentDateTime();
-                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals).execute();
-                    break;
-                case Last7days://Last 7-days
-                    // get the measurements of specified measurement class from seven days before the specified date
-                    //  /measurements/60min/room/1/variableclass/1/2016/04/27?weekly=true
-                    //  weatherreports/60min/building/{id}/{year}/{month}/{day}?var={vname}&weekly=true
-                    hashMapJsonUrlsLineColors=MesurementClass.jsonURL_GeneratorToday(measurementClassID, buildingID, roomID,
-                            measurementTimeWindow);
-                    startDateTime="2016/04/20"+" 00:00";//DateTimeObj.get7daysBeforeFromCurrentDateTime();
-                    endDateTime="2016/04/27"+" 23:45";//DateTimeObj.getCurrentDateTime();
 
                     new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals).execute();
 
-
-                    break;
-                case ThisMonth://Current Month
-                    // /measurements/60min/room/{roomid}/variableclass/{id}/{year}/{month}
-                    // weatherreports/60min/building/{id}/{year}/{month}?var={vname}
-                    break;
-                case ThisYear://current Year
-                    // /measurements/15min/room/{roomid}/variableclass/{id}/{year }
-                    break;
-
-            }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
 
@@ -499,11 +499,12 @@ public class Chart_LineChart extends AppCompatActivity
     private void manageAsyncTaskResults(HashMap<String, List<String>> hashMapJson_results, ArrayList<Long> arrayListXAxisValuesInMili, DateTimeObj.MeasurementTimeWindow timeWindow) {
         ArrayList<ILineDataSet> datasets = new ArrayList<ILineDataSet>();
         for (Map.Entry<String,List<String>> entry : hashMapJson_results.entrySet()){
-            LinkedHashMap<Long,Float> hashMapParsedResults=parsJSON(entry.getValue().get(0));
+            LinkedHashMap<Long,Float> hashMapParsedResults=MesurementClass.parsJSON_Measurement(entry.getValue().get(0));
 
             ArrayList<Entry> arrayListYvalues=addRecordsToChartData(hashMapParsedResults, arrayListXAxisValuesInMili, timeWindow);
             LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayListYvalues, entry.getKey(), Integer.valueOf(entry.getValue().get(1)));
-            datasets.add(lineInternalDataset);        }
+            datasets.add(lineInternalDataset);
+        }
 
         populateLineChart(datasets, arrayTimeStamp);
     }

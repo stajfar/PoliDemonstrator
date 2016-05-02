@@ -105,9 +105,7 @@ public class RoomSelector extends Activity {
 
 
 
-                String startDateTime,endDateTime;
-                startDateTime="2016/04/14"+" 00:00";
-                endDateTime="2016/04/14"+" 23:45";
+
 
 
 
@@ -117,8 +115,7 @@ public class RoomSelector extends Activity {
                 basket.putString("roomID",roomID);
                 basket.putString("measuermentClassID",measurementClassID);
                 basket.putSerializable("hashMapMeasuremetClasses", hashMapMeasurementClassesParesed);
-                basket.putString("startDateTime", startDateTime);
-                basket.putString("endDateTime",endDateTime);
+
 
 
 
