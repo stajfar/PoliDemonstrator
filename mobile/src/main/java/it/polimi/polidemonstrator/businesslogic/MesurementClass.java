@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.polimi.polidemonstrator.Chart_LineChart;
 import it.polimi.polidemonstrator.R;
 
 /**
@@ -92,24 +93,24 @@ public class MesurementClass {
             case  Today:
                 switch (sensorClassID) {
                     case "1":
-                       // UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        //UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
-                        UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
+                        //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
                         break;
                     case "2":
-                        //UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
-                        //UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
+                       // UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
@@ -124,14 +125,14 @@ public class MesurementClass {
                         break;
 
                     case "4":
-                        //UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                       // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
-                        //UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
+                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        //UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
                         break;
@@ -146,12 +147,12 @@ public class MesurementClass {
             case Last7days:
                 switch (sensorClassID) {
                     case "1":
-                        UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
-                        //UrlsColorsInternal.add(serverURL+"/measurements/60min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate()+"?weekly=true");
+                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL+"/measurements/60min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate()+"?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
-                        // UrlsColorsExternal.add(serverURL+"/weatherreports/60min/building/"+buildingID+"/" + DateTimeObj.getCurrentDate() + "?var=airtemperature&weekly=true");
+                        //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsExternal.add(serverURL+"/weatherreports/60min/building/"+buildingID+"/" + DateTimeObj.getCurrentDate() + "?var=airtemperature&weekly=true");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
@@ -243,6 +244,12 @@ public class MesurementClass {
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/4j71k");
+                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
+                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        break;
+                    case "10"://power consumption
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
+                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
                         break;
@@ -386,46 +393,46 @@ public class MesurementClass {
         return null;
     }
 
-    public static List<String> jsonURL_GeneratorMeasurementVariables(HashMap<Integer, String[]> parsed_measurementClassVariables,
+    public static List<String[]> jsonURL_GeneratorMeasurementVariables(HashMap<Integer, String[]> parsed_measurementClassVariables,
                                                                       DateTimeObj.MeasurementTimeWindow measurementTimeWindow) {
-        List<String> jsonURL_MeasurementVariables=new ArrayList<>();
+        List<String[]> jsonURL_MeasurementVariables=new ArrayList<>();
         switch(measurementTimeWindow){
             case Today:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/15min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate();
-                    jsonURL_MeasurementVariables.add(url);
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
                 }
                 break;
             case Last7days:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate()+"?weekly=true";
-                    jsonURL_MeasurementVariables.add(url);
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
                 }
                 break;
             case ThisMonth:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear()+"/"+DateTimeObj.getCurrentMonth();
-                    jsonURL_MeasurementVariables.add(url);
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
                 }
                 break;
             case ThisYear:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear();
-                    jsonURL_MeasurementVariables.add(url);
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
                 }
                 break;
         }
        return jsonURL_MeasurementVariables;
     }
 
-    public static List<LinkedHashMap<Long,Float>> getListofMeasurementVariableData(List<String> measurementVariableURLs) {
+    public static List<ChartLine> getListofMeasurementVariableData(List<String[]> measurementVariableURLs,Context context) {
         //fetch  data from JSON API
-        List<LinkedHashMap<Long,Float>> listJsonData=new ArrayList<>();
+        List<ChartLine> listJsonData=new ArrayList<>();
         String JSON_STRING;
         for (int i=0;i<measurementVariableURLs.size();i++){
 
             try {
-                 URL  url = new URL(measurementVariableURLs.get(i));
+                 URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url and the second one is the italian label
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
@@ -439,7 +446,10 @@ public class MesurementClass {
                 httpconnection.disconnect();
 
                 LinkedHashMap<Long,Float> hashMapParsedResult=  parsJSON_Measurement(stringBuilder.toString().trim());
-                listJsonData.add(hashMapParsedResult);
+                Map<String,String> chartLables=getLineChartLabels(context);
+
+                ChartLine chartLine=new ChartLine(geMeasurementColor(context, i),chartLables.get(measurementVariableURLs.get(i)[1]),hashMapParsedResult);//color,line-label,json-output-parsed
+                listJsonData.add(chartLine);
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -449,6 +459,50 @@ public class MesurementClass {
         }
 
         return listJsonData;
+    }
+
+    public static HashMap<String, List<String>> getListofMeasurementClassData(HashMap<String, List<String>> hashMapUrlsColors) {
+        String JSON_STRING;
+        try {
+            HashMap<String,List<String>> hashMapJson_results=new HashMap<>();
+
+            //fetch  data from JSON API
+            for (Map.Entry<String,List<String>> entry : hashMapUrlsColors.entrySet()){
+                List<String> listjsonColor=new ArrayList<>();
+                URL url=new URL(entry.getValue().get(0));
+                HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+                InputStream inputStream=httpconnection.getInputStream();
+                BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder stringBuilder=new StringBuilder();
+                while ((JSON_STRING = bufferedReader.readLine()) != null)
+                {
+                    stringBuilder.append(JSON_STRING+"\n");
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpconnection.disconnect();
+
+                listjsonColor.add(stringBuilder.toString().trim());
+                listjsonColor.add(entry.getValue().get(1));//this will sepecifies the color of the line
+
+                hashMapJson_results.put(entry.getKey(), listjsonColor); //key is the line lable, listUrl color conatains Json outpt and the color of line
+            }
+
+            return hashMapJson_results;
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static int geMeasurementColor(Context context, int i) {
+        int[] rainbow = context.getResources().getIntArray(R.array.ChartColors);
+        if (i> rainbow.length){i=i%rainbow.length;}
+           return rainbow[i];
     }
 
 
@@ -601,6 +655,51 @@ public class MesurementClass {
     }
 
 
+    static Map<String, String> getLineChartLabels(Context context) {
+        String[] array = context.getResources().getStringArray(R.array.ChartLabels);
+        Map<String, String> result = new HashMap<>();
+        for (String str : array) {
+            String[] splittedItem = str.split(":");
+            result.put(splittedItem[0], splittedItem[1]);
+        }
+        return result;
+    }
+
+ public static class ChartLine{
+     int color;
+     String label;
+     LinkedHashMap<Long,Float> linexyvalues;
+
+     public ChartLine(int color, String label, LinkedHashMap<Long, Float> linexyvalues) {
+         this.color = color;
+         this.label = label;
+         this.linexyvalues = linexyvalues;
+     }
+
+     public int getColor() {
+         return color;
+     }
+
+     public void setColor(int color) {
+         this.color = color;
+     }
+
+     public String getLabel() {
+         return label;
+     }
+
+     public void setLabel(String label) {
+         this.label = label;
+     }
+
+     public LinkedHashMap<Long, Float> getLinexyvalues() {
+         return linexyvalues;
+     }
+
+     public void setLinexyvalues(LinkedHashMap<Long, Float> linexyvalues) {
+         this.linexyvalues = linexyvalues;
+     }
+ }
 
 
 

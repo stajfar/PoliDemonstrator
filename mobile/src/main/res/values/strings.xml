@@ -16,6 +16,41 @@
 
 
 
+    <array name="ChartColors">
+        <item>@color/bright_pink</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/chartreuse</item>
+        <item>@color/green</item>
+        <item>@color/spring_green</item>
+        <item>@color/cyan</item>
+        <item>@color/azure</item>
+        <item>@color/blue</item>
+        <item>@color/violet</item>
+        <item>@color/magenta</item>
+    </array>
+
+
+    <array name="ChartLabels">
+        <item>temp interna basso:Internal Temperature 1mt</item>
+        <item>temp interna alto:Ceiling Internal Temperature</item>
+        <item>umid interna basso:Floor Internal Humidity</item>
+        <item>umid interna alto:Ceiling Internal Humidity</item>
+        <item>lum interna basso:Floor Internal Luminosity</item>
+        <item>lum interna alto:Ceiling Internal Luminosity</item>
+        <item>co2 interna basso:Floor Internal CO2</item>
+        <item>co2 interna alto:Ceiling Internal CO2</item>
+        <item>corrente:Smart Plug</item>
+        <item>potenza attiva:Active Power</item>
+        <item>Potenza attiva prese:Present Active Power</item>
+        <item>Potenza attiva luci:Lights Active Power</item>
+        <item>Potenza attiva clima:Climate Active Power</item>
+        <item>Energia attiva prese:Present Active Energy</item>
+        <item>Energia attiva luci:Lights Active Energy</item>
+        <item>Energia attiva clima:Climate Active Energy</item>
+    </array>
+
 
 
 
