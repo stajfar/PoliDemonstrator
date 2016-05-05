@@ -33,26 +33,33 @@
 
 
     <array name="ChartLabels">
-        <item>temp interna basso:Internal Temperature 1mt</item>
-        <item>temp interna alto:Ceiling Internal Temperature</item>
-        <item>umid interna basso:Floor Internal Humidity</item>
-        <item>umid interna alto:Ceiling Internal Humidity</item>
-        <item>lum interna basso:Floor Internal Luminosity</item>
-        <item>lum interna alto:Ceiling Internal Luminosity</item>
-        <item>co2 interna basso:Floor Internal CO2</item>
-        <item>co2 interna alto:Ceiling Internal CO2</item>
-        <item>corrente:Smart Plug</item>
-        <item>potenza attiva:Active Power</item>
+        <item>temperatura interna 1mt:Internal Temperature 1mt</item>
+        <item>temperatura interna 3.5mt:Internal Temperature 3.5mt</item>
+        <item>temperatura corridoio 3.5mt:Corridor Temperature 3.5mt</item>
+        <item>temperatura corridoio 1mt:Corridor Temperature 1mt</item>
+        <item>umidita interna 1mt:Internal Humidity 1mt</item>
+        <item>umidita interna 3.5mt:Internal Humidity 3.5mt</item>
+        <item>umidita corridoio 1mt:Corridor Humidity 1mt</item>
+        <item>umidita corridoio 3.5mt:Corridor Humidity 3.5mt</item>
+        <item>luminosita interna 1mt:Internal Luminosity 1mt</item>
+        <item>luminosita interna 3.5mt:Internal Luminosity 3.5mt</item>
+        <item>co2 interna 1mt:Internal CO2 1mt</item>
+        <item>co2 interna 3.5mt:Internal CO2 3.5mt</item>
+        <item>co2 corridoio 1mt:Corridor CO2 1mt</item>
+        <item>co2 corridoio 3.5mt:Corridor CO2 3.5mt</item>
+        <item>corrente ufficio sm1:Smart Plug sm1</item>
+        <item>corrente ufficio sm2:Smart Plug sm2</item>
         <item>Potenza attiva prese:Present Active Power</item>
         <item>Potenza attiva luci:Lights Active Power</item>
         <item>Potenza attiva clima:Climate Active Power</item>
-        <item>Energia attiva prese:Present Active Energy</item>
-        <item>Energia attiva luci:Lights Active Energy</item>
-        <item>Energia attiva clima:Climate Active Energy</item>
     </array>
 
-
-
+    <array name="UnwantedMeasurementIdentifiers">
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>10</item>
+    </array>
 
 
 

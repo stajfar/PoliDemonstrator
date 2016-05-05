@@ -225,7 +225,8 @@ public class RoomSelector extends Activity {
         protected void onPostExecute(String results) {
             if (results != null) {
                 Room room = new Room();
-                hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results);
+                int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
+                hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results,UnwantedMeasurementIdentifiers);
                 //Fill sensor spinner with given sensors list data
                 addItemsOnSpinnerSensors(hashMapMeasurementClassesParesed);
             }else{

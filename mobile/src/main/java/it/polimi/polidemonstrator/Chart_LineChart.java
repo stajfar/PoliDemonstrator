@@ -239,7 +239,7 @@ public class Chart_LineChart extends AppCompatActivity
         @Override
         protected List<MesurementClass.ChartLine> doInBackground(Void... params) {
             String  measurementClassVariablesURL=MesurementClass.jsonURL_GeneratorMeasurenetClassVariables(roomID, measurementClassID);
-            HashMap<Integer, String[]> parsed_MeasurementClassVariables=MesurementClass.getListofMeasurementVariables(measurementClassVariablesURL);
+            HashMap<Integer, String[]> parsed_MeasurementClassVariables=MesurementClass.getListofMeasurementVariables(measurementClassVariablesURL);//String[]==variableDescription,variableUnit,sensorID
 
             List<String[]> measurementVariableURLsLabelNames=MesurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
             // now the measurement variable urls are ready, fetch related json data

@@ -84,22 +84,23 @@ public class Room {
 
 
 
-    public HashMap<String,String> parsRoomSensorClassesJSON(String json_results) {
+    public HashMap<String,String> parsRoomSensorClassesJSON(String json_results, int[] unwantedMeasurementIdentifiers) {
         try {
             HashMap<String,String> hashMapSensorClasses=new HashMap<>();
             JSONArray jsonArray=new JSONArray(json_results);
             int count=0;
-            String identifierSensor;
-            String nameSensor;
+            String measurementIdentifier;
+            String measurementName;
 
 
             while (count< jsonArray.length())
             {
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
-                identifierSensor=jsonObject.getString("identifier");
-                nameSensor=jsonObject.getString("name");
-                //fill a list to be returened
-                hashMapSensorClasses.put(identifierSensor,nameSensor);
+                measurementIdentifier=jsonObject.getString("identifier");
+                measurementName=jsonObject.getString("name");
+               if(MesurementClass.iswantedMeasurementsIdentifier(measurementIdentifier,unwantedMeasurementIdentifiers)){
+                   hashMapSensorClasses.put(measurementIdentifier, measurementName);
+               }
                 count++;
             }
             return hashMapSensorClasses;

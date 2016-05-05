@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -129,6 +130,12 @@ public class MesurementClass {
                        // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        break;
+                    case "6":
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
+                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
+                        hashMapJson_Urls.put("Active Power- adb", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
@@ -356,7 +363,7 @@ public class MesurementClass {
 
             String json_String=stringBuilder.toString().trim();
             //now the results are ready and we have to pars the Json results
-            HashMap<Integer,String[]> parsed_MeasurementClassVariables=parsJSON_MeasurementClassVariables(json_String);
+            HashMap<Integer,String[]> parsed_MeasurementClassVariables=parsJSON_MeasurementClassVariables(json_String);//String[]==variableDescription,variableUnit,sensorID
             return parsed_MeasurementClassVariables;
 
         } catch (MalformedURLException e) {
@@ -374,16 +381,24 @@ public class MesurementClass {
             JSONArray jsonArray=new JSONArray(json_results);
             int count=0;
             int variableID;
-            String variableName;
+
+            String variableDescription;
+            String variableUnit;
+            String sensorID;
+
             String isVariableIndoor;
             HashMap<Integer, String[]> hashMapParsedResult=new HashMap<>();
 
             while (count< jsonArray.length())            {
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
+                JSONObject jsonSubObject=jsonObject.getJSONObject("fksensor");
                 variableID = jsonObject.getInt("variableid");
-                variableName = jsonObject.getString("name");
 
-                hashMapParsedResult.put(variableID,new String[]{variableName});
+                variableDescription=jsonObject.getString("description");
+                variableUnit=jsonObject.getString("measure");
+                sensorID=jsonSubObject.getString("sensorid");
+
+                hashMapParsedResult.put(variableID,new String[]{variableDescription,variableUnit,sensorID});
                 count++;
             }
             return hashMapParsedResult;
@@ -400,25 +415,25 @@ public class MesurementClass {
             case Today:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/15min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate();
-                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});//entry.getValue()[0] --> indexes 0==description 1==measure Unit 2==sensorid
                 }
                 break;
             case Last7days:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate()+"?weekly=true";
-                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
                 }
                 break;
             case ThisMonth:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear()+"/"+DateTimeObj.getCurrentMonth();
-                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
                 }
                 break;
             case ThisYear:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear();
-                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0]});
+                    jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
                 }
                 break;
         }
@@ -432,7 +447,7 @@ public class MesurementClass {
         for (int i=0;i<measurementVariableURLs.size();i++){
 
             try {
-                 URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url and the second one is the italian label
+                 URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
@@ -447,8 +462,13 @@ public class MesurementClass {
 
                 LinkedHashMap<Long,Float> hashMapParsedResult=  parsJSON_Measurement(stringBuilder.toString().trim());
                 Map<String,String> chartLables=getLineChartLabels(context);
+                String measurementDescription=get3FirstWordsofDescription(measurementVariableURLs.get(i)[1]);//[1] is the italian measurement description
+                String measurementUnit=measurementVariableURLs.get(i)[2];
+                String measurementSensorID=measurementVariableURLs.get(i)[3];
 
-                ChartLine chartLine=new ChartLine(geMeasurementColor(context, i),chartLables.get(measurementVariableURLs.get(i)[1]),hashMapParsedResult);//color,line-label,json-output-parsed
+                String measurementCompleteLabel="("+measurementSensorID+")"+chartLables.get(measurementDescription)+"("+measurementUnit+")";
+
+                ChartLine chartLine=new ChartLine(geMeasurementColor(context, i),measurementCompleteLabel,hashMapParsedResult);//color,line-label,json-output-parsed
                 listJsonData.add(chartLine);
 
             } catch (MalformedURLException e) {
@@ -459,6 +479,13 @@ public class MesurementClass {
         }
 
         return listJsonData;
+    }
+
+    private static String get3FirstWordsofDescription(String description) {
+        String harvestedDescription;
+        String[] splittedItem = description.split(" ");
+        harvestedDescription=splittedItem[0]+" "+splittedItem[1]+" "+splittedItem[2];
+        return harvestedDescription;
     }
 
     public static HashMap<String, List<String>> getListofMeasurementClassData(HashMap<String, List<String>> hashMapUrlsColors) {
@@ -663,6 +690,16 @@ public class MesurementClass {
             result.put(splittedItem[0], splittedItem[1]);
         }
         return result;
+    }
+
+    public static boolean iswantedMeasurementsIdentifier(String measurementIdentifier,int[] unwantedMeasurementIdentifiersList) {
+
+        boolean isMeasurementAllowed=true;
+        if(Arrays.binarySearch(unwantedMeasurementIdentifiersList,Integer.valueOf(measurementIdentifier)) >= 0)//sort the array first!
+        {
+            isMeasurementAllowed=false;
+        }
+        return isMeasurementAllowed;
     }
 
  public static class ChartLine{
