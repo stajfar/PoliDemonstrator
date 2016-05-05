@@ -144,13 +144,24 @@ public class DateTimeObj {
         return  mMinute;
     }
 
-    public static ArrayList<Long> getDateTimeMiliRange(MeasurementTimeWindow measurementTimeWindow, TimeIntervals timeInterval){
+    public static ArrayList<Long> getDateTimeMiliRange(MeasurementTimeWindow measurementTimeWindow, TimeIntervals timeInterval, String selectedDate){
 
         int interval=timeInterval.getTimeInterval();
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            Date endDate = dateFormat.parse(getCurrentDateTime());
-            Date startDate=dateFormat.parse(getChartStartDateTime(measurementTimeWindow));
+            Date startDate;
+            Date endDate;
+            if (measurementTimeWindow== MeasurementTimeWindow.Custom){
+                startDate=dateFormat.parse(selectedDate +" 00:00");
+                endDate=dateFormat.parse(selectedDate+" 23:45");
+
+            }else {
+                startDate=dateFormat.parse(getChartStartDateTime(measurementTimeWindow));
+                endDate = dateFormat.parse(getCurrentDateTime());
+            }
+
+
+           
 
 
 
@@ -184,6 +195,7 @@ public class DateTimeObj {
             case ThisYear:
                 startChartDateTime=getFirstDayOfCurrentYear();
                 break;
+
         }
         return startChartDateTime;
     }
@@ -212,7 +224,8 @@ public class DateTimeObj {
         Today (0),
         Last7days (1),
         ThisMonth (2),
-        ThisYear (3);
+        ThisYear (3),
+        Custom (4);
 
         public int getMeasurementTimeWindow(){return  measurementTimeWindow;}
         private int measurementTimeWindow;

@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorNavigationDrawer">#1D2E3C</color>
+    <color name="colorNavigationDrawer">#FFFFFF</color>
 
     <color name="bright_pink">#FF007F</color>
     <color name="red">#FF0000</color>

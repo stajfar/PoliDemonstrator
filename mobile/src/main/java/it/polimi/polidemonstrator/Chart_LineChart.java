@@ -19,6 +19,7 @@ import android.view.MenuItem;
 
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -49,6 +50,7 @@ public class Chart_LineChart extends AppCompatActivity
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
     HashMap<String, String> hashMapMeasurementClassesParsed;
     String buildingID,roomID,measurementClassID;
+    String SelectedDate;
 
     ListView listViewMeasurements;
     AlertDialog dialog;
@@ -56,6 +58,7 @@ public class Chart_LineChart extends AppCompatActivity
     Spinner spinnerTimeSpan;
     DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
     DateTimeObj.TimeIntervals timeIntervals;
+    DatePicker datePicker;
 
 
 
@@ -88,9 +91,11 @@ public class Chart_LineChart extends AppCompatActivity
         spinnerTimeSpan=(Spinner)findViewById(R.id.spinnerTimeSpan);
         spinnerTimeSpan.setOnItemSelectedListener(new spinnerTimeSpanSelectedListener());
 
+        datePicker=(DatePicker)findViewById(R.id.datePickerSelectDate);
+
         measurementTimeWindow= DateTimeObj.MeasurementTimeWindow.Today;
         timeIntervals= DateTimeObj.TimeIntervals.FifteenMins;
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow);
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
 
 
 
@@ -106,7 +111,7 @@ public class Chart_LineChart extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow).execute();
+                new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
                 Snackbar.make(view, "Fetching data from server...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -119,7 +124,7 @@ public class Chart_LineChart extends AppCompatActivity
         toggle.syncState();
         buildAlterDialog(hashMapMeasurementClassesParsed);
 
-        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow).execute();
+        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
     }
 
     private void buildAlterDialog(HashMap<String, String> hashMapMeasurementClassesParsed) {
@@ -171,11 +176,13 @@ public class Chart_LineChart extends AppCompatActivity
                         arrayTimeStamp.add(DateTimeObj.getMonthDayTime(arrayListXAxisValues.get(count)));
                         break;
                     case ThisMonth:
-                        //// TODO: 5/3/2016  
+                        arrayTimeStamp.add(DateTimeObj.getMonthDayTime(arrayListXAxisValues.get(count)));
                         break;
                     case ThisYear:
-                        //// TODO: 5/3/2016
+                        arrayTimeStamp.add(DateTimeObj.getMonthDayTime(arrayListXAxisValues.get(count)));
                         break;
+                    case Custom:
+                        arrayTimeStamp.add(DateTimeObj.getTime(arrayListXAxisValues.get(count)));
                 }
         }
         return arrayChartEntries;
@@ -210,8 +217,8 @@ public class Chart_LineChart extends AppCompatActivity
     public void onClick(DialogInterface dialog, int which) {
         MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
         measurementClassID=mesurementClass.getSensorClasseId();
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow);
-        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow).execute();
+        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
+        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
 
         Toast.makeText(Chart_LineChart.this,
                 mesurementClass.getSensorClasseId()+" "+mesurementClass.getSensorClassLabel(),
@@ -254,7 +261,7 @@ public class Chart_LineChart extends AppCompatActivity
 
             ArrayList<ILineDataSet> datasets = new ArrayList<>();
             //prepare X values in miliseconds for the x-axis of the chart
-            ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals);
+            ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, "");//// TODO: 5/5/2016 selectedDate last parameter
             for(int i=0;i<measurementClassVariablesParsed.size();i++)
             {
                 ArrayList<Entry> arrayListYvalues=addRecordsToChartData(measurementClassVariablesParsed.get(i).getLinexyvalues(), arrayListXAxisValuesInMili, measurementTimeWindow);
@@ -276,19 +283,21 @@ public class Chart_LineChart extends AppCompatActivity
         HashMap<String,List<String>> hashMapUrlsColors;
         ArrayList<Long> arrayListXAxisValuesInMili;
         DateTimeObj.MeasurementTimeWindow timeWindow;
+        String selectedDate;
 
 
-        BackgroudTask(HashMap<String, List<String>> hashMapUrlsColors, DateTimeObj.TimeIntervals intervals, DateTimeObj.MeasurementTimeWindow measurementTimeWindow){
+        BackgroudTask(HashMap<String, List<String>> hashMapUrlsColors, DateTimeObj.TimeIntervals intervals, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, String selectedDate){
             this.intervals=intervals;
             this.hashMapUrlsColors=hashMapUrlsColors;
             this.timeWindow=measurementTimeWindow;
+            this.selectedDate=selectedDate;
 
         }
 
         @Override
         protected void onPreExecute() {
             //prepare X values in miliseconds for the x-axis of the chart
-            arrayListXAxisValuesInMili=DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals);
+            arrayListXAxisValuesInMili=DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals,selectedDate);
         }
 
         @Override
@@ -426,6 +435,10 @@ public class Chart_LineChart extends AppCompatActivity
                     measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.ThisYear;
                     timeIntervals= DateTimeObj.TimeIntervals.OneDay;
                     break;
+                case 4:
+                    measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.Custom;
+                    timeIntervals= DateTimeObj.TimeIntervals.FifteenMins;
+                    break;
             }
         }
 
@@ -438,11 +451,15 @@ public class Chart_LineChart extends AppCompatActivity
     private class btnRefreshOnclick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            int selectedYear = datePicker.getYear();
+            int selectedMonth = datePicker.getMonth()+1;
+            int selectedDay =  datePicker.getDayOfMonth();
+            SelectedDate=selectedYear+"/"+selectedMonth+"/"+selectedDay;
 
                     hashMapJsonUrlsLineColors= MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID,
-                            measurementTimeWindow);
+                            measurementTimeWindow,SelectedDate);
 
-                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals,measurementTimeWindow).execute();
+                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals,measurementTimeWindow,SelectedDate).execute();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);

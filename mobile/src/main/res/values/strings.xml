@@ -54,7 +54,7 @@
         <item>Potenza attiva clima:Climate Active Power</item>
     </array>
 
-    <array name="UnwantedMeasurementIdentifiers">
+    <array name="UnwantedMeasurementIdentifiers"> <!-- make sure this list is sorted, because of binary search -->
         <item>6</item>
         <item>7</item>
         <item>8</item>

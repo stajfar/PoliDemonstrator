@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Time Periods"
+                android:text="Time Windows"
                 android:id="@+id/tvPeriods"
                 android:layout_alignBottom="@+id/imageView"
                 android:layout_centerHorizontal="true" />
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Start Date"
+                    android:text="Select Date"
                     android:id="@+id/tvStartDate"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
@@ -90,32 +90,13 @@
                 <DatePicker
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/datePickerStartDate"
+                    android:id="@+id/datePickerSelectDate"
 
                     android:datePickerMode="spinner"
                     android:calendarViewShown="false"
                     android:layout_below="@+id/tvStartDate"
                     android:layout_alignParentStart="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="End Date"
-                    android:id="@+id/tvEndDate"
-
-                    android:layout_below="@+id/datePickerStartDate"
-                    android:layout_alignParentStart="true" />
-
-                <DatePicker
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/datePickerEndDate"
-
-                    android:datePickerMode="spinner"
-                    android:calendarViewShown="false"
-                    android:layout_below="@+id/tvEndDate"
-                    android:layout_alignParentStart="true" />
             </RelativeLayout>
 
 
