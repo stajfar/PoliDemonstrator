@@ -258,19 +258,23 @@ public class Chart_LineChart extends AppCompatActivity
         @Override
         protected void onPostExecute(List<MesurementClass.ChartLine> measurementClassVariablesParsed) {
             super.onPostExecute(measurementClassVariablesParsed);
+            if (measurementClassVariablesParsed != null) {
+                ArrayList<ILineDataSet> datasets = new ArrayList<>();
+                //prepare X values in miliseconds for the x-axis of the chart
+                ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, "");//// TODO: 5/5/2016 selectedDate last parameter
+                for (int i = 0; i < measurementClassVariablesParsed.size(); i++) {
+                    ArrayList<Entry> arrayListYvalues = addRecordsToChartData(measurementClassVariablesParsed.get(i).getLinexyvalues(), arrayListXAxisValuesInMili, measurementTimeWindow);
 
-            ArrayList<ILineDataSet> datasets = new ArrayList<>();
-            //prepare X values in miliseconds for the x-axis of the chart
-            ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, "");//// TODO: 5/5/2016 selectedDate last parameter
-            for(int i=0;i<measurementClassVariablesParsed.size();i++)
-            {
-                ArrayList<Entry> arrayListYvalues=addRecordsToChartData(measurementClassVariablesParsed.get(i).getLinexyvalues(), arrayListXAxisValuesInMili, measurementTimeWindow);
 
-
-                LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayListYvalues, measurementClassVariablesParsed.get(i).getLabel(),measurementClassVariablesParsed.get(i).getColor());
-                datasets.add(lineInternalDataset);
+                    LineDataSet lineInternalDataset = FillChartArrayListDataSets(arrayListYvalues, measurementClassVariablesParsed.get(i).getLabel(), measurementClassVariablesParsed.get(i).getColor());
+                    datasets.add(lineInternalDataset);
+                }
+                populateLineChart(datasets, arrayTimeStamp);
+            } else {
+                Toast.makeText(Chart_LineChart.this,
+                        "Server is not available, or there is not data to be displayed!",
+                        Toast.LENGTH_SHORT).show();
             }
-            populateLineChart(datasets, arrayTimeStamp);
         }
 
     }
@@ -321,6 +325,11 @@ public class Chart_LineChart extends AppCompatActivity
                     datasets.add(lineInternalDataset);
                 }
                 populateLineChart(datasets, arrayTimeStamp);
+            }
+            else {
+                Toast.makeText(Chart_LineChart.this,
+                        "Server is not available, or there is not data to be displayed!",
+                        Toast.LENGTH_SHORT).show();
             }
         }
 

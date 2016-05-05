@@ -102,8 +102,8 @@ public class MesurementClass {
                         //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
@@ -114,41 +114,36 @@ public class MesurementClass {
                         UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
 
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Luminosity", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
 
                     case "4":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                        // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
-                    case "6":
+                    case "5":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Active Power- adb", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         //UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
-                    case "10"://energy consumption
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
-                        UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Energy Consumption", UrlsColorsInternal);
-                        break;
+
                 }
                 break;
             case Last7days:
@@ -162,8 +157,8 @@ public class MesurementClass {
                         UrlsColorsExternal.add(serverURL+"/weatherreports/60min/building/"+buildingID+"/" + DateTimeObj.getCurrentDate() + "?var=airtemperature&weekly=true");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
                         // UrlsColorsInternal.add("");
@@ -174,8 +169,8 @@ public class MesurementClass {
                         UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity&weekly=true");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
 
                         break;
                     case "3":
@@ -188,19 +183,19 @@ public class MesurementClass {
                         //UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "5"://office Smart plug
                         //UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Office Smart Plug (A)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         // UrlsColorsInternal.add("");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
 
                 }
@@ -216,8 +211,8 @@ public class MesurementClass {
                         // UrlsColorsExternal.add("https://api.myjson.com/bins/4sham");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
@@ -228,32 +223,32 @@ public class MesurementClass {
                         //UrlsColorsExternal.add("https://api.myjson.com/bins/4vsnu");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Luminosity", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
                     case "4":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "5":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Smart Plug", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/4j71k");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
                 }
                 break;
@@ -268,8 +263,8 @@ public class MesurementClass {
                         // UrlsColorsExternal.add("https://api.myjson.com/bins/4sham");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
@@ -280,33 +275,33 @@ public class MesurementClass {
                         //UrlsColorsExternal.add("https://api.myjson.com/bins/4vsnu");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
 
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Luminosity", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
                     case "4":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "5":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Smart Plug", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/4j71k");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
                 }
                 break;
@@ -321,8 +316,8 @@ public class MesurementClass {
                         //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Temperature", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Temperature", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
@@ -333,29 +328,29 @@ public class MesurementClass {
                         UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + selectedDate + "?var=relativehumidity");
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
-                        hashMapJson_Urls.put("Internal Humidity", UrlsColorsInternal);
-                        hashMapJson_Urls.put("External Humidity", UrlsColorsExternal);
+                        hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
+                        hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
 
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Luminosity", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
 
                     case "4":
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
                         // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Internal CO2", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
 
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
                         //UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
-                        hashMapJson_Urls.put("Power Consumption", UrlsColorsInternal);
+                        hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
 
                 }
