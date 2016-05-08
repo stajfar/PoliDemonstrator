@@ -33,8 +33,9 @@ import it.polimi.polidemonstrator.businesslogic.Room;
 public class RoomSelector extends Activity {
 
     private Spinner spinnerBuilding, spinnerRoom, spinnerSensor;
-    private Button btnSubmit, btnRefreshBuilding;
-    private String serverUrl="http://eis.deib.polimi.it/ScuolaPolimi/cloudsetting.json";
+    private Button btnRefreshBuilding;
+    ListView listVieMeasurements;
+
     HashMap<String, String> hashMapMeasurementClassesParesed;
 
     @Override
@@ -43,31 +44,21 @@ public class RoomSelector extends Activity {
         setContentView(R.layout.roomselector);
         setAcitivityElements();
 
-        //execute a background task to fill the building spinner
-        serverUrl="";
+
         new BackgroundTaskGetBuildings().execute();
 
         addListenerOnButton();
         addListenerOnSpinnerItemSelection();
 
-      /*  List<MesurementClass> arrayList=new ArrayList<>();
-        for (int i=0;i<5;i++) {
-            MesurementClass fakemeasurementclass = new MesurementClass();
-            fakemeasurementclass.setSensorClasseId(String.valueOf(i));
-            fakemeasurementclass.setSensorClassLabel("lable " + String.valueOf(i));
-            arrayList.add(fakemeasurementclass);
-        }
-        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
-        ListView listViewtest=(ListView)findViewById(R.id.listViewtest);
-        listViewtest.setAdapter(sensorClassesAdapter);*/
+
     }
 
     private void setAcitivityElements() {
         spinnerBuilding = (Spinner) findViewById(R.id.spinnerBuilding);
         spinnerRoom = (Spinner) findViewById(R.id.spinnerRoom);
         spinnerSensor = (Spinner) findViewById(R.id.spinnerSensor);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
 
+        listVieMeasurements=(ListView)findViewById(R.id.listViewMeasurementClass);
         btnRefreshBuilding=(Button) findViewById(R.id.btnRefreshBuilding);
     }
 
@@ -84,48 +75,13 @@ public class RoomSelector extends Activity {
 
         spinnerBuilding.setOnItemSelectedListener(new SpinnerBuildingOnItemSelectedListener());
         spinnerRoom.setOnItemSelectedListener(new SpinnerRoomOnItemSelectedListener());
+        listVieMeasurements.setOnItemClickListener(new listViewMeasurementsOnItemSelectedListener());
     }
 
     // get the selected dropdown list value
     public void addListenerOnButton() {
 
 
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Here we have to create a bundle and send the Building ID, Room ID and VariableClass (i.e., temperature)
-                //to next activity
-                Building selectedBuilding=(Building)spinnerBuilding.getSelectedItem();
-                Room selectedRoom=(Room)spinnerRoom.getSelectedItem();
-                MesurementClass selectedSensorClass=(MesurementClass)spinnerSensor.getSelectedItem();
-                String buildingID=selectedBuilding.getBuildingid();
-                String roomID=selectedRoom.getRoomid();
-                String measurementClassID=selectedSensorClass.getSensorClasseId();
-
-
-
-
-
-
-
-
-                Bundle basket=new Bundle();
-                basket.putString("buildingID", buildingID);
-                basket.putString("roomID",roomID);
-                basket.putString("measuermentClassID",measurementClassID);
-                basket.putSerializable("hashMapMeasuremetClasses", hashMapMeasurementClassesParesed);
-
-
-
-
-
-                Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
-                openChartActivity.putExtras(basket);
-                startActivity(openChartActivity);
-
-            }
-        });
 
         btnRefreshBuilding.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,30 +152,26 @@ public class RoomSelector extends Activity {
 
 
     //Async Task to fetch Sensors Class list of a given room ID
-    public class BackgroundTaskGetSensorList extends AsyncTask<String, Void, String> {
+    public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //call a select latest value of a measurement class
+            MesurementClass mesurementClass=new MesurementClass(RoomSelector.this);
+            String  measurementClassVariablesURL=mesurementClass.jsonURL_GeneratorMeasurenetClassVariables("1", "1");
+
+        }
         @Override
         protected String doInBackground(String... params) {
             Room room = new Room();
             String roomSensorlistJSON = room.getRoomSensorlist("https://api.myjson.com/bins/1lyj6");//("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
+
+
             return roomSensorlistJSON;
-            //list of variables that are measured on a specific room
-            //http://131.175.56.243:8080/variables/room/1/list
 
-            //list of sensors in one specific room
-            //http://131.175.56.243:8080/sensors/room/1
-
-            //list of variables on each sensor
-            //http://131.175.56.243:8080/variables/sensor/4/list
-
-            //the values of each sensor variable in a specific date
-            //http://131.175.56.243:8080/measurements/60min/sensor/variable/8/2016/03/30
-
-            // returns a specific room agregated values of a specific chosen variable class
-            //http://131.175.56.243:8080/measurements/15min/room/1/variableclass/1/2016/04/14
-
-            //returns a specific building weather reports
-            //http://131.175.56.243:8080/weatherreports/60min/building/1/2016/4/14?var=airtemperature
         }
+
+
 
         @Override
         protected void onPostExecute(String results) {
@@ -229,6 +181,26 @@ public class RoomSelector extends Activity {
                 hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results,UnwantedMeasurementIdentifiers);
                 //Fill sensor spinner with given sensors list data
                 addItemsOnSpinnerSensors(hashMapMeasurementClassesParesed);
+
+                ArrayList<MesurementClass> arrayList = new ArrayList<>();
+                for (Map.Entry<String,String> entry : hashMapMeasurementClassesParesed.entrySet()){
+                    MesurementClass msurementClass=new MesurementClass(RoomSelector.this);
+                    msurementClass.setSensorClasseId(entry.getKey());
+                    msurementClass.setSensorClassLabel(entry.getValue());
+                    String[] listViewItem=MesurementClass.getMeasurementListViewItem(entry.getKey());
+                    if (listViewItem != null) {
+                        msurementClass.setSensorClassLabel(listViewItem[0]);
+                        msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
+                    }
+                    arrayList.add(msurementClass);
+                }
+                MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
+
+                listVieMeasurements.setAdapter(sensorClassesAdapter);
+
+
+
+
             }else{
                 Toast.makeText(RoomSelector.this,
                         "Sorry, server is not Available,\n please try again!",
@@ -318,13 +290,37 @@ public class RoomSelector extends Activity {
                     "OnItemSelectedListener : " + room.getRoomLabel()+" "+room.getRoomid(),
                     Toast.LENGTH_SHORT).show();
             //execute another Async Task to fetch the related rooms of the chosen building
-            new BackgroundTaskGetSensorList().execute(room.getRoomid());
+            new BackgroundTaskGetMeasurementList().execute(room.getRoomid());
 
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
+        }
+    }
+
+    private class listViewMeasurementsOnItemSelectedListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //Here we have to create a bundle and send the Building ID, Room ID and VariableClass (i.e., temperature)
+            //to next activity
+            Building selectedBuilding=(Building)spinnerBuilding.getSelectedItem();
+            Room selectedRoom=(Room)spinnerRoom.getSelectedItem();
+            MesurementClass selectedSensorClass=(MesurementClass)listVieMeasurements.getItemAtPosition(position);
+            String buildingID=selectedBuilding.getBuildingid();
+            String roomID=selectedRoom.getRoomid();
+            String measurementClassID=selectedSensorClass.getSensorClasseId();
+
+            Bundle basket=new Bundle();
+            basket.putString("buildingID", buildingID);
+            basket.putString("roomID",roomID);
+            basket.putString("measuermentClassID",measurementClassID);
+            basket.putSerializable("hashMapMeasuremetClasses", hashMapMeasurementClassesParesed);
+
+            Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
+            openChartActivity.putExtras(basket);
+            startActivity(openChartActivity);
         }
     }
 }

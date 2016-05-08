@@ -3,6 +3,7 @@ package it.polimi.polidemonstrator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -59,6 +61,7 @@ public class Chart_LineChart extends AppCompatActivity
     DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
     DateTimeObj.TimeIntervals timeIntervals;
     DatePicker datePicker;
+    MesurementClass measurementClass;
 
 
 
@@ -95,7 +98,9 @@ public class Chart_LineChart extends AppCompatActivity
 
         measurementTimeWindow= DateTimeObj.MeasurementTimeWindow.Today;
         timeIntervals= DateTimeObj.TimeIntervals.FifteenMins;
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
+
+        measurementClass=new MesurementClass(Chart_LineChart.this);
+        hashMapJsonUrlsLineColors=  measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
 
 
 
@@ -130,15 +135,15 @@ public class Chart_LineChart extends AppCompatActivity
     private void buildAlterDialog(HashMap<String, String> hashMapMeasurementClassesParsed) {
         ArrayList<MesurementClass> arrayList = new ArrayList<>();
         for (Map.Entry<String,String> entry : hashMapMeasurementClassesParsed.entrySet()){
-            MesurementClass measurementClass=new MesurementClass(Chart_LineChart.this);
-            measurementClass.setSensorClasseId(entry.getKey());
-            measurementClass.setSensorClassLabel(entry.getValue());
+            MesurementClass msurementClass=new MesurementClass(Chart_LineChart.this);
+            msurementClass.setSensorClasseId(entry.getKey());
+            msurementClass.setSensorClassLabel(entry.getValue());
             String[] listViewItem=MesurementClass.getMeasurementListViewItem(entry.getKey());
             if (listViewItem != null) {
-                measurementClass.setSensorClassLabel(listViewItem[0]);
-                measurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
+                msurementClass.setSensorClassLabel(listViewItem[0]);
+                msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
             }
-            arrayList.add(measurementClass);
+            arrayList.add(msurementClass);
         }
         MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(Chart_LineChart.this,R.layout.list_singlerow,arrayList);
 
@@ -217,7 +222,7 @@ public class Chart_LineChart extends AppCompatActivity
     public void onClick(DialogInterface dialog, int which) {
         MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
         measurementClassID=mesurementClass.getSensorClasseId();
-        hashMapJsonUrlsLineColors=  MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
+        hashMapJsonUrlsLineColors=  mesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
 
         Toast.makeText(Chart_LineChart.this,
@@ -245,10 +250,11 @@ public class Chart_LineChart extends AppCompatActivity
 
         @Override
         protected List<MesurementClass.ChartLine> doInBackground(Void... params) {
-            String  measurementClassVariablesURL=MesurementClass.jsonURL_GeneratorMeasurenetClassVariables(roomID, measurementClassID);
+
+            String  measurementClassVariablesURL=measurementClass.jsonURL_GeneratorMeasurenetClassVariables(roomID, measurementClassID);
             HashMap<Integer, String[]> parsed_MeasurementClassVariables=MesurementClass.getListofMeasurementVariables(measurementClassVariablesURL);//String[]==variableDescription,variableUnit,sensorID
 
-            List<String[]> measurementVariableURLsLabelNames=MesurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
+            List<String[]> measurementVariableURLsLabelNames=measurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
             // now the measurement variable urls are ready, fetch related json data
             List<MesurementClass.ChartLine> parsed_MeasurementVariables=MesurementClass.getListofMeasurementVariableData(measurementVariableURLsLabelNames,Chart_LineChart.this);
 
@@ -323,6 +329,23 @@ public class Chart_LineChart extends AppCompatActivity
                     ArrayList<Entry> arrayListYvalues=addRecordsToChartData(hashMapParsedResults, arrayListXAxisValuesInMili, timeWindow);
                     LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayListYvalues, entry.getKey(), Integer.valueOf(entry.getValue().get(1)));
                     datasets.add(lineInternalDataset);
+
+                    if (measurementClassID.equals("9"))
+                    {
+                        Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+
+                        LimitLine ll1 = new LimitLine(MesurementClass.computeMeanMeasurementValue(hashMapParsedResults), "Mean Over Selected Time Window");
+                        ll1.setLineWidth(4f);
+                        ll1.enableDashedLine(10f, 10f, 0f);
+                        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+                        ll1.setTextSize(10f);
+                        ll1.setTypeface(tf);
+                        YAxis leftAxis = lineChart.getAxisLeft();
+                        leftAxis.addLimitLine(ll1);
+                        // limit lines are drawn behind data (and not on top)
+                        leftAxis.setDrawLimitLinesBehindData(true);
+
+                    }
                 }
                 populateLineChart(datasets, arrayTimeStamp);
             }
@@ -465,7 +488,7 @@ public class Chart_LineChart extends AppCompatActivity
             int selectedDay =  datePicker.getDayOfMonth();
             SelectedDate=selectedYear+"/"+selectedMonth+"/"+selectedDay;
 
-                    hashMapJsonUrlsLineColors= MesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID,
+                    hashMapJsonUrlsLineColors= measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID,
                             measurementTimeWindow,SelectedDate);
 
                     new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals,measurementTimeWindow,SelectedDate).execute();
