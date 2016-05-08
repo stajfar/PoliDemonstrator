@@ -15,8 +15,10 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,11 +34,11 @@ import it.polimi.polidemonstrator.businesslogic.Room;
  */
 public class RoomSelector extends Activity {
 
-    private Spinner spinnerBuilding, spinnerRoom, spinnerSensor;
+    private Spinner spinnerBuilding, spinnerRoom;
     private Button btnRefreshBuilding;
     ListView listVieMeasurements;
 
-    HashMap<String, String> hashMapMeasurementClassesParesed;
+    List<MesurementClass> hashMapMeasurementClassesParesed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class RoomSelector extends Activity {
     private void setAcitivityElements() {
         spinnerBuilding = (Spinner) findViewById(R.id.spinnerBuilding);
         spinnerRoom = (Spinner) findViewById(R.id.spinnerRoom);
-        spinnerSensor = (Spinner) findViewById(R.id.spinnerSensor);
+
 
         listVieMeasurements=(ListView)findViewById(R.id.listViewMeasurementClass);
         btnRefreshBuilding=(Button) findViewById(R.id.btnRefreshBuilding);
@@ -132,19 +134,23 @@ public class RoomSelector extends Activity {
     }
 
     // add fetched data from API to SpinnerSensorClasses
-    public void addItemsOnSpinnerSensors(HashMap<String,String> hashMapMeasurementClasses) {
+    public void addItemsOnListViewMeasurementClasses(List<MesurementClass> listMesurementClasses) {
 
         ArrayList<MesurementClass> arrayList = new ArrayList<>();
-        for (Map.Entry<String,String> entry : hashMapMeasurementClasses.entrySet()){
-           MesurementClass mesurementClass=new MesurementClass(RoomSelector.this);
-            mesurementClass.setSensorClasseId(entry.getKey());
-            mesurementClass.setSensorClassLabel(entry.getValue());
-            arrayList.add(mesurementClass);
+        for(MesurementClass item : listMesurementClasses){
+            MesurementClass msurementClass=new MesurementClass();
+            String[] listViewItem=MesurementClass.getMeasurementListViewItem(item.getSensorClasseId());
+            if (listViewItem != null) {
+                msurementClass.setSensorClasseId(item.getSensorClasseId());
+                msurementClass.setSensorClassLabel(listViewItem[0]);
+                msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
+                msurementClass.setSensorClassSensorLatestValue(item.getSensorClassSensorLatestValue()+" "+listViewItem[2]);//entry.getValue()[1] is the lates value of measurement Class
+            }
+            arrayList.add(msurementClass);
         }
-        MesurementClass.SpinAdapterSensorClasses adapter=new MesurementClass.SpinAdapterSensorClasses(RoomSelector.this,android.R.layout.simple_spinner_item,
-               arrayList);
+        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
 
-        spinnerSensor.setAdapter(adapter);
+        listVieMeasurements.setAdapter(sensorClassesAdapter);
 
     }
 
@@ -170,9 +176,6 @@ public class RoomSelector extends Activity {
             return roomSensorlistJSON;
 
         }
-
-
-
         @Override
         protected void onPostExecute(String results) {
             if (results != null) {
@@ -180,27 +183,7 @@ public class RoomSelector extends Activity {
                 int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
                 hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results,UnwantedMeasurementIdentifiers);
                 //Fill sensor spinner with given sensors list data
-                addItemsOnSpinnerSensors(hashMapMeasurementClassesParesed);
-
-                ArrayList<MesurementClass> arrayList = new ArrayList<>();
-                for (Map.Entry<String,String> entry : hashMapMeasurementClassesParesed.entrySet()){
-                    MesurementClass msurementClass=new MesurementClass(RoomSelector.this);
-                    msurementClass.setSensorClasseId(entry.getKey());
-                    msurementClass.setSensorClassLabel(entry.getValue());
-                    String[] listViewItem=MesurementClass.getMeasurementListViewItem(entry.getKey());
-                    if (listViewItem != null) {
-                        msurementClass.setSensorClassLabel(listViewItem[0]);
-                        msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
-                    }
-                    arrayList.add(msurementClass);
-                }
-                MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
-
-                listVieMeasurements.setAdapter(sensorClassesAdapter);
-
-
-
-
+                addItemsOnListViewMeasurementClasses(hashMapMeasurementClassesParesed);
             }else{
                 Toast.makeText(RoomSelector.this,
                         "Sorry, server is not Available,\n please try again!",
@@ -315,8 +298,9 @@ public class RoomSelector extends Activity {
             Bundle basket=new Bundle();
             basket.putString("buildingID", buildingID);
             basket.putString("roomID",roomID);
-            basket.putString("measuermentClassID",measurementClassID);
-            basket.putSerializable("hashMapMeasuremetClasses", hashMapMeasurementClassesParesed);
+            basket.putString("measuermentClassID", measurementClassID);
+            basket.putSerializable("listMeasuremetClasses", (Serializable) hashMapMeasurementClassesParesed);
+
 
             Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
             openChartActivity.putExtras(basket);

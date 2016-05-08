@@ -35,8 +35,10 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class Chart_LineChart extends AppCompatActivity
     String JSON_STRING;
     LineChart lineChart;
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
-    HashMap<String, String> hashMapMeasurementClassesParsed;
+    List<MesurementClass> listMeasurementClassesParsed;
     String buildingID,roomID,measurementClassID;
     String SelectedDate;
 
@@ -73,7 +75,7 @@ public class Chart_LineChart extends AppCompatActivity
 
         Bundle gotBasket=getIntent().getExtras();
 
-        hashMapMeasurementClassesParsed=(HashMap)gotBasket.getSerializable("hashMapMeasuremetClasses");
+        listMeasurementClassesParsed=(List<MesurementClass>)gotBasket.getSerializable("listMeasuremetClasses");
         buildingID=gotBasket.getString("buildingID");
         roomID=gotBasket.getString("roomID");
         measurementClassID=gotBasket.getString("measuermentClassID");
@@ -127,18 +129,18 @@ public class Chart_LineChart extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        buildAlterDialog(hashMapMeasurementClassesParsed);
+        buildAlterDialog(listMeasurementClassesParsed);
 
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
     }
 
-    private void buildAlterDialog(HashMap<String, String> hashMapMeasurementClassesParsed) {
+    private void buildAlterDialog(List<MesurementClass> listMeasurementClassesParsed) {
         ArrayList<MesurementClass> arrayList = new ArrayList<>();
-        for (Map.Entry<String,String> entry : hashMapMeasurementClassesParsed.entrySet()){
+        for(MesurementClass item : listMeasurementClassesParsed){
             MesurementClass msurementClass=new MesurementClass(Chart_LineChart.this);
-            msurementClass.setSensorClasseId(entry.getKey());
-            msurementClass.setSensorClassLabel(entry.getValue());
-            String[] listViewItem=MesurementClass.getMeasurementListViewItem(entry.getKey());
+            msurementClass.setSensorClasseId(item.getSensorClasseId());
+            msurementClass.setSensorClassLabel(item.getSensorClassLabel());
+            String[] listViewItem=MesurementClass.getMeasurementListViewItem(item.getSensorClasseId());
             if (listViewItem != null) {
                 msurementClass.setSensorClassLabel(listViewItem[0]);
                 msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));

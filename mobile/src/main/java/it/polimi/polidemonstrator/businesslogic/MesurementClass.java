@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,7 +37,7 @@ import it.polimi.polidemonstrator.R;
 /**
  * Created by saeed on 4/26/2016.
  */
-public class MesurementClass {
+public class MesurementClass implements Serializable {
 
     private static String serverURL;
     //correlated to sensor classes
@@ -44,6 +45,9 @@ public class MesurementClass {
     private String sensorClassLabel;
     private int sensorClassImage;
     private String sensorClassSensorLatestValue;
+
+    public MesurementClass() {
+    }
 
     public int getSensorClassImage() {
         return sensorClassImage;

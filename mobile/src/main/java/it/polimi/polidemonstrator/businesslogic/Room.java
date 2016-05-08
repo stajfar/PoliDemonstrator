@@ -84,26 +84,24 @@ public class Room {
 
 
 
-    public HashMap<String,String> parsRoomSensorClassesJSON(String json_results, int[] unwantedMeasurementIdentifiers) {
+    public List<MesurementClass> parsRoomSensorClassesJSON(String json_results, int[] unwantedMeasurementIdentifiers) {
         try {
-            HashMap<String,String> hashMapSensorClasses=new HashMap<>();
+             List<MesurementClass> listMeasurementClasses=new ArrayList<>();
             JSONArray jsonArray=new JSONArray(json_results);
             int count=0;
-            String measurementIdentifier;
-            String measurementName;
-
-
             while (count< jsonArray.length())
             {
+                MesurementClass measurementItem=new MesurementClass();
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
-                measurementIdentifier=jsonObject.getString("identifier");
-                measurementName=jsonObject.getString("name");
-               if(MesurementClass.iswantedMeasurementsIdentifier(measurementIdentifier,unwantedMeasurementIdentifiers)){
-                   hashMapSensorClasses.put(measurementIdentifier, measurementName);
+                measurementItem.setSensorClasseId(jsonObject.getString("identifier"));
+                measurementItem.setSensorClassLabel(jsonObject.getString("name"));
+
+               if(MesurementClass.iswantedMeasurementsIdentifier(jsonObject.getString("identifier"),unwantedMeasurementIdentifiers)){
+                   listMeasurementClasses.add(measurementItem);
                }
                 count++;
             }
-            return hashMapSensorClasses;
+            return listMeasurementClasses;
 
         } catch (JSONException e) {
             e.printStackTrace();
