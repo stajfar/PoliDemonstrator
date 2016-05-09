@@ -55,6 +55,7 @@
     </array>
 
     <array name="UnwantedMeasurementIdentifiers"> <!-- make sure this list is sorted, because of binary search -->
+        <item>5</item>
         <item>6</item>
         <item>7</item>
         <item>8</item>

@@ -598,19 +598,20 @@ public class MesurementClass implements Serializable {
         return sum/hashMapParsedResults.size();
     }
 
-    public static HashMap<String, String[]> getMeasurementValues(HashMap<String, String> resultsParsed, String roomid) {
-        HashMap<String, String[]> MeasurementIDwithLatestMeanValue=new HashMap<>();
-        for(Map.Entry<String, String> entry : resultsParsed.entrySet()){
+    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid) {
+
+        for(MesurementClass meaurementClassItem : resultsParsed){
             //json Query for each measurement class
-            //String measurementLatestValue=getMeasurementLatestValue(roomid,entry.getKey());
-            MeasurementIDwithLatestMeanValue.put(entry.getKey(),new String[]{entry.getValue(),"20"});
+            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId());
+            meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
+
         }
-        return MeasurementIDwithLatestMeanValue;
+        return resultsParsed;
     }
 
-    private  String getMeasurementLatestValue(String roomid, String measurementClassKey) {
+    private static String getMeasurementLatestValue(String roomid, String measurementClassKey) {
         String JSON_STRING;
-        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/2016/05/06?from=14:15&to=14:20";
+        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+DateTimeObj.getCurrentDate()+"?from=14:15&to=14:20";
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
@@ -629,8 +630,12 @@ public class MesurementClass implements Serializable {
             LinkedHashMap<Long,Float> measurementData=parsJSON_Measurement(json_String);
 
             List<Map.Entry<Long,Float>> entryList = new ArrayList<>(measurementData.entrySet());
-            Map.Entry<Long,Float> lastEntry = entryList.get(entryList.size()-1);
-            return lastEntry.getValue().toString();
+            if (entryList.size() > 0) {
+                Map.Entry<Long, Float> lastEntry = entryList.get(entryList.size() - 1);
+                return lastEntry.getValue().toString();
+            }else {
+                return "";
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

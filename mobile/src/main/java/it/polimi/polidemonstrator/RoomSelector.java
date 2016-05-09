@@ -2,29 +2,23 @@ package it.polimi.polidemonstrator;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.utils.ColorTemplate;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 
 import it.polimi.polidemonstrator.businesslogic.Building;
-import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
 import it.polimi.polidemonstrator.businesslogic.MesurementClass;
 import it.polimi.polidemonstrator.businesslogic.Room;
 
@@ -38,7 +32,7 @@ public class RoomSelector extends Activity {
     private Button btnRefreshBuilding;
     ListView listVieMeasurements;
 
-    List<MesurementClass> hashMapMeasurementClassesParesed;
+    List<MesurementClass> listMeasurementClassesParesed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +152,7 @@ public class RoomSelector extends Activity {
 
 
     //Async Task to fetch Sensors Class list of a given room ID
-    public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, String> {
+    public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, List<MesurementClass>> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -168,22 +162,23 @@ public class RoomSelector extends Activity {
 
         }
         @Override
-        protected String doInBackground(String... params) {
+        protected List<MesurementClass> doInBackground(String... params) {
             Room room = new Room();
-            String roomSensorlistJSON = room.getRoomSensorlist("https://api.myjson.com/bins/1lyj6");//("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
-
-
-            return roomSensorlistJSON;
-
+            String roomMeasurementClasslistJSON = room.getRoomSensorlist("https://api.myjson.com/bins/1lyj6");//("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
+            if (roomMeasurementClasslistJSON != null){
+                int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed=MesurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,params[0]);
+            }
+            return listMeasurementClassesParesed;
         }
         @Override
-        protected void onPostExecute(String results) {
-            if (results != null) {
-                Room room = new Room();
-                int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
-                hashMapMeasurementClassesParesed = room.parsRoomSensorClassesJSON(results,UnwantedMeasurementIdentifiers);
+        protected void onPostExecute(List<MesurementClass> listMeasurementClassesParesed) {
+            if (listMeasurementClassesParesed != null) {
+
+
                 //Fill sensor spinner with given sensors list data
-                addItemsOnListViewMeasurementClasses(hashMapMeasurementClassesParesed);
+                addItemsOnListViewMeasurementClasses(listMeasurementClassesParesed);
             }else{
                 Toast.makeText(RoomSelector.this,
                         "Sorry, server is not Available,\n please try again!",
@@ -299,7 +294,7 @@ public class RoomSelector extends Activity {
             basket.putString("buildingID", buildingID);
             basket.putString("roomID",roomID);
             basket.putString("measuermentClassID", measurementClassID);
-            basket.putSerializable("listMeasuremetClasses", (Serializable) hashMapMeasurementClassesParesed);
+            basket.putSerializable("listMeasuremetClasses", (Serializable) listMeasurementClassesParesed);
 
 
             Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
