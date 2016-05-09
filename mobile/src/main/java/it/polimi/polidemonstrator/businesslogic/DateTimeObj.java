@@ -135,6 +135,35 @@ public class DateTimeObj {
     }
 
 
+    public static String getCurrentTimeHour()
+    {
+        SimpleDateFormat df = new SimpleDateFormat("HH");
+        Calendar c = Calendar.getInstance();
+        String date=df.format(c.getTime());
+        return date;
+    }
+
+    public static String getCurrentTimeMinute()
+    {
+        SimpleDateFormat df = new SimpleDateFormat("mm");
+        Calendar c = Calendar.getInstance();
+        String date=df.format(c.getTime());
+        return date;
+    }
+
+    public static String[] getTimeMinuteRangeInHalfHour( ){
+        String currentTimeMinute=getCurrentTimeMinute();
+       int currentMinute=Integer.valueOf(currentTimeMinute);
+        String[] result;
+            if(currentMinute>=0 && currentMinute <=30){
+               result =new String[]{"00","30"};
+            }else {
+                result =new String[]{"31","59"};
+            }
+       return result;
+    }
+
+
 
     public static String getMonthDayTime(long timeStamp)
     {

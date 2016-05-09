@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -407,6 +408,8 @@ public class MesurementClass implements Serializable {
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+            int maxStale = 60 * 60*24*28 ; // tolerate 4week stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder=new StringBuilder();
@@ -507,6 +510,8 @@ public class MesurementClass implements Serializable {
             try {
                  URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+                int maxStale = 60 * 15 ; // tolerate 15 minutes stale
+                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder stringBuilder=new StringBuilder();
@@ -556,6 +561,8 @@ public class MesurementClass implements Serializable {
                 List<String> listjsonColor=new ArrayList<>();
                 URL url=new URL(entry.getValue().get(0));
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+                int maxStale = 60 * 15 ; // tolerate 15 minutes stale
+                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder stringBuilder=new StringBuilder();
@@ -611,10 +618,15 @@ public class MesurementClass implements Serializable {
 
     private static String getMeasurementLatestValue(String roomid, String measurementClassKey) {
         String JSON_STRING;
-        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+DateTimeObj.getCurrentDate()+"?from="+DateTimeObj.getTime(DateTimeObj.getCurrentDateTimeInMili() - 1800000)+"&to="+DateTimeObj.getTime(DateTimeObj.getCurrentDateTimeInMili());
+        String currentHour=DateTimeObj.getCurrentTimeHour();
+        String[] startEndMinutes= DateTimeObj.getTimeMinuteRangeInHalfHour();
+        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+
+                DateTimeObj.getCurrentDate()+"?from="+currentHour+":"+startEndMinutes[0] +"&to="+currentHour+":"+startEndMinutes[1];
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+            int maxStale = 60 * 30 ; // tolerate 30 minutes stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder=new StringBuilder();

@@ -62,6 +62,8 @@ public class Room {
         try {
             URL url=new URL(json_url);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+            int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder=new StringBuilder();

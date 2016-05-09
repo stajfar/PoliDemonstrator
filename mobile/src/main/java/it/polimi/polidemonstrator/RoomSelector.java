@@ -2,6 +2,7 @@ package it.polimi.polidemonstrator;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,8 @@ public class RoomSelector extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.roomselector);
         setAcitivityElements();
+
+
 
 
         new BackgroundTaskGetBuildings().execute();
@@ -300,6 +305,15 @@ public class RoomSelector extends Activity {
             Intent openChartActivity = new Intent("android.intent.action.CHART_LINECHART");
             openChartActivity.putExtras(basket);
             startActivity(openChartActivity);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
         }
     }
 }
