@@ -67,6 +67,11 @@ public class DateTimeObj {
         return dateTime;
     }
 
+    public static long getCurrentDateTimeInMili(){
+        long dateTimeMili=System.currentTimeMillis();
+        return dateTimeMili;
+    }
+
 
 
 
@@ -129,6 +134,8 @@ public class DateTimeObj {
         return  mTime;
     }
 
+
+
     public static String getMonthDayTime(long timeStamp)
     {
         SimpleDateFormat df = new SimpleDateFormat("MMMM dd, HH:mm");
@@ -159,11 +166,6 @@ public class DateTimeObj {
                 startDate=dateFormat.parse(getChartStartDateTime(measurementTimeWindow));
                 endDate = dateFormat.parse(getCurrentDateTime());
             }
-
-
-           
-
-
 
             long startDateTimeMili= startDate.getTime();
             long endDateTimeMili=endDate.getTime();
@@ -208,6 +210,7 @@ public class DateTimeObj {
         OneDay (76400000),
         HalfaDay(43200000),
         OneHour(3600000),
+        HalfanHour(1800000),
         FifteenMins(900000);
 
        public int getTimeInterval() {

@@ -611,7 +611,7 @@ public class MesurementClass implements Serializable {
 
     private static String getMeasurementLatestValue(String roomid, String measurementClassKey) {
         String JSON_STRING;
-        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+DateTimeObj.getCurrentDate()+"?from=14:15&to=14:20";
+        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+DateTimeObj.getCurrentDate()+"?from="+DateTimeObj.getTime(DateTimeObj.getCurrentDateTimeInMili() - 1800000)+"&to="+DateTimeObj.getTime(DateTimeObj.getCurrentDateTimeInMili());
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
