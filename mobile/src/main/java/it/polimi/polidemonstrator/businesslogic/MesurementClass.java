@@ -605,28 +605,32 @@ public class MesurementClass implements Serializable {
         return sum/hashMapParsedResults.size();
     }
 
-    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid) {
+    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh) {
 
         for(MesurementClass meaurementClassItem : resultsParsed){
             //json Query for each measurement class
-            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId());
+            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh);
             meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
 
         }
         return resultsParsed;
     }
 
-    private static String getMeasurementLatestValue(String roomid, String measurementClassKey) {
+    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh) {
         String JSON_STRING;
-        String currentHour=DateTimeObj.getCurrentTimeHour();
-        String[] startEndMinutes= DateTimeObj.getTimeMinuteRangeInHalfHour();
-        String measurementClassVariablesURL=serverURL+"/measurements/15min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+
-                DateTimeObj.getCurrentDate()+"?from="+currentHour+":"+startEndMinutes[0] +"&to="+currentHour+":"+startEndMinutes[1];
+
+        String[] startEndHours= DateTimeObj.getTimeRangeForTwoHours();
+        String measurementClassVariablesURL=serverURL+"/measurements/60min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+
+                DateTimeObj.getCurrentDate()+"?from="+startEndHours[0]+":00&to="+startEndHours[1]+":00";
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-            int maxStale = 60 * 30 ; // tolerate 30 minutes stale
-            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            if (isRefresh==true) {
+                httpconnection.setUseCaches(false);
+            }
+                int maxStale = 60 * 60 ; // tolerate 30 minutes stale
+                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder=new StringBuilder();

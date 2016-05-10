@@ -24,12 +24,17 @@
         android:layout_height="wrap_content"
         android:text="Refresh Buildings" />
 
-
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_refresh_measurements"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listViewMeasurementClass" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
 </LinearLayout>

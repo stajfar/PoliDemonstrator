@@ -143,7 +143,7 @@ public class DateTimeObj {
         return date;
     }
 
-    public static String getCurrentTimeMinute()
+    public static String getCurrentTimeMin()
     {
         SimpleDateFormat df = new SimpleDateFormat("mm");
         Calendar c = Calendar.getInstance();
@@ -151,15 +151,25 @@ public class DateTimeObj {
         return date;
     }
 
-    public static String[] getTimeMinuteRangeInHalfHour( ){
-        String currentTimeMinute=getCurrentTimeMinute();
-       int currentMinute=Integer.valueOf(currentTimeMinute);
-        String[] result;
-            if(currentMinute>=0 && currentMinute <=30){
-               result =new String[]{"00","30"};
-            }else {
-                result =new String[]{"31","59"};
-            }
+    public static String[] getTimeRangeForTwoHours( ){
+        String currentHour=getCurrentTimeHour();
+        int currentHourvalue=Integer.valueOf(currentHour);
+        int start=currentHourvalue-1;
+        if(start<0){
+            start=0;
+        }
+
+        String startHour= String.valueOf(start);
+        String endHour=String.valueOf(currentHourvalue+1);
+        if(startHour.length() == 1){
+            startHour="0"+startHour;
+        }
+        if(endHour.length() == 1){
+            endHour="0"+endHour;
+        }
+
+        String[] result =new String[]{startHour,endHour};
+
        return result;
     }
 

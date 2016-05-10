@@ -34,6 +34,24 @@ import it.polimi.polidemonstrator.R;
 public class Room {
     private String roomid;
     private String roomLabel;
+    private static String serverURL;
+
+    public Room(Context context) {
+        ServerURL serverURL=new ServerURL();
+        this.serverURL=serverURL.getServerURL(context);
+    }
+
+    public Room() {
+
+    }
+
+    public static String getServerURL() {
+        return serverURL;
+    }
+
+    public static void setServerURL(String serverURL) {
+        Room.serverURL = serverURL;
+    }
 
 
 
@@ -57,7 +75,8 @@ public class Room {
 
 
 
-    public String getRoomSensorlist(String json_url){
+    public String getRoomMeasurementlist(String roomid){
+        String json_url=serverURL+"/variables/room/"+roomid+"/list";
         String JSON_STRING;
         try {
             URL url=new URL(json_url);

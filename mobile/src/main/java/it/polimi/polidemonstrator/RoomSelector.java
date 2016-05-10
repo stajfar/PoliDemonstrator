@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -26,6 +27,7 @@ import it.polimi.polidemonstrator.businesslogic.MesurementClass;
 import it.polimi.polidemonstrator.businesslogic.Room;
 
 
+
 /**
  * Created by saeed on 4/11/2016.
  */
@@ -34,16 +36,22 @@ public class RoomSelector extends Activity {
     private Spinner spinnerBuilding, spinnerRoom;
     private Button btnRefreshBuilding;
     ListView listVieMeasurements;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     List<MesurementClass> listMeasurementClassesParesed;
+
+    MesurementClass measurementClass;
+    Building building;
+    Room room;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.roomselector);
         setAcitivityElements();
-
-
+        measurementClass=new MesurementClass(RoomSelector.this);
+        building=new Building(RoomSelector.this);
+        room=new Room(RoomSelector.this);
 
 
         new BackgroundTaskGetBuildings().execute();
@@ -61,6 +69,8 @@ public class RoomSelector extends Activity {
 
         listVieMeasurements=(ListView)findViewById(R.id.listViewMeasurementClass);
         btnRefreshBuilding=(Button) findViewById(R.id.btnRefreshBuilding);
+
+        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.swipe_refresh_measurements);
     }
 
 
@@ -77,6 +87,8 @@ public class RoomSelector extends Activity {
         spinnerBuilding.setOnItemSelectedListener(new SpinnerBuildingOnItemSelectedListener());
         spinnerRoom.setOnItemSelectedListener(new SpinnerRoomOnItemSelectedListener());
         listVieMeasurements.setOnItemClickListener(new listViewMeasurementsOnItemSelectedListener());
+        swipeRefreshLayout.setOnRefreshListener(new swipeRefreshLayoutOnRefreshListener());
+        swipeRefreshLayout.post(new swipRefreshLayoutAnimation());
     }
 
     // get the selected dropdown list value
@@ -98,8 +110,7 @@ public class RoomSelector extends Activity {
     private void addItemsOnSpinnerBuildings(HashMap<String, String> hashMapBuildings) {
         ArrayList<Building> arrayList = new ArrayList<Building>();
         for (Map.Entry<String,String> entry : hashMapBuildings.entrySet()){
-
-            Building building=new Building();
+            Building building=new Building(RoomSelector.this);
             building.setBuildingid(entry.getKey());
             building.setBuildingLable(entry.getValue());
             arrayList.add(building);
@@ -120,7 +131,6 @@ public class RoomSelector extends Activity {
 
         ArrayList<Room> arrayList = new ArrayList<Room>();
         for (Map.Entry<String,String> entry : hashMapRooms.entrySet()){
-
             Room room=new Room();
             room.setRoomid(entry.getKey());
             room.setRoomLabel(entry.getValue());
@@ -158,22 +168,26 @@ public class RoomSelector extends Activity {
 
     //Async Task to fetch Sensors Class list of a given room ID
     public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, List<MesurementClass>> {
+        Room room;
+        boolean isRefresh;
+        public BackgroundTaskGetMeasurementList(Room room, boolean isRefresh) {
+            this.room=room;
+            this.isRefresh=isRefresh;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //call a select latest value of a measurement class
-            MesurementClass mesurementClass=new MesurementClass(RoomSelector.this);
-            String  measurementClassVariablesURL=mesurementClass.jsonURL_GeneratorMeasurenetClassVariables("1", "1");
 
         }
         @Override
         protected List<MesurementClass> doInBackground(String... params) {
-            Room room = new Room();
-            String roomMeasurementClasslistJSON = room.getRoomSensorlist("https://api.myjson.com/bins/1lyj6");//("http://131.175.56.243:8080/variables/room/"+params[0]+"/list");//params[0] corresponds to roomID
+
+            String roomMeasurementClasslistJSON = room.getRoomMeasurementlist(room.getRoomid());
             if (roomMeasurementClasslistJSON != null){
                 int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
                 listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
-                listMeasurementClassesParesed=MesurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,params[0]);
+                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh);
             }
             return listMeasurementClassesParesed;
         }
@@ -189,6 +203,8 @@ public class RoomSelector extends Activity {
                         "Sorry, server is not Available,\n please try again!",
                         Toast.LENGTH_SHORT).show();
             }
+            // stopping swipe refresh
+            swipeRefreshLayout.setRefreshing(false);
         }
 
     }
@@ -197,15 +213,15 @@ public class RoomSelector extends Activity {
     public class BackgroundTaskGetBuildingRoomsList extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            Building building = new Building();
-            String roomListJSON = building.getRoomList("https://api.myjson.com/bins/4ep2q");//("http://131.175.56.243:8080/rooms/building/"+params[0]);//param[0] corresponds to Building id
+            String buildingID=params[0];
+            String roomListJSON = building.getRoomList(buildingID);
             return roomListJSON;
         }
 
         @Override
         protected void onPostExecute(String results) {
             if (results != null) {
-                Room room = new Room();
+
                 HashMap<String, String> hashMapRooms = room.parsRoomListJSON(results);
                 //Fill sensor spinner with given sensors list data
                 addItemsOnSpinnerRooms(hashMapRooms);
@@ -224,15 +240,14 @@ public class RoomSelector extends Activity {
     public class BackgroundTaskGetBuildings extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
-            Building building = new Building();
-            String buildingListJSON = building.getBuildings("https://api.myjson.com/bins/4cjwy");//("http://131.175.56.243:8080/buildings/");
+
+            String buildingListJSON = building.getBuildings();//("http://131.175.56.243:8080/buildings/");
             return buildingListJSON;
         }
 
         @Override
         protected void onPostExecute(String results) {
             if (results != null) {
-                Building building = new Building();
                 HashMap<String, String> hashMapBuildings = building.parsBuildingJSON(results);
                 //Fill sensor spinner with given sensors list data
                 addItemsOnSpinnerBuildings(hashMapBuildings);
@@ -268,12 +283,14 @@ public class RoomSelector extends Activity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Room room=(Room) parent.getItemAtPosition(position);
+            boolean isRefresh=false;
 
             Toast.makeText(parent.getContext(),
                     "OnItemSelectedListener : " + room.getRoomLabel()+" "+room.getRoomid(),
                     Toast.LENGTH_SHORT).show();
+
             //execute another Async Task to fetch the related rooms of the chosen building
-            new BackgroundTaskGetMeasurementList().execute(room.getRoomid());
+            new BackgroundTaskGetMeasurementList(room,isRefresh).execute();
 
         }
 
@@ -314,6 +331,26 @@ public class RoomSelector extends Activity {
         HttpResponseCache cache = HttpResponseCache.getInstalled();
         if (cache != null) {
             cache.flush();
+        }
+    }
+
+    private class swipeRefreshLayoutOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
+        @Override
+        public void onRefresh() {
+            Room room=(Room) spinnerRoom.getSelectedItem();
+            Toast.makeText(RoomSelector.this,
+                    "OnItemSelectedListener : " + room.getRoomLabel()+" "+room.getRoomid(),
+                    Toast.LENGTH_SHORT).show();
+            //execute another Async Task to fetch the related rooms of the chosen building
+            new BackgroundTaskGetMeasurementList(room,true).execute();
+
+        }
+    }
+
+    private class swipRefreshLayoutAnimation implements Runnable {
+        @Override
+        public void run() {
+            swipeRefreshLayout.setRefreshing(true);
         }
     }
 }

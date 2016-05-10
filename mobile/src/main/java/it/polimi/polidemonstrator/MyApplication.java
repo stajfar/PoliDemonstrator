@@ -17,7 +17,7 @@ public class MyApplication extends Application {
         //install the http response cache for the application
         try {
             File httpCacheDir = new File(MyApplication.this.getCacheDir(), "http");
-            long httpCacheSize = 2 * 1024 * 1024; // 2 MiB
+            long httpCacheSize = 3 * 1024 * 1024; // 3 MiB
             HttpResponseCache.install(httpCacheDir, httpCacheSize);}
         catch(IOException e){
             //// TODO: 5/9/2016  show a toast message

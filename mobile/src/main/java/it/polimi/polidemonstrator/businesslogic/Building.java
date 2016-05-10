@@ -27,6 +27,12 @@ import java.util.List;
 public class Building {
 
 
+    public Building(Context context) {
+        ServerURL serverURL=new ServerURL();
+        this.serverURL=serverURL.getServerURL(context);
+    }
+
+    private static String serverURL;
     private String buildingid;
     private String buildingLable;
 
@@ -46,9 +52,23 @@ public class Building {
         this.buildingLable = buildingLable;
     }
 
+
+    public static String getServerURL() {
+        return serverURL;
+    }
+
+    public static void setServerURL(String serverURL) {
+        Building.serverURL = serverURL;
+    }
+
+
+
+
+
     //List of functions
-    public String getBuildings(String json_url) {
+    public String getBuildings( ) {
         String JSON_STRING;
+        String json_url=serverURL+"/buildings";
         try {
             URL url = new URL(json_url);
             HttpURLConnection httpconnection = (HttpURLConnection) url.openConnection();
@@ -100,8 +120,8 @@ public class Building {
         return null;
     }
 
-    public String getRoomList(String json_url) {
-
+    public String getRoomList(String buildingID) {
+        String json_url=serverURL+"/rooms/building/"+buildingID;
         String JSON_STRING;
         try {
             URL url = new URL(json_url);
