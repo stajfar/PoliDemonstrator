@@ -2,9 +2,11 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -20,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+
+import it.polimi.polidemonstrator.R;
 
 /**
  * Created by saeed on 4/11/2016.
@@ -153,12 +157,13 @@ public class Building {
     //A custom adapter for spinner which makes it more flexible to work with complex data types
     public static class SpinAdapterBuilding extends ArrayAdapter<Building> {
         private Context context;
-
+        private int resource;
         private List<Building> buildings;
         public SpinAdapterBuilding(Context context, int resource, List<Building> buildings) {
             super(context, resource, buildings);
             this.context = context;
             this.buildings=buildings;
+            this.resource=resource;
 
         }
 
@@ -179,26 +184,33 @@ public class Building {
         // This is for the "passive" state of the spinner
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
-            TextView label = new TextView(context);
-            label.setTextColor(Color.BLACK);
-            // Then you can get the current item using the values array (Users array) and the current position
-            // You can NOW reference each method you has created in your bean object (User class)
-            label.setText(buildings.get(position).getBuildingLable());
+            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View listView_row= inflater.inflate(resource,parent,false);
+            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
+            TextView textViewRoom=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
+            TextView textViewRightSide=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
 
-            // And finally return your dynamic (or custom) view for each spinner item
-            return label;
+            textViewRoom.setText(buildings.get(position).getBuildingLable());
+            textViewRightSide.setText("");
+            imageView.setImageResource(R.drawable.ic_building);
+            return listView_row;
+
         }
 
         // And here is when the "chooser" is popped up
         // Normally is the same view, but you can customize it if you want
         @Override
         public View getDropDownView(int position, View convertView,ViewGroup parent) {
-            TextView label = new TextView(context);
-            label.setTextColor(Color.BLACK);
-            label.setText(buildings.get(position).getBuildingLable());
+            LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View listView_row= inflater.inflate(resource,parent,false);
+            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
+            TextView textViewRoom=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
+            TextView textViewRightSide=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
 
-            return label;
+            textViewRoom.setText(buildings.get(position).getBuildingLable());
+            textViewRightSide.setText("");
+            imageView.setImageResource(R.drawable.ic_building);
+            return listView_row;
         }
 
     }

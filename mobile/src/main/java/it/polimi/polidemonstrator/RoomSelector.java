@@ -35,7 +35,7 @@ import it.polimi.polidemonstrator.businesslogic.Room;
 public class RoomSelector extends Activity {
 
     private Spinner spinnerBuilding, spinnerRoom;
-    private Button btnRefreshBuilding;
+
     ListView listVieMeasurements;
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -69,7 +69,7 @@ public class RoomSelector extends Activity {
 
 
         listVieMeasurements=(ListView)findViewById(R.id.listViewMeasurementClass);
-        btnRefreshBuilding=(Button) findViewById(R.id.btnRefreshBuilding);
+
 
         swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.swipe_refresh_measurements);
     }
@@ -97,12 +97,7 @@ public class RoomSelector extends Activity {
 
 
 
-        btnRefreshBuilding.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new BackgroundTaskGetBuildings().execute();
-            }
-        });
+
     }
 
 
@@ -117,7 +112,7 @@ public class RoomSelector extends Activity {
             arrayList.add(building);
         }
 
-        Building.SpinAdapterBuilding adapter=new Building.SpinAdapterBuilding(RoomSelector.this,android.R.layout.simple_spinner_item,
+        Building.SpinAdapterBuilding adapter=new Building.SpinAdapterBuilding(RoomSelector.this,R.layout.list_singlerow,
                 arrayList);
 
         spinnerBuilding.setAdapter(adapter);
@@ -138,7 +133,7 @@ public class RoomSelector extends Activity {
             arrayList.add(room);
         }
 
-        Room.SpinAdapterRoom adapter=new Room.SpinAdapterRoom(RoomSelector.this,android.R.layout.simple_spinner_item,
+        Room.SpinAdapterRoom adapter=new Room.SpinAdapterRoom(RoomSelector.this,R.layout.list_singlerow,
                 arrayList);
         spinnerRoom.setAdapter(adapter);
     }
