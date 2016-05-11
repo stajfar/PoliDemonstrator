@@ -605,18 +605,18 @@ public class MesurementClass implements Serializable {
         return sum/hashMapParsedResults.size();
     }
 
-    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh) {
+    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh,boolean isInternetConnected) {
 
         for(MesurementClass meaurementClassItem : resultsParsed){
             //json Query for each measurement class
-            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh);
+            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh,isInternetConnected);
             meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
 
         }
         return resultsParsed;
     }
 
-    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh) {
+    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh,boolean isInternetConnected) {
         String JSON_STRING;
 
         String[] startEndHours= DateTimeObj.getTimeRangeForTwoHours();
@@ -625,10 +625,10 @@ public class MesurementClass implements Serializable {
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-            if (isRefresh==true) {
+            if (isRefresh==true && isInternetConnected==true) {
                 httpconnection.setUseCaches(false);
             }
-                int maxStale = 60 * 60 ; // tolerate 30 minutes stale
+                int maxStale = 60 * 60 ; // tolerate 60 minutes stale
                 httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
 
             InputStream inputStream=httpconnection.getInputStream();

@@ -23,6 +23,7 @@ import java.util.Map;
 
 
 import it.polimi.polidemonstrator.businesslogic.Building;
+import it.polimi.polidemonstrator.businesslogic.InternetConnection;
 import it.polimi.polidemonstrator.businesslogic.MesurementClass;
 import it.polimi.polidemonstrator.businesslogic.Room;
 
@@ -170,6 +171,7 @@ public class RoomSelector extends Activity {
     public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, List<MesurementClass>> {
         Room room;
         boolean isRefresh;
+        boolean isInternetConnected;
         public BackgroundTaskGetMeasurementList(Room room, boolean isRefresh) {
             this.room=room;
             this.isRefresh=isRefresh;
@@ -182,18 +184,23 @@ public class RoomSelector extends Activity {
         }
         @Override
         protected List<MesurementClass> doInBackground(String... params) {
-
+            isInternetConnected= InternetConnection.isInternetConnected(RoomSelector.this);
             String roomMeasurementClasslistJSON = room.getRoomMeasurementlist(room.getRoomid());
             if (roomMeasurementClasslistJSON != null){
                 int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
                 listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
-                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh);
+                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh,isInternetConnected);
             }
             return listMeasurementClassesParesed;
         }
         @Override
         protected void onPostExecute(List<MesurementClass> listMeasurementClassesParesed) {
             if (listMeasurementClassesParesed != null) {
+                if(isInternetConnected == false){
+                    Toast.makeText(RoomSelector.this,
+                            "There is no internet connection, cached data is displayed!",
+                            Toast.LENGTH_SHORT).show();
+                }
 
 
                 //Fill sensor spinner with given sensors list data
@@ -224,8 +231,16 @@ public class RoomSelector extends Activity {
 
                 HashMap<String, String> hashMapRooms = room.parsRoomListJSON(results);
                 //Fill sensor spinner with given sensors list data
-                addItemsOnSpinnerRooms(hashMapRooms);
+                if(hashMapRooms.size() != 0){
+                    addItemsOnSpinnerRooms(hashMapRooms);
+                }else {
+                    addItemsOnSpinnerRooms(hashMapRooms);
+                    //clean Listview of measurements from old data
+                    cleanListViewMeasurementClasses();
+                }
+
             }else{
+
                 Toast.makeText(RoomSelector.this,
                         "Sorry, server is not Available,\n please try again!",
                         Toast.LENGTH_SHORT).show();
@@ -263,6 +278,8 @@ public class RoomSelector extends Activity {
     public class SpinnerBuildingOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+
             Building building=(Building) parent.getItemAtPosition(pos);
 
             Toast.makeText(parent.getContext(),
@@ -276,6 +293,12 @@ public class RoomSelector extends Activity {
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
+    }
+
+    private void cleanListViewMeasurementClasses() {
+        ArrayList<MesurementClass> arrayList = new ArrayList<>();
+        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(RoomSelector.this,R.layout.list_singlerow,arrayList);
+        listVieMeasurements.setAdapter(sensorClassesAdapter);
     }
 
 
