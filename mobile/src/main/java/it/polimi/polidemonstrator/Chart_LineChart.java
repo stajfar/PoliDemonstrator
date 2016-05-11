@@ -346,6 +346,7 @@ public class Chart_LineChart extends AppCompatActivity
                         ll1.setTextSize(10f);
                         ll1.setTypeface(tf);
                         YAxis leftAxis = lineChart.getAxisLeft();
+                        leftAxis.removeAllLimitLines();
                         leftAxis.addLimitLine(ll1);
                         // limit lines are drawn behind data (and not on top)
                         leftAxis.setDrawLimitLinesBehindData(true);
