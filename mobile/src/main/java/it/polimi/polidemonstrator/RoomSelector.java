@@ -171,7 +171,7 @@ public class RoomSelector extends Activity {
     public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, List<MesurementClass>> {
         Room room;
         boolean isRefresh;
-        boolean isInternetConnected;
+
         public BackgroundTaskGetMeasurementList(Room room, boolean isRefresh) {
             this.room=room;
             this.isRefresh=isRefresh;
@@ -184,23 +184,19 @@ public class RoomSelector extends Activity {
         }
         @Override
         protected List<MesurementClass> doInBackground(String... params) {
-            isInternetConnected= InternetConnection.isInternetConnected(RoomSelector.this);
+
             String roomMeasurementClasslistJSON = room.getRoomMeasurementlist(room.getRoomid());
             if (roomMeasurementClasslistJSON != null){
                 int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
                 listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
-                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh,isInternetConnected);
+                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh);
             }
             return listMeasurementClassesParesed;
         }
         @Override
         protected void onPostExecute(List<MesurementClass> listMeasurementClassesParesed) {
             if (listMeasurementClassesParesed != null) {
-                if(isInternetConnected == false){
-                    Toast.makeText(RoomSelector.this,
-                            "There is no internet connection, cached data is displayed!",
-                            Toast.LENGTH_SHORT).show();
-                }
+
 
 
                 //Fill sensor spinner with given sensors list data
@@ -360,12 +356,22 @@ public class RoomSelector extends Activity {
     private class swipeRefreshLayoutOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
         @Override
         public void onRefresh() {
+            boolean isInternetConnected=InternetConnection.isInternetConnected(RoomSelector.this);
             Room room=(Room) spinnerRoom.getSelectedItem();
             Toast.makeText(RoomSelector.this,
-                    "OnItemSelectedListener : " + room.getRoomLabel()+" "+room.getRoomid(),
+                    "Refreshing : " + room.getRoomLabel()+" data.",
                     Toast.LENGTH_SHORT).show();
-            //execute another Async Task to fetch the related rooms of the chosen building
-            new BackgroundTaskGetMeasurementList(room,true).execute();
+            if(isInternetConnected == false){
+                Toast.makeText(RoomSelector.this,
+                        "There is no internet connection, cached data is displayed!",
+                        Toast.LENGTH_SHORT).show();
+
+                new BackgroundTaskGetMeasurementList(room, false).execute();//read data from cache
+                swipeRefreshLayout.setRefreshing(false);
+            }else {
+                //execute another Async Task to fetch the related rooms of the chosen building
+                new BackgroundTaskGetMeasurementList(room, true).execute();
+            }
 
         }
     }

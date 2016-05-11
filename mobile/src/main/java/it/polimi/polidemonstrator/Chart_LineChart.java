@@ -36,15 +36,14 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
+import it.polimi.polidemonstrator.businesslogic.InternetConnection;
 import it.polimi.polidemonstrator.businesslogic.MesurementClass;
 
 public class Chart_LineChart extends AppCompatActivity
@@ -106,12 +105,6 @@ public class Chart_LineChart extends AppCompatActivity
         hashMapJsonUrlsLineColors=  measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
 
 
-
-
-
-
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -119,9 +112,17 @@ public class Chart_LineChart extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
-                Snackbar.make(view, "Fetching data from server...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                boolean isInternetConnected= InternetConnection.isInternetConnected(Chart_LineChart.this);
+                if(isInternetConnected == false){
+                    Toast.makeText(Chart_LineChart.this,
+                            "There is no internet connection, cached data is displayed!",
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    boolean refreshCacheData=true;
+                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals, measurementTimeWindow, SelectedDate,refreshCacheData).execute();
+                    Snackbar.make(view, "Fetching data from server...", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
 
@@ -132,7 +133,7 @@ public class Chart_LineChart extends AppCompatActivity
         toggle.syncState();
         buildAlterDialog(listMeasurementClassesParsed);
 
-        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
+        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate, false).execute();
     }
 
     private void buildAlterDialog(List<MesurementClass> listMeasurementClassesParsed) {
@@ -226,7 +227,7 @@ public class Chart_LineChart extends AppCompatActivity
         MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
         measurementClassID=mesurementClass.getSensorClasseId();
         hashMapJsonUrlsLineColors=  mesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
-        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate).execute();
+        new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate, false).execute();
 
         Toast.makeText(Chart_LineChart.this,
                 mesurementClass.getSensorClasseId()+" "+mesurementClass.getSensorClassLabel(),
@@ -297,14 +298,15 @@ public class Chart_LineChart extends AppCompatActivity
         ArrayList<Long> arrayListXAxisValuesInMili;
         DateTimeObj.MeasurementTimeWindow timeWindow;
         String selectedDate;
+        boolean isRefreshCachedData; //this is only related to cached data and is not correlated to changing the time window, etc.
 
 
-        BackgroudTask(HashMap<String, List<String>> hashMapUrlsColors, DateTimeObj.TimeIntervals intervals, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, String selectedDate){
+        BackgroudTask(HashMap<String, List<String>> hashMapUrlsColors, DateTimeObj.TimeIntervals intervals, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, String selectedDate, boolean isRefreshCachedData){
             this.intervals=intervals;
             this.hashMapUrlsColors=hashMapUrlsColors;
             this.timeWindow=measurementTimeWindow;
             this.selectedDate=selectedDate;
-
+            this.isRefreshCachedData=isRefreshCachedData;
         }
 
         @Override
@@ -316,7 +318,7 @@ public class Chart_LineChart extends AppCompatActivity
         @Override
         protected HashMap<String,List<String>> doInBackground(Void... params) {
 
-            HashMap<String,List<String>> hashMapJson_results=MesurementClass.getListofMeasurementClassData(hashMapUrlsColors);
+            HashMap<String,List<String>> hashMapJson_results=MesurementClass.getListofMeasurementClassData(hashMapUrlsColors,isRefreshCachedData);
             //now pars the results that are given by the API
             return  hashMapJson_results;
         }
@@ -494,7 +496,7 @@ public class Chart_LineChart extends AppCompatActivity
                     hashMapJsonUrlsLineColors= measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID,
                             measurementTimeWindow,SelectedDate);
 
-                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals,measurementTimeWindow,SelectedDate).execute();
+                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals,measurementTimeWindow,SelectedDate, false).execute();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);

@@ -510,7 +510,7 @@ public class MesurementClass implements Serializable {
             try {
                  URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-                int maxStale = 60 * 15 ; // tolerate 15 minutes stale
+                int maxStale = 60 * 45 ; // tolerate 45 minutes stale
                 httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
@@ -551,7 +551,7 @@ public class MesurementClass implements Serializable {
         return harvestedDescription;
     }
 
-    public static HashMap<String, List<String>> getListofMeasurementClassData(HashMap<String, List<String>> hashMapUrlsColors) {
+    public static HashMap<String, List<String>> getListofMeasurementClassData(HashMap<String, List<String>> hashMapUrlsColors, boolean isRefreshCachedData) {
         String JSON_STRING;
         try {
             HashMap<String,List<String>> hashMapJson_results=new HashMap<>();
@@ -561,7 +561,10 @@ public class MesurementClass implements Serializable {
                 List<String> listjsonColor=new ArrayList<>();
                 URL url=new URL(entry.getValue().get(0));
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-                int maxStale = 60 * 15 ; // tolerate 15 minutes stale
+                if (isRefreshCachedData==true) {
+                    httpconnection.setUseCaches(false);
+                }
+                int maxStale = 60 * 45 ; // tolerate 45 minutes stale
                 httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
                 InputStream inputStream=httpconnection.getInputStream();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
@@ -605,18 +608,18 @@ public class MesurementClass implements Serializable {
         return sum/hashMapParsedResults.size();
     }
 
-    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh,boolean isInternetConnected) {
+    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh) {
 
         for(MesurementClass meaurementClassItem : resultsParsed){
             //json Query for each measurement class
-            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh,isInternetConnected);
+            String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh);
             meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
 
         }
         return resultsParsed;
     }
 
-    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh,boolean isInternetConnected) {
+    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh) {
         String JSON_STRING;
 
         String[] startEndHours= DateTimeObj.getTimeRangeForTwoHours();
@@ -625,7 +628,7 @@ public class MesurementClass implements Serializable {
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-            if (isRefresh==true && isInternetConnected==true) {
+            if (isRefresh==true) {
                 httpconnection.setUseCaches(false);
             }
                 int maxStale = 60 * 60 ; // tolerate 60 minutes stale

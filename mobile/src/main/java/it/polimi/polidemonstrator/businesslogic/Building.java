@@ -155,9 +155,6 @@ public class Building {
         private Context context;
 
         private List<Building> buildings;
-
-
-
         public SpinAdapterBuilding(Context context, int resource, List<Building> buildings) {
             super(context, resource, buildings);
             this.context = context;
