@@ -65,6 +65,8 @@ public class Chart_LineChart extends AppCompatActivity
     DatePicker datePicker;
     MesurementClass measurementClass;
 
+    boolean isChartinDetailMode;//determines if watch shows average values of details of each specific sensor
+
 
 
 
@@ -104,6 +106,8 @@ public class Chart_LineChart extends AppCompatActivity
         measurementClass=new MesurementClass(Chart_LineChart.this);
         hashMapJsonUrlsLineColors=  measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
 
+        isChartinDetailMode=false;//at the beginning we want to display average values
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,7 +123,12 @@ public class Chart_LineChart extends AppCompatActivity
                             Toast.LENGTH_SHORT).show();
                 }else {
                     boolean refreshCacheData=true;
-                    new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals, measurementTimeWindow, SelectedDate,refreshCacheData).execute();
+                    if(isChartinDetailMode==false) {
+                        new BackgroudTask(hashMapJsonUrlsLineColors, timeIntervals, measurementTimeWindow, SelectedDate, refreshCacheData).execute();
+                    }else{
+
+                        new BackgroundTaskGetMeasurementClassVariables(roomID,measurementClassID,measurementTimeWindow,timeIntervals,refreshCacheData).execute();
+                    }
                     Snackbar.make(view, "Fetching data from server...", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -244,11 +253,15 @@ public class Chart_LineChart extends AppCompatActivity
         private  String measurementClassID;
         private  DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
         private DateTimeObj.TimeIntervals intervals;
-        public BackgroundTaskGetMeasurementClassVariables(String roomID, String measurementClassID, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, DateTimeObj.TimeIntervals timeIntervals) {
+        private boolean refreshCacheData;
+        public BackgroundTaskGetMeasurementClassVariables(String roomID, String measurementClassID, DateTimeObj.MeasurementTimeWindow measurementTimeWindow, DateTimeObj.TimeIntervals timeIntervals, boolean refreshCacheData) {
             this.roomID=roomID;
             this.measurementClassID=measurementClassID;
             this.measurementTimeWindow=measurementTimeWindow;
             this.intervals=timeIntervals;
+            this.refreshCacheData=refreshCacheData;
+
+            isChartinDetailMode=true;
         }
 
 
@@ -260,7 +273,7 @@ public class Chart_LineChart extends AppCompatActivity
 
             List<String[]> measurementVariableURLsLabelNames=measurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
             // now the measurement variable urls are ready, fetch related json data
-            List<MesurementClass.ChartLine> parsed_MeasurementVariables=MesurementClass.getListofMeasurementVariableData(measurementVariableURLsLabelNames,Chart_LineChart.this);
+            List<MesurementClass.ChartLine> parsed_MeasurementVariables=MesurementClass.getListofMeasurementVariableData(measurementVariableURLsLabelNames,Chart_LineChart.this,refreshCacheData);
 
             return parsed_MeasurementVariables;
         }
@@ -271,7 +284,7 @@ public class Chart_LineChart extends AppCompatActivity
             if (measurementClassVariablesParsed != null) {
                 ArrayList<ILineDataSet> datasets = new ArrayList<>();
                 //prepare X values in miliseconds for the x-axis of the chart
-                ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, "");//// TODO: 5/5/2016 selectedDate last parameter
+                ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, SelectedDate);//// TODO: 5/5/2016 selectedDate last parameter
                 for (int i = 0; i < measurementClassVariablesParsed.size(); i++) {
                     ArrayList<Entry> arrayListYvalues = addRecordsToChartData(measurementClassVariablesParsed.get(i).getLinexyvalues(), arrayListXAxisValuesInMili, measurementTimeWindow);
 
@@ -307,6 +320,7 @@ public class Chart_LineChart extends AppCompatActivity
             this.timeWindow=measurementTimeWindow;
             this.selectedDate=selectedDate;
             this.isRefreshCachedData=isRefreshCachedData;
+            isChartinDetailMode=false;//switch to average displaying of the chart
         }
 
         @Override
@@ -413,8 +427,8 @@ public class Chart_LineChart extends AppCompatActivity
     }
 
     private void displaySelectedMeasurementDetails() {
-
-        new BackgroundTaskGetMeasurementClassVariables(roomID,measurementClassID,measurementTimeWindow,timeIntervals).execute();
+        boolean refreshCacheData=false;
+        new BackgroundTaskGetMeasurementClassVariables(roomID,measurementClassID,measurementTimeWindow,timeIntervals, refreshCacheData).execute();
 
 
     }
@@ -463,15 +477,15 @@ public class Chart_LineChart extends AppCompatActivity
                     break;
                 case 1:
                     measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.Last7days;
-                    timeIntervals= DateTimeObj.TimeIntervals.HalfaDay;
+                    timeIntervals= DateTimeObj.TimeIntervals.OneEighthDay;
                     break;
                 case 2:
                     measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.ThisMonth;
-                    timeIntervals= DateTimeObj.TimeIntervals.HalfaDay;
+                    timeIntervals= DateTimeObj.TimeIntervals.OneEighthDay;
                     break;
                 case 3:
                     measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.ThisYear;
-                    timeIntervals= DateTimeObj.TimeIntervals.OneDay;
+                    timeIntervals= DateTimeObj.TimeIntervals.OneEighthDay;
                     break;
                 case 4:
                     measurementTimeWindow=DateTimeObj.MeasurementTimeWindow.Custom;

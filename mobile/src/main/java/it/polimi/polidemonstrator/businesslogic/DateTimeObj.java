@@ -248,6 +248,8 @@ public class DateTimeObj {
 
         OneDay (76400000),
         HalfaDay(43200000),
+        QuarterDay(21600000),
+        OneEighthDay(10800000),
         OneHour(3600000),
         HalfanHour(1800000),
         FifteenMins(900000);
