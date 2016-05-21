@@ -476,7 +476,7 @@ public class MesurementClass implements Serializable {
                     jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
                 }
                 break;
-            case Custom://// TODO: 5/12/2016 complete this part edit the date part 
+            case Custom://// TODO: 5/12/2016 complete this part edit the date part
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear();
                     jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
@@ -619,8 +619,8 @@ public class MesurementClass implements Serializable {
             if (isRefresh==true) {
                 httpconnection.setUseCaches(false);
             }
-                int maxStale = 60 * 60 ; // tolerate 60 minutes stale
-                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            int maxStale = 60 * 60 ; // tolerate 60 minutes stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
 
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));

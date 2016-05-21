@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -15,11 +17,18 @@ import com.estimote.sdk.Region;
 import java.util.List;
 import java.util.UUID;
 
+import it.polimi.polidemonstrator.businessLogic.MeasurementClass;
+import it.polimi.polidemonstrator.businessLogic.Room;
+
+
 /**
  * Created by saeed on 5/18/2016.
  */
 public class MyApplication extends Application {
     private BeaconManager beaconmanager;
+    Region region;
+    List<MeasurementClass> listMeasurementClassesParesed;
+    MeasurementClass measurementClass;
 
     @Override
     public void onCreate() {
@@ -30,50 +39,90 @@ public class MyApplication extends Application {
 
         beaconmanager = new BeaconManager(getApplicationContext());
 
-        // add this below:
+        region=new Region("monitored region",UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),null,null);// 43060, 27142);
+        //set background monitoring interval
+       // beaconmanager.setBackgroundScanPeriod(10*1000,15*1000);
+
+        // monitoring service to see if users enters or exits from a specific beacon region
         beaconmanager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
-                showNotification(
+                MyNotification.showNotification(MyApplication.this, MainActivity.class,
                         "Entring the region",
                         "you are Entring the building");
+                Room room=new Room(MyApplication.this);
+                room.setRoomid("1");
+
+
+                new BackgroundTaskGetMeasurementList(room,true).execute();
             }
 
             @Override
             public void onExitedRegion(Region region) {
-                showNotification(
-                        "Exiting region",
-                        "you are exiting the building");
+
             }
         });
         // add this below:
         beaconmanager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconmanager.startMonitoring(new Region(
-                        "monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),43060,27142 ));
+                beaconmanager.startMonitoring(region);
+
 
 
             }
         });
     }
 
-    public void showNotification(String title, String message) {
-        Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
-                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new Notification.Builder(this)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build();
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
+
+
+    //Async Task to fetch Sensors Class list of a given room ID
+    public class BackgroundTaskGetMeasurementList extends AsyncTask<String, Void, List<MeasurementClass>> {
+        Room room;
+        boolean isRefresh;
+
+        public BackgroundTaskGetMeasurementList(Room room, boolean isRefresh) {
+            this.room=room;
+            this.isRefresh=isRefresh;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected List<MeasurementClass> doInBackground(String... params) {
+
+            String roomMeasurementClasslistJSON = room.getRoomMeasurementlist(room.getRoomid());
+
+            if (roomMeasurementClasslistJSON != null){
+                int[] UnwantedMeasurementIdentifiers = getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed, room.getRoomid(), isRefresh);
+            }
+            return listMeasurementClassesParesed;
+        }
+        @Override
+        protected void onPostExecute(List<MeasurementClass> listMeasurementClassesParesed) {
+            if (listMeasurementClassesParesed != null) {
+                Toast.makeText(MyApplication.this,
+                        "Yes Server!",
+                        Toast.LENGTH_SHORT).show();
+
+                //Fill sensor spinner with given sensors list data
+                //addItemsOnListViewMeasurementClasses(listMeasurementClassesParesed);
+            }else{
+                Toast.makeText(MyApplication.this,
+                        "No Server!",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
     }
+
+
+
 }
