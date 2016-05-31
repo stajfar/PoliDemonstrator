@@ -2,6 +2,8 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -25,11 +27,18 @@ public class ServerURL {
     public String getServerURL(Context context){
         String fullAPIUrl=null;
         //run a background task to get the API server url form the json file which is uploaded into web server
-        String webServerURL= context.getString(R.string.server_url);
+       /* String webServerURL= context.getString(R.string.server_url);
         try {
-            String results= new BackgroundTaskGetAPIServer().execute(webServerURL).get();
+            //// TODO: 5/30/2016  uncomment the following lines
+           String results= new BackgroundTaskGetAPIServer().execute(webServerURL).get();
             if (results != null) {
                 fullAPIUrl=ParsServerURL(results);
+            }
+            else {
+                Toast.makeText(context,
+                        "Cannot retrieve Cloud URL! \n" +
+                                "Check web server!",
+                        Toast.LENGTH_SHORT).show();
             }
 
         } catch (InterruptedException e) {
@@ -37,7 +46,8 @@ public class ServerURL {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return fullAPIUrl;
+        return fullAPIUrl;  */
+        return  "http://131.175.21.162:8080";
     }
 
 

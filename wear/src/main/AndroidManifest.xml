@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.polimi.polidemonstrator">
+    package="it.polimi.polidemonstrator"
+    android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+
+    >
     <uses-permission android:name="android.permission.INTERNET" />
+
 
 
     <uses-feature android:name="android.hardware.type.watch" />
@@ -13,6 +17,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
+
+        <service android:enabled="true" android:name=".businessLogic.ConnectionServiceToHandheld"/>
+
+
+
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">

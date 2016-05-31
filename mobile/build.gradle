@@ -22,6 +22,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     wearApp project(':wear')
+    compile 'com.google.android.gms:play-services-wearable:+'
     testCompile 'junit:junit:4.12'
     //to add chart libraries to the project
     compile 'com.android.support:appcompat-v7:23.3.0'

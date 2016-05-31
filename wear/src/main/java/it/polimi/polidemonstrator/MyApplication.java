@@ -27,6 +27,7 @@ import com.google.android.gms.wearable.Wearable;
 import java.util.List;
 import java.util.UUID;
 
+import it.polimi.polidemonstrator.businessLogic.ConnectionServiceToHandheld;
 import it.polimi.polidemonstrator.businessLogic.MeasurementClass;
 import it.polimi.polidemonstrator.businessLogic.Room;
 
@@ -34,9 +35,7 @@ import it.polimi.polidemonstrator.businessLogic.Room;
 /**
  * Created by saeed on 5/18/2016.
  */
-public class MyApplication extends Application implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private BeaconManager beaconmanager;
-    Region region;
+public class MyApplication extends Application  {
     List<MeasurementClass> listMeasurementClassesParesed;
     MeasurementClass measurementClass;
 
@@ -44,142 +43,23 @@ public class MyApplication extends Application implements GoogleApiClient.Connec
     public void onCreate() {
         super.onCreate();
 
-        setWearToHandheldSettings();
-
-
-
-
-        // Add this before all other beacon code
-        EstimoteSDK.enableDebugLogging(true);
-
-        beaconmanager = new BeaconManager(getApplicationContext());
-
-        region=new Region("monitored region",UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),null,null);// 43060, 27142);
-        //set background monitoring interval
-        beaconmanager.setBackgroundScanPeriod(10*1000,15*1000);
-
-        // monitoring service to see if users enters or exits from a specific beacon region
-        beaconmanager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-            @Override
-            public void onEnteredRegion(Region region, List<Beacon> list) {
-                MyNotification.showNotification(MyApplication.this, MainActivity.class,
-                        "Entring the region",
-                        "sending msg");
-
-
-                //Room room=new Room(MyApplication.this);
-                //room.setRoomid("1");
-                //new BackgroundTaskGetMeasurementList(room,true).execute();
-
-                sendMessage();
-            }
-
-            @Override
-            public void onExitedRegion(Region region) {
-                MyNotification.showNotification(MyApplication.this, MainActivity.class,
-                        "Exiting the region",
-                        "sending msg");
-
-
-                //Room room=new Room(MyApplication.this);
-                //room.setRoomid("1");
-                //new BackgroundTaskGetMeasurementList(room,true).execute();
-
-                sendMessage();
-
-            }
-        });
-        // add this below:
-        beaconmanager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                beaconmanager.startMonitoring(region);
-
-
-
-            }
-        });
+        startService(new Intent(this,ConnectionServiceToHandheld.class));
 
 
 
     }
 
-    private void setWearToHandheldSettings() {
-        //Connect the GoogleApiClient
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-        if (!mResolvingError) {
-            mGoogleApiClient.connect();
-        }
-    }
 
 
-    //to send message from wearable to handheld
-    Node mNode; // the connected device to send the message to
-    GoogleApiClient mGoogleApiClient;
-    private static final String HELLO_WORLD_WEAR_PATH = "/hello-world-wear";
-    private boolean mResolvingError=false;
 
 
-    /**
-     * Send message to mobile handheld
-     */
-    private void sendMessage() {
 
-        if (mNode != null && mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
-            Wearable.MessageApi.sendMessage(
-                    mGoogleApiClient, mNode.getId(), HELLO_WORLD_WEAR_PATH, null).setResultCallback(
 
-                    new ResultCallback<MessageApi.SendMessageResult>() {
-                        @Override
-                        public void onResult(MessageApi.SendMessageResult sendMessageResult) {
 
-                            if (!sendMessageResult.getStatus().isSuccess()) {
-                                Log.e("TAG", "Failed to send message with status code: "
-                                        + sendMessageResult.getStatus().getStatusCode());
-                            }
-                        }
-                    }
-            );
-        }else{
-            //Improve your code
-        }
 
-    }
 
-    /*
-    * Resolve the node = the connected device to send the message to
-    */
-    private void resolveNode() {
 
-        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-            @Override
-            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                for (Node node : nodes.getNodes()) {
-                    mNode = node;
-                }
-            }
-        });
-    }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        resolveNode();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
 
 
     //Async Task to fetch Sensors Class list of a given room ID
