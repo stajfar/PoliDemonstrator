@@ -34,7 +34,8 @@ import it.polimi.polidemonstrator.MyNotification;
  */
 public class ConnectionServiceToHandheld extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private BeaconManager beaconmanager;
-    Region region;
+    Region regionRoom;
+    Region regionElevator;
     Context context;
 
 
@@ -55,7 +56,9 @@ public class ConnectionServiceToHandheld extends Service implements GoogleApiCli
 
         beaconmanager = new BeaconManager(getApplicationContext());
 
-        region=new Region("monitored region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),43060, 27142);
+        regionRoom=new Region("monitored region room", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),43060, 27142);
+
+        regionElevator=new Region("monitored region elevator", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),43060, 27142);
         //set background monitoring interval
         beaconmanager.setBackgroundScanPeriod(10*1000,15*1000);
 
@@ -68,9 +71,14 @@ public class ConnectionServiceToHandheld extends Service implements GoogleApiCli
                         "sending msg");
 
 
+
                 //Room room=new Room(MyApplication.this);
                 //room.setRoomid("1");
                 //new BackgroundTaskGetMeasurementList(room,true).execute();
+
+
+                StateMachine stateMachine=new StateMachine();
+               StateMachine.State newState= stateMachine.transition[StateMachine.State.FF.ordinal()][StateMachine.Symbols.Rm_out.ordinal()];
 
                 sendMessage();
             }
@@ -94,7 +102,9 @@ public class ConnectionServiceToHandheld extends Service implements GoogleApiCli
         beaconmanager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconmanager.startMonitoring(region);
+
+                beaconmanager.startMonitoring(regionElevator);
+                beaconmanager.startMonitoring(regionRoom);
 
 
 
