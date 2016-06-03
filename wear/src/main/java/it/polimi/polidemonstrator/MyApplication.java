@@ -1,33 +1,14 @@
 package it.polimi.polidemonstrator;
 
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.wearable.view.WatchViewStub;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.estimote.sdk.Beacon;
-import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.EstimoteSDK;
-import com.estimote.sdk.Region;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
-
 import java.util.List;
-import java.util.UUID;
 
-import it.polimi.polidemonstrator.businessLogic.ConnectionServiceToHandheld;
+import it.polimi.polidemonstrator.businessLogic.BeaconMonitoring;
+import it.polimi.polidemonstrator.businessLogic.SendMessageServiceToHandheld;
 import it.polimi.polidemonstrator.businessLogic.MeasurementClass;
 import it.polimi.polidemonstrator.businessLogic.Room;
 
@@ -42,24 +23,10 @@ public class MyApplication extends Application  {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        startService(new Intent(this,ConnectionServiceToHandheld.class));
-
-
+        //start monitoring sorounding beacons
+       new BeaconMonitoring(this);
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //Async Task to fetch Sensors Class list of a given room ID

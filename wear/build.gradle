@@ -33,4 +33,5 @@ dependencies {
     // of Estimote Android SDK; you'll find the latest version number on:
     //   https://github.com/Estimote/Android-SDK/releases
     compile 'com.estimote:sdk:0.10.4@aar'
+    compile 'com.android.support:support-v4:23.3.0'
 }
