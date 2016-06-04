@@ -7,24 +7,35 @@
     tools:context="it.polimi.polidemonstrator.MainActivity"
     tools:deviceIds="wear_square">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_square" />
+
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter Reg"
-        android:id="@+id/btnenter" />
+        android:text="En El"
+        android:id="@+id/btnenterFloor" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Exit Reg"
-        android:id="@+id/btnexit" />
+        android:text="Ex El"
+        android:id="@+id/btnexitFloor" />
+
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="En R"
+        android:id="@+id/btnenterRoom" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ex R"
+        android:id="@+id/btnexitRoom" />
 
 </LinearLayout>

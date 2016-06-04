@@ -5,7 +5,7 @@ package it.polimi.polidemonstrator.businessLogic;
  */
 public class StateMachine {
 
-    enum State { //the first one shows floor and the second one show room presence
+   public enum State { //the first one shows floor and the second one show room presence
         FF ,
         TT ,
         TF ;
@@ -14,7 +14,7 @@ public class StateMachine {
 
     }
 
-    enum Symbols{
+   public enum Symbols{
         Elv_in,
         Elv_out,
         Rm_in,
@@ -22,7 +22,7 @@ public class StateMachine {
         static public final Integer length = 1 + Rm_out.ordinal();
     }
 
-    State transition[][] ={
+  public static  State transition[][] ={//FF means Floor=false,Room=False, etc.
         //      Elv_out    Elv_in      Room_in    Room_out
        /*FF*/ {State.FF,  State.FF,   State.TT,    State.FF },
        /*TT*/ {State.FF,  State.FF,   State.TT,    State.TF },

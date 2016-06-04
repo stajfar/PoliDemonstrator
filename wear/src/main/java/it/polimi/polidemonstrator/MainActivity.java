@@ -12,12 +12,15 @@ import android.widget.Toast;
 
 import com.estimote.sdk.SystemRequirementsChecker;
 
+import javax.sql.StatementEvent;
+
 import it.polimi.polidemonstrator.businessLogic.SendMessageServiceToHandheld;
+import it.polimi.polidemonstrator.businessLogic.StateMachine;
 
 public class MainActivity extends Activity {
 
     private TextView mTextView;
-    private Button btnEnterReg,btnExitReg;
+    private Button btnEnterFloor,btnExitFloor,btnEnterRoom,btnExitRoom;
     Context context;
 
     @Override
@@ -28,12 +31,16 @@ public class MainActivity extends Activity {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
-                btnEnterReg = (Button) stub.findViewById(R.id.btnenter);
-                btnExitReg = (Button) stub.findViewById(R.id.btnexit);
+               // mTextView = (TextView) stub.findViewById(R.id.text);
+                btnEnterFloor = (Button) stub.findViewById(R.id.btnenterFloor);
+                btnExitFloor = (Button) stub.findViewById(R.id.btnexitFloor);
+                btnEnterRoom = (Button) stub.findViewById(R.id.btnenterRoom);
+                btnExitRoom = (Button) stub.findViewById(R.id.btnexitRoom);
 
-                btnEnterReg.setOnClickListener(new btnEnterRegClicked());
-                btnExitReg.setOnClickListener(new btnExitRegClicked());
+                btnEnterFloor.setOnClickListener(new btnEnterFloorClicked());
+                btnExitFloor.setOnClickListener(new btnExitFloorClicked());
+                btnEnterRoom.setOnClickListener(new btnEnterRoomClicked());
+                btnExitRoom.setOnClickListener(new btnExitRoomClicked());
             }
         });
 
@@ -51,50 +58,72 @@ public class MainActivity extends Activity {
     }
 
 
-    //testings purposes
 
-
-    private void mytestFunction() {
-
-
-        //consider it as entering to region
-        MyNotification.showNotification(this, MainActivity.class,
-                "Entring the region",
-                "sending msg");
-
-
-    }
-
-    private class btnEnterRegClicked implements View.OnClickListener {
+    StateMachine.State oldState=StateMachine.State.FF;
+    private class btnEnterFloorClicked implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             Toast.makeText(context,
-                    "enter",
+                    "Enter elv",
                     Toast.LENGTH_SHORT).show();
-            MyNotification.showNotification(context, MainActivity.class,
-                    "Entring the region",
-                    "sending msg");
+            //happened event
+            StateMachine.Symbols newInputEvent=StateMachine.Symbols.Elv_in;
 
+            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInputEvent.ordinal()];
 
+            if(oldState== StateMachine.State.TF && newState == StateMachine.State.FF){
+                //this means that user is going to leave the building monitor if everything is fine
+                startService(new Intent(context,SendMessageServiceToHandheld.class));
+                //Room room=new Room(MyApplication.this);
+                //room.setRoomid("1");
+                //new BackgroundTaskGetMeasurementList(room,true).execute();
+            }
 
-            //Room room=new Room(MyApplication.this);
-            //room.setRoomid("1");
-            //new BackgroundTaskGetMeasurementList(room,true).execute();
+            //ok everything is down and we have to update old state by new state
+            oldState=newState;
+        }
+    }
 
+    private class btnExitFloorClicked implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(context,
+                    "Exit floor",
+                    Toast.LENGTH_SHORT).show();
 
-            startService(new Intent(context,SendMessageServiceToHandheld.class));
-            
+            StateMachine.Symbols newInput=StateMachine.Symbols.Elv_out;
+            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
+
+            oldState=newState;
+        }
+    }
+
+    private class btnEnterRoomClicked implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(context,
+                    "Enter room",
+                    Toast.LENGTH_SHORT).show();
+
+            StateMachine.Symbols newInput=StateMachine.Symbols.Rm_in;
+            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
+            oldState=newState;
 
 
         }
     }
 
-    private class btnExitRegClicked implements View.OnClickListener {
+    private class btnExitRoomClicked implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             Toast.makeText(context,
-                    "exit",
+                    "Exit room",
                     Toast.LENGTH_SHORT).show();
+
+            StateMachine.Symbols newInput=StateMachine.Symbols.Rm_out;
+            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
+            oldState=newState;
+
         }
     }
 }
