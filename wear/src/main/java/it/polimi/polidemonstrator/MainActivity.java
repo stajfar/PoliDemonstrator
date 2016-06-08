@@ -1,9 +1,12 @@
 package it.polimi.polidemonstrator;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.widget.Button;
@@ -12,14 +15,13 @@ import android.widget.Toast;
 
 import com.estimote.sdk.SystemRequirementsChecker;
 
-import javax.sql.StatementEvent;
-
+import it.polimi.polidemonstrator.businessLogic.BeaconMonitoring;
 import it.polimi.polidemonstrator.businessLogic.SendMessageServiceToHandheld;
 import it.polimi.polidemonstrator.businessLogic.StateMachine;
 
 public class MainActivity extends Activity {
 
-    private TextView mTextView;
+
     private Button btnEnterFloor,btnExitFloor,btnEnterRoom,btnExitRoom;
     Context context;
 
@@ -27,6 +29,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context=this.getApplicationContext();
+
+       // new BeaconMonitoring(this);
+
+        //send a message by service to handheld, requesting beacons of the room
+        String myMessagePath=getResources().getString(R.string.messagepath_beacon);
+        String myMessage=getResources().getString(R.string.message_fetchBeaconList);
+        startService(new Intent(context,
+                SendMessageServiceToHandheld.class).putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage));
+
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
@@ -44,7 +57,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        context=this.getApplicationContext();
+
 
 
     }
@@ -73,7 +86,12 @@ public class MainActivity extends Activity {
 
             if(oldState== StateMachine.State.TF && newState == StateMachine.State.FF){
                 //this means that user is going to leave the building monitor if everything is fine
-                startService(new Intent(context,SendMessageServiceToHandheld.class));
+               startService(new Intent(context,SendMessageServiceToHandheld.class).putExtra("myMessage","userLeaving"));
+
+
+
+
+
                 //Room room=new Room(MyApplication.this);
                 //room.setRoomid("1");
                 //new BackgroundTaskGetMeasurementList(room,true).execute();
@@ -83,6 +101,9 @@ public class MainActivity extends Activity {
             oldState=newState;
         }
     }
+
+
+
 
     private class btnExitFloorClicked implements View.OnClickListener {
         @Override

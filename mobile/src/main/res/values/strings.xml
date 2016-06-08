@@ -75,4 +75,11 @@
     <string name="action_about">Settings</string>
 
 
+
+    <!-- message paths between wearble and handheld -->
+    <string name="messagepath_beacon">/poliDemonstrator-beacon</string>
+
+    <!-- messages between wearble and handheld -->
+    <string name="message_fetchBeaconList">/poliDemonstrator-beacon-fetch-beacons</string>
+
 </resources>

@@ -24,9 +24,10 @@ public class MyApplication extends Application  {
     public void onCreate() {
         super.onCreate();
         //start monitoring sorounding beacons
-       new BeaconMonitoring(this);
+      // new BeaconMonitoring(this);
 
     }
+
 
 
     //Async Task to fetch Sensors Class list of a given room ID

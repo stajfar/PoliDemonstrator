@@ -1,19 +1,14 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
 import android.app.Activity;
-
 import android.app.Service;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-
 import android.util.Log;
-
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,12 +20,12 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import it.polimi.polidemonstrator.MainActivity;
-
+import it.polimi.polidemonstrator.R;
 
 /**
- * Created by saeed on 5/31/2016.
+ * Created by saeed on 6/7/2016.
  */
-public class SendMessageServiceToHandheld extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class SendMessageServiceToWearble extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     //to send message from wearable to handheld
     Node mNode; // the connected device to send the message to
     GoogleApiClient mGoogleApiClient;
@@ -55,9 +50,10 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle extras = intent.getExtras();
-        this.myMessage = extras.getString("myMessage");
-        this.POLI_DEMONSTRATOR_MESSAGE_PATH=extras.getString("myMessagePath");
+        Bundle gotBasket = intent.getExtras();
+
+        this.POLI_DEMONSTRATOR_MESSAGE_PATH=gotBasket.getString("myMessagePath");
+        this.myMessage = gotBasket.getString("myMessage");
 
         connectToGoogleClientAPIandSendMessage();
 

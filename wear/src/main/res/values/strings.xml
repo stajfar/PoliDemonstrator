@@ -14,4 +14,11 @@
         <item>8</item>
         <item>10</item>
     </array>
+
+    <!-- message paths between wearble and handheld -->
+    <string name="messagepath_beacon">/poliDemonstrator-beacon</string>
+
+    <!-- messages between wearble and handheld -->
+    <string name="message_fetchBeaconList">/poliDemonstrator-beacon-fetch-beacons</string>
+
 </resources>

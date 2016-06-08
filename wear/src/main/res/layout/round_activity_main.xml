@@ -6,11 +6,49 @@
     tools:context="it.polimi.polidemonstrator.MainActivity"
     tools:deviceIds="wear_round">
 
-    <TextView
-        android:id="@+id/text"
+
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_round" />
+
+        android:text="En El"
+        android:id="@+id/btnenterFloor"
+        android:layout_above="@+id/btnenterRoom"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Ex El"
+        android:id="@+id/btnexitFloor"
+        android:layout_alignTop="@+id/btnenterFloor"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp" />
+
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="En R"
+        android:id="@+id/btnenterRoom"
+        android:layout_alignTop="@+id/btnexitRoom"
+        android:layout_alignEnd="@+id/btnenterFloor" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Ex R"
+        android:id="@+id/btnexitRoom"
+        android:layout_marginBottom="61dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/btnexitFloor" />
 </RelativeLayout>
