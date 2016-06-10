@@ -25,7 +25,7 @@ public class StateMachine {
   public static  State transition[][] ={//FF means Floor=false,Room=False, etc.
         //      Elv_out    Elv_in      Room_in    Room_out
        /*FF*/ {State.FF,  State.FF,   State.TT,    State.FF },
-       /*TT*/ {State.FF,  State.FF,   State.TT,    State.TF },
+       /*TT*/ {State.TT,  State.FF,   State.TT,    State.TF },
        /*TF*/ {State.FF,  State.FF,   State.TT,    State.TF }
 
     };
