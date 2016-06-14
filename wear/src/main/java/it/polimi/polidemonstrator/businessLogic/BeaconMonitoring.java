@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import it.polimi.polidemonstrator.MainActivity;
 import it.polimi.polidemonstrator.MyNotification;
+import it.polimi.polidemonstrator.R;
 
 /**
  * Created by saeed on 6/3/2016.
@@ -126,6 +127,9 @@ public class BeaconMonitoring  implements SensorEventListener {
                         MyNotification.showNotification(context, MainActivity.class,
                                 "Leaving?",
                                 newState.toString());
+                        //Send TT message to handheld
+                        //send a message by service to handheld, requesting beacons of the room
+                        sendMessageToHandheld_BeaconChange(newState);
 
                         //Room room=new Room(MyApplication.this);
                         //room.setRoomid("1");
@@ -139,6 +143,9 @@ public class BeaconMonitoring  implements SensorEventListener {
                     StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
                     oldState=newState2;
                     MyNotification.showNotification(context, MainActivity.class,"Enter  room", newState2.toString());
+                    //Send TT message to handheld
+                    //send a message by service to handheld, requesting beacons of the room
+                    sendMessageToHandheld_BeaconChange(newState2);
                     break;
             }
             //stop monitoring beacon manager to save battery
@@ -171,7 +178,6 @@ public class BeaconMonitoring  implements SensorEventListener {
                 isScanning = false;//so you can connect to beacon manager after user start walking
                 // timer.cancel();
                 isTimerstarted=false;
-
             }
         }
 
@@ -187,12 +193,14 @@ public class BeaconMonitoring  implements SensorEventListener {
 
                     oldState = newState;
                     MyNotification.showNotification(context, MainActivity.class,"Exiting  elevator", newState.toString());
+                    sendMessageToHandheld_BeaconChange(newState);
                     break;
                 case "room":
                     StateMachine.Symbols newInput2 = StateMachine.Symbols.Rm_out;
                     StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput2.ordinal()];
                     oldState = newState2;
                     MyNotification.showNotification(context, MainActivity.class,"Exiting  room", newState2.toString());
+                    sendMessageToHandheld_BeaconChange(newState2);
                     break;
             }
 
@@ -215,6 +223,26 @@ public class BeaconMonitoring  implements SensorEventListener {
             // sendMessage();
         }
     }
+
+    private void sendMessageToHandheld_BeaconChange(StateMachine.State newState) {
+        //send a message by service to handheld, requesting beacons of the room
+        String myMessagePath=context.getResources().getString(R.string.messagepath_beacon_Change);
+        String myMessage="";
+        switch (newState){
+            case FF:
+                myMessage=context.getResources().getString(R.string.message_beaconChange_FF);
+                break;
+            case TF:
+                myMessage=context.getResources().getString(R.string.message_beaconChange_TF);
+                break;
+            case TT:
+                myMessage=context.getResources().getString(R.string.message_beaconChange_TT);
+                break;
+        }
+        context.startService(new Intent(context,
+                SendMessageServiceToHandheld.class).putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage));
+    }
+
     List<Region> myRegionsList=null;
     private class beaconManagerServiceReadyCallback implements BeaconManager.ServiceReadyCallback {
         @Override

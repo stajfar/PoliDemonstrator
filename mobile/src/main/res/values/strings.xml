@@ -78,8 +78,12 @@
 
     <!-- message paths between wearble and handheld -->
     <string name="messagepath_beacon">/poliDemonstrator-beacon</string>
+    <string name="messagepath_beacon_Change">/poliDemonstrator-beaconChange</string>
 
     <!-- messages between wearble and handheld -->
-    <string name="message_fetchBeaconList">/poliDemonstrator-beacon-fetch-beacons</string>
+    <string name="message_fetchBeaconList">poliDemonstrator-beacon-fetch-beacons</string>
+    <string name="message_beaconChange_FF">poliDemonstrator-beacon-beaconChange-FF</string>
+    <string name="message_beaconChange_TF">poliDemonstrator-beacon-beaconChange-TF</string>
+    <string name="message_beaconChange_TT">poliDemonstrator-beacon-beaconChange-TT</string>
 
 </resources>
