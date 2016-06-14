@@ -9,12 +9,15 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 
+import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
+
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TestClass test=new TestClass();
 
 
         Thread timer = new Thread() {
