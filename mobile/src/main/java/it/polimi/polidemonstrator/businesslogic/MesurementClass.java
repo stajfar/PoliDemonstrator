@@ -47,6 +47,27 @@ public class MesurementClass implements Serializable {
     private int sensorClassImage;
     private String sensorClassSensorLatestValue;
 
+    private String sensorVariableLabel;
+    private List<Integer> listSensorVariable;
+
+    public List<Integer> getListSensorVariable() {
+        return listSensorVariable;
+    }
+
+    public void setListSensorVariable(List<Integer> listSensorVariable) {
+        this.listSensorVariable = listSensorVariable;
+    }
+
+    public String getSensorVariableLabel() {
+        return sensorVariableLabel;
+    }
+
+    public void setSensorVariableLabel(String sensorVariableLabel) {
+        this.sensorVariableLabel = sensorVariableLabel;
+    }
+
+
+
     public MesurementClass() {
     }
 
@@ -801,6 +822,21 @@ public class MesurementClass implements Serializable {
         return null;
     }
 
+    public static Float parsJSON_Measurement_Object_WithOutTimeStamp(String json_results) {
+        try {
+            JSONObject jsonObject=new JSONObject(json_results);
+
+            Float value=null;
+            if (!jsonObject.getString("value").equals("null")) {
+                value = Float.valueOf(jsonObject.getString("value"));
+            }
+            return value;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     static Map<String, String> getLineChartLabels(Context context) {
         String[] array = context.getResources().getStringArray(R.array.ChartLabels);
@@ -857,6 +893,38 @@ public class MesurementClass implements Serializable {
          this.linexyvalues = linexyvalues;
      }
  }
+
+
+
+    //this part is related to user awareness
+    public  Float getInstantMeasurementVariableValue(int measurementVariableID) {
+        String json_Url = serverURL + "/measurements/variable/" + String.valueOf(measurementVariableID) + "/instant";
+        String JSON_STRING;
+        try {
+            URL url = new URL(json_Url);
+            HttpURLConnection httpconnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = httpconnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((JSON_STRING = bufferedReader.readLine()) != null)
+            {
+                stringBuilder.append(JSON_STRING+"\n");
+            }
+            bufferedReader.close();
+            inputStream.close();
+            httpconnection.disconnect();
+            String json_String=stringBuilder.toString().trim();
+            //pars json_string
+            Float parsedResult = parsJSON_Measurement_Object_WithOutTimeStamp(json_String);
+            return parsedResult;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 

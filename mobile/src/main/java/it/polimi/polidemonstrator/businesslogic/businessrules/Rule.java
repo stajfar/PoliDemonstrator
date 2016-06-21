@@ -3,7 +3,6 @@ package it.polimi.polidemonstrator.businesslogic.businessrules;
 /**
  * Created by saeed on 6/13/2016.
  */
-import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,7 @@ public class Rule
 
         private class NullActionDispatcher implements ActionDispatcher {
             @Override
-            public void fire(Context context, String myMessage) {
+            public void fire() {
 
             }
         }
@@ -50,14 +49,14 @@ public class Rule
         this.dispatcher = dispatcher;
     }
 
-    public boolean eval(Map<String, ?> bindings, Context context, String myMessage)
+    public boolean eval(Map<String, ?> bindings)
     {
         boolean eval = false;
         for (Expression expression : expressions)
         {
             eval = expression.interpret(bindings);
             if (eval)
-                dispatcher.fire(context,myMessage);
+                dispatcher.fire();
         }
         return eval;
     }

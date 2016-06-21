@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polimi.polidemonstrator.R;
 
@@ -72,6 +73,67 @@ public class Room {
         this.roomid = roomid;
     }
 
+   ///get room variables
+    public String getRoomMeasurementVariables_JSON(String roomid){
+        String json_url=serverURL+"/variables/room/"+roomid;
+        String JSON_STRING;
+        try {
+            URL url=new URL(json_url);
+            HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+            int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            InputStream inputStream=httpconnection.getInputStream();
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder=new StringBuilder();
+            while ((JSON_STRING = bufferedReader.readLine()) != null)
+            {
+                stringBuilder.append(JSON_STRING+"\n");
+            }
+            bufferedReader.close();
+            inputStream.close();
+            httpconnection.disconnect();
+            return stringBuilder.toString().trim();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public Map<String,List<Integer>> parsRoomSensorVariablesJSON(String json_results, List<String> instantMeasurementVariables) {
+        Map<String,List<Integer>> mapParsedResults=new HashMap<>();
+        try {
+
+            JSONArray jsonArray=new JSONArray(json_results);
+
+            MesurementClass measurementItem=null;
+
+            for(String mesurementVariable: instantMeasurementVariables) {
+                int count=0;
+                List<Integer> listJsonMeasurementVariables=new ArrayList<>();
+                measurementItem = new MesurementClass();
+                while (count < jsonArray.length()) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(count);
+                    if (mesurementVariable.equals(jsonObject.getString("label")) && jsonObject.getJSONObject("fksensor").getBoolean("indoor") == true) {
+
+                        measurementItem.setSensorVariableLabel(jsonObject.getString("label"));
+                        listJsonMeasurementVariables.add(jsonObject.getInt("variableid"));
+                    }
+                    count++;
+                }
+                mapParsedResults.put(measurementItem.getSensorVariableLabel(),listJsonMeasurementVariables);
+            }
+            return mapParsedResults;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 
@@ -102,6 +164,9 @@ public class Room {
         }
         return null;
     }
+
+
+
 
 
 

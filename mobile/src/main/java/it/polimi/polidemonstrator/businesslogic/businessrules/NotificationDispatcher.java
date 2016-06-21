@@ -2,6 +2,7 @@ package it.polimi.polidemonstrator.businesslogic.businessrules;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,8 +13,19 @@ import it.polimi.polidemonstrator.MainActivity;
  */
 public class NotificationDispatcher implements ActionDispatcher {
 
+    private String myMessageTitle;
+    private String myMessageText;
+    private Context context;
+
+    public NotificationDispatcher(Context context, String myMessageTitle, String myMessageText) {
+        this.context = context;
+        this.myMessageTitle = myMessageTitle;
+        this.myMessageText=myMessageText;
+
+    }
+
     @Override
-    public void fire(Context context, String myMessage) {
+    public void fire() {
         //here you you implement what to do when Action is triggered (Send a notification to user)
         //other action classes are required
 
@@ -25,8 +37,8 @@ public class NotificationDispatcher implements ActionDispatcher {
                 new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
         android.app.Notification notification = new android.app.Notification.Builder(context)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(myMessage)
-                .setContentText("message recieved!!!")
+                .setContentTitle(myMessageTitle)
+                .setContentText(myMessageText)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .build();

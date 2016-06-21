@@ -63,6 +63,16 @@
     </array>
 
 
+    <array name="InstantMeasurementVariables"> <!-- -->
+        <item>Potenza attiva forza</item>
+        <item>Potenza attiva luci</item>
+        <item>Potenza attiva clima</item>
+        <item>Finestra sinistra</item>
+        <item>Finestra destra</item>
+    </array>
+
+
+
 
 
 
