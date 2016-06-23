@@ -39,6 +39,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
                 //fetch the list of beacons from internet and send it back to wearble
                 EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
                 //call async task to fetch beacon lists
+                //// TODO: 6/22/2016  replace the rooom id
                 estimoteBeacon.new BackgroundTaskGetRoomCorrelatedBeacons(1,false,context).execute();
 
             }
@@ -46,40 +47,8 @@ public class ListenerServiceFromWear extends WearableListenerService {
         }else if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_beacon_Change))) {
             //message is related to beacons
             String myMessage=new String(messageEvent.getData());
-            //String messages
-            final String FF=context.getResources().getString(R.string.message_beaconChange_FF);
-            final String TF=context.getResources().getString(R.string.message_beaconChange_TF);
-            final String TT=context.getResources().getString(R.string.message_beaconChange_TT);
-            if (myMessage.equals(FF)){
-                //Watch says user is just Entered the elevator from floor
+            evaluateUserState(myMessage);
 
-            }else if(myMessage.equals(TF)){
-                //Watch says user is just exited the room, yet is present inside the floor
-
-            }else if(myMessage.equals(TT)){
-                //Watch says user is just entered the room
-                
-                JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_forza = 'O' AND Potenza_attiva_luci = 'C'"
-                        ,"Consumption Warning!!","Lights are OFF!");
-                List<JSON_Ruler> json_rulers=new ArrayList<>();
-                //// TODO: 6/21/2016  fix this to be able to add more rules
-                json_rulers.add(json_rule);
-
-               
-
-
-
-                //fetch rules from DB
-
-                //fetch latest Sensor Data
-
-
-                //Evaluate rules
-
-                //Send a Notification to user
-                new BackgroudTaskRuleFactGenerator(context,json_rulers).execute();
-
-            }
         }
 
 
@@ -107,6 +76,56 @@ public class ListenerServiceFromWear extends WearableListenerService {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
         }
+
+    }
+
+    private void evaluateUserState(String myMessage) {
+        //String messages
+        final String FF=context.getResources().getString(R.string.message_beaconChange_FF);
+        final String TF=context.getResources().getString(R.string.message_beaconChange_TF);
+        final String TT=context.getResources().getString(R.string.message_beaconChange_TT);
+
+
+        if (myMessage.equals(FF)){
+            //Watch says user is just Entered the elevator from floor(Leaving?)  AND
+            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'O'"
+                    ,"Consumption Warning!!","Air Conditioner is ON!");
+
+            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'O'"
+                    ,"Consumption Warning!!","Lights are ON!");
+
+            List<JSON_Ruler> json_rulers=new ArrayList<>();
+            //// TODO: 6/21/2016  fix this to be able to add more rules
+            json_rulers.add(json_rule);
+            json_rulers.add(json_rule2);
+
+            //Send a Notification to user
+            new BackgroudTaskRuleFactGenerator(context,json_rulers).execute();
+
+
+
+        }else if(myMessage.equals(TF)){
+            //Watch says user is just exited the room, yet is present inside the floor
+
+        }else if(myMessage.equals(TT)){
+            //Watch says user is just entered the room
+
+            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'C'"
+                    ,"Consumption Warning!!","Air Conditioner is OFF!");
+
+            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'C'"
+                    ,"Consumption Warning!!","Lights are OFF!");
+
+            List<JSON_Ruler> json_rulers=new ArrayList<>();
+            //// TODO: 6/21/2016  fix this to be able to add more rules
+            json_rulers.add(json_rule);
+            json_rulers.add(json_rule2);
+
+            //Send a Notification to user
+            new BackgroudTaskRuleFactGenerator(context,json_rulers).execute();
+
+        }
+
 
     }
 

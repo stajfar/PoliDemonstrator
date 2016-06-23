@@ -71,7 +71,7 @@ public class BeaconMonitoring  implements SensorEventListener {
             EstimoteSDK.enableDebugLogging(true);
             beaconmanager = new BeaconManager(context);
             //set background monitoring interval
-            beaconmanager.setBackgroundScanPeriod(7 * 1000, 3 * 1000);
+            beaconmanager.setBackgroundScanPeriod(5 * 1000, 15 * 1000);
             // monitoring service to see if users enters or exits from a specific beacon region
             beaconmanager.setMonitoringListener(new beaconManagerMonotoringListener());
             beaconmanager.connect(new beaconManagerServiceReadyCallback());
@@ -92,7 +92,7 @@ public class BeaconMonitoring  implements SensorEventListener {
             if(listCorrelatedEstimoteBeacons != null && isScanning==false) {
                 beaconmanager = new BeaconManager(context);
                 //set background monitoring interval
-                beaconmanager.setBackgroundScanPeriod(7 * 1000, 10 * 1000);
+                beaconmanager.setBackgroundScanPeriod(5 * 1000, 15 * 1000);
                 // monitoring service to see if users enters or exits from a specific beacon region
                 beaconmanager.setMonitoringListener(new beaconManagerMonotoringListener());
                 beaconmanager.connect(new beaconManagerServiceReadyCallback());
@@ -163,7 +163,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                 }
                 timerTask = new MyTimerTask();
                 //Start the timer to do TimerTask after 2 minutes
-                timer.schedule(timerTask, 2 * 60 * 1000);
+                timer.schedule(timerTask, 15 * 60 * 1000);
             }
         }
 
@@ -188,19 +188,23 @@ public class BeaconMonitoring  implements SensorEventListener {
             //MyNotification.showNotification(context, MainActivity.class,"Exiting the region", "sending msg");
             switch(region.getIdentifier()) {
                 case "elevator":
-                    StateMachine.Symbols newInput = StateMachine.Symbols.Elv_out;
-                    StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
+                    if( oldState != StateMachine.State.TT ) {
+                        StateMachine.Symbols newInput = StateMachine.Symbols.Elv_out;
+                        StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
 
-                    oldState = newState;
-                    MyNotification.showNotification(context, MainActivity.class,"Exiting  elevator", newState.toString());
-                    sendMessageToHandheld_BeaconChange(newState);
+                        oldState = newState;
+                        MyNotification.showNotification(context, MainActivity.class, "Exiting  elevator", newState.toString());
+                        sendMessageToHandheld_BeaconChange(newState);
+                    }
                     break;
                 case "room":
-                    StateMachine.Symbols newInput2 = StateMachine.Symbols.Rm_out;
-                    StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput2.ordinal()];
-                    oldState = newState2;
-                    MyNotification.showNotification(context, MainActivity.class,"Exiting  room", newState2.toString());
-                    sendMessageToHandheld_BeaconChange(newState2);
+                    if(oldState != StateMachine.State.FF) {
+                        StateMachine.Symbols newInput2 = StateMachine.Symbols.Rm_out;
+                        StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput2.ordinal()];
+                        oldState = newState2;
+                        MyNotification.showNotification(context, MainActivity.class, "Exiting  room", newState2.toString());
+                        sendMessageToHandheld_BeaconChange(newState2);
+                    }
                     break;
             }
 
@@ -215,7 +219,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                 }
                 timerTask = new MyTimerTask();
                 //Start the timer to do TimerTask after 2 minutes
-                timer.schedule(timerTask, 2 * 60 * 1000);
+                timer.schedule(timerTask, 10 * 60 * 1000);
             }
             //Room room=new Room(MyApplication.this);
             //room.setRoomid("1");
