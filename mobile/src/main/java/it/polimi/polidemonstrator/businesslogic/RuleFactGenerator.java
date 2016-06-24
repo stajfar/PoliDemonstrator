@@ -19,8 +19,10 @@ public class RuleFactGenerator {
 
     Context context;
 
+
     public RuleFactGenerator(Context context) {
         this.context = context;
+
     }
 
     public  Map<String, String> factGenerator(String roomId){

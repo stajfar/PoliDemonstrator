@@ -26,12 +26,15 @@ public class ListenerServiceFromWear extends WearableListenerService {
     private static final String POLI_DEMONSTRATOR_WEAR_PATH = "/poliDemonstrator-wear";
     Context context;
 
+
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
           /*
          * Receive the message from wear
          */
         context=getApplicationContext();
+
+
         if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_beacon))) {
             //message is related to beacons
             String myMessage=new String(messageEvent.getData());
@@ -110,10 +113,10 @@ public class ListenerServiceFromWear extends WearableListenerService {
         }else if(myMessage.equals(TT)){
             //Watch says user is just entered the room
 
-            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'C'"
-                    ,"Consumption Warning!!","Air Conditioner is OFF!");
+            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'C' AND Finestra_sinistra = 'C'"
+                    ,"Consumption Warning!!","Air Conditioner ON, Windows OPEN!");
 
-            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'C'"
+            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'O'"
                     ,"Consumption Warning!!","Lights are OFF!");
 
             List<JSON_Ruler> json_rulers=new ArrayList<>();
@@ -135,14 +138,18 @@ public class ListenerServiceFromWear extends WearableListenerService {
         Context context;
         List<JSON_Ruler> json_rulers;
 
+
         BackgroudTaskRuleFactGenerator(Context context, List<JSON_Ruler> json_rulers){
             this.context=context;
             this.json_rulers=json_rulers;
         }
 
+
+
         @Override
         protected Map<String, String> doInBackground(Void... params) {
-            RuleFactGenerator ruleFactGenerator=new RuleFactGenerator(context);
+            RuleFactGenerator ruleFactGenerator =new RuleFactGenerator(context);
+            //// TODO: 6/24/2016  room id
             Map<String, String> bindings = ruleFactGenerator.factGenerator("1");
             return bindings;
         }

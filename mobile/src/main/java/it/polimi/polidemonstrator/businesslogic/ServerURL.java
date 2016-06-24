@@ -27,9 +27,8 @@ public class ServerURL {
     public String getServerURL(Context context){
         String fullAPIUrl=null;
         //run a background task to get the API server url form the json file which is uploaded into web server
-       /* String webServerURL= context.getString(R.string.server_url);
+        String webServerURL= context.getString(R.string.server_url);
         try {
-            //// TODO: 5/30/2016  uncomment the following lines
            String results= new BackgroundTaskGetAPIServer().execute(webServerURL).get();
             if (results != null) {
                 fullAPIUrl=ParsServerURL(results);
@@ -46,8 +45,8 @@ public class ServerURL {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return fullAPIUrl;  */
-        return  "http://131.175.21.162:8080";
+        return fullAPIUrl;
+
     }
 
 

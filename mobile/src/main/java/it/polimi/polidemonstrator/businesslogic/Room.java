@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.polimi.polidemonstrator.MyApplication;
 import it.polimi.polidemonstrator.R;
 
 /**
@@ -38,23 +39,13 @@ public class Room {
     private static String serverURL;
 
     public Room(Context context) {
-        ServerURL serverURL=new ServerURL();
-        this.serverURL=serverURL.getServerURL(context);
+        final MyApplication myApplication=(MyApplication)context.getApplicationContext();
+        this.serverURL= myApplication.getJsonServerURL();
     }
 
     public Room() {
 
     }
-
-    public static String getServerURL() {
-        return serverURL;
-    }
-
-    public static void setServerURL(String serverURL) {
-        Room.serverURL = serverURL;
-    }
-
-
 
 
     public String getRoomLabel() {

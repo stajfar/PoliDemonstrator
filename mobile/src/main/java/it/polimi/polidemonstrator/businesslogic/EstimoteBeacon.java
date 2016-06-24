@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import it.polimi.polidemonstrator.MyApplication;
 import it.polimi.polidemonstrator.R;
 
 /**
@@ -73,8 +74,8 @@ public class EstimoteBeacon {
     //list of functions
     public EstimoteBeacon(Context context) {
         this.context=context;
-        ServerURL serverURL=new ServerURL();
-        this.serverURL=serverURL.getServerURL(context);
+        final MyApplication myApplication=(MyApplication)context.getApplicationContext();
+        this.serverURL= myApplication.getJsonServerURL();
 
     }
 

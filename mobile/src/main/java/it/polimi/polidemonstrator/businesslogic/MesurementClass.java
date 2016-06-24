@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polimi.polidemonstrator.Chart_LineChart;
+import it.polimi.polidemonstrator.MyApplication;
 import it.polimi.polidemonstrator.R;
 
 /**
@@ -99,8 +100,8 @@ public class MesurementClass implements Serializable {
 
 
     public MesurementClass(Context context) {
-        ServerURL serverURL=new ServerURL();
-        this.serverURL=serverURL.getServerURL(context);
+        final MyApplication myApplication=(MyApplication)context.getApplicationContext();
+        this.serverURL= myApplication.getJsonServerURL();
     }
 
 
@@ -497,7 +498,7 @@ public class MesurementClass implements Serializable {
                     jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
                 }
                 break;
-            case Custom://// TODO: 5/12/2016 complete this part edit the date part
+            case Custom:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
                     String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentYear();
                     jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});
