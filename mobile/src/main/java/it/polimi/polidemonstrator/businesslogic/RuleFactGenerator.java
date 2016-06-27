@@ -25,9 +25,9 @@ public class RuleFactGenerator {
 
     }
 
-    public  Map<String, String> factGenerator(String roomId){
+    public  Map<String, String> factGenerator(int roomId){
         Room room=new Room(context);
-        String json_roomVariables= room.getRoomMeasurementVariables_JSON(roomId);
+        String json_roomVariables= room.getRoomMeasurementVariables_JSON(String.valueOf(roomId));
         //get list of desired variables from String.xml
        String[] instantMeasurementVariables= context.getResources().getStringArray(R.array.InstantMeasurementVariables);
         List<String> listDesiredStringVariables = Arrays.asList(instantMeasurementVariables);

@@ -92,8 +92,8 @@
 
     <!-- messages between wearble and handheld -->
     <string name="message_fetchBeaconList">poliDemonstrator-beacon-fetch-beacons</string>
-    <string name="message_beaconChange_FF">poliDemonstrator-beacon-beaconChange-FF</string>
-    <string name="message_beaconChange_TF">poliDemonstrator-beacon-beaconChange-TF</string>
-    <string name="message_beaconChange_TT">poliDemonstrator-beacon-beaconChange-TT</string>
+    <string name="message_beaconChange_FF">FF</string>
+    <string name="message_beaconChange_TF">TF</string>
+    <string name="message_beaconChange_TT">TT</string>
 
 </resources>

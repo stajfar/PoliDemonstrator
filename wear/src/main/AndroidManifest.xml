@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.polimi.polidemonstrator"
-    android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
 
     >
+    
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" ></uses-permission>
     <uses-permission android:name="android.permission.INTERNET" />
 
 
@@ -13,6 +14,28 @@
 
     <uses-feature android:name="android.hardware.sensor.step.stepcounter" />
     <uses-feature android:name="android.hardware.sensor.step.stepdetector" />
+
+
+
+    <receiver
+        android:name="it.polimi.polidemonstrator.businessLogic.BroadcastReceiverOnBootComplete"
+        android:enabled="true"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.PACKAGE_REPLACED" />
+            <data android:scheme="package" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.PACKAGE_ADDED" />
+            <data android:scheme="package" />
+        </intent-filter>
+    </receiver>
+
+    <service android:name="it.polimi.polidemonstrator.businessLogic.AndroidServiceStartOnBoot"></service>
+
 
     <application
         android:name=".MyApplication"
@@ -26,8 +49,10 @@
 
         <service android:name=".businessLogic.ListenerServiceFromHandheld">
             <intent-filter>
-                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-beacon" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-beaconChange" />
             </intent-filter>
         </service>
 

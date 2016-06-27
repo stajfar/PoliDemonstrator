@@ -23,7 +23,7 @@ import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
  */
 public class ListenerServiceFromWear extends WearableListenerService {
 
-    private static final String POLI_DEMONSTRATOR_WEAR_PATH = "/poliDemonstrator-wear";
+
     Context context;
 
 
@@ -55,7 +55,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
         }
 
 
-
+        /*
         if (messageEvent.getPath().equals(POLI_DEMONSTRATOR_WEAR_PATH)) {
             //do something when you receive the message
             //fetch data from internet and push it back to wear
@@ -79,6 +79,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
         }
+        */
 
     }
 
@@ -89,43 +90,11 @@ public class ListenerServiceFromWear extends WearableListenerService {
         final String TT=context.getResources().getString(R.string.message_beaconChange_TT);
 
 
-        if (myMessage.equals(FF)){
+        if (myMessage.equals(FF) || myMessage.equals(TF) || myMessage.equals(TT) ){
             //Watch says user is just Entered the elevator from floor(Leaving?)  AND
-            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'O'"
-                    ,"Consumption Warning!!","Air Conditioner is ON!");
 
-            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'O'"
-                    ,"Consumption Warning!!","Lights are ON!");
-
-            List<JSON_Ruler> json_rulers=new ArrayList<>();
-            //// TODO: 6/21/2016  fix this to be able to add more rules
-            json_rulers.add(json_rule);
-            json_rulers.add(json_rule2);
-
-            //Send a Notification to user
-            new BackgroudTaskRuleFactGenerator(context,json_rulers).execute();
-
-
-
-        }else if(myMessage.equals(TF)){
-            //Watch says user is just exited the room, yet is present inside the floor
-
-        }else if(myMessage.equals(TT)){
-            //Watch says user is just entered the room
-
-            JSON_Ruler json_rule=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_clima = 'C' AND Finestra_sinistra = 'C'"
-                    ,"Consumption Warning!!","Air Conditioner ON, Windows OPEN!");
-
-            JSON_Ruler json_rule2=new JSON_Ruler("NotificationDispatcher","Potenza_attiva_luci = 'O'"
-                    ,"Consumption Warning!!","Lights are OFF!");
-
-            List<JSON_Ruler> json_rulers=new ArrayList<>();
-            //// TODO: 6/21/2016  fix this to be able to add more rules
-            json_rulers.add(json_rule);
-            json_rulers.add(json_rule2);
-
-            //Send a Notification to user
-            new BackgroudTaskRuleFactGenerator(context,json_rulers).execute();
+            //// TODO: 6/27/2016  correct the room number and isrefresh
+           JSON_Ruler.fetchCorrelatedUserRulesFromCloud(context,1,false,myMessage);
 
         }
 
@@ -133,15 +102,19 @@ public class ListenerServiceFromWear extends WearableListenerService {
     }
 
 
+
+
     //get internal and External sensor data form API
-    public class BackgroudTaskRuleFactGenerator extends AsyncTask<Void, Void, Map<String, String>> {
+    public static class BackgroudTaskRuleFactGenerator extends AsyncTask<Void, Void, Map<String, String>> {
         Context context;
         List<JSON_Ruler> json_rulers;
+        int roomID;
 
 
-        BackgroudTaskRuleFactGenerator(Context context, List<JSON_Ruler> json_rulers){
+        public BackgroudTaskRuleFactGenerator(Context context,int roomID, List<JSON_Ruler> json_rulers){
             this.context=context;
             this.json_rulers=json_rulers;
+            this.roomID=roomID;
         }
 
 
@@ -149,15 +122,14 @@ public class ListenerServiceFromWear extends WearableListenerService {
         @Override
         protected Map<String, String> doInBackground(Void... params) {
             RuleFactGenerator ruleFactGenerator =new RuleFactGenerator(context);
-            //// TODO: 6/24/2016  room id
-            Map<String, String> bindings = ruleFactGenerator.factGenerator("1");
+            Map<String, String> bindings = ruleFactGenerator.factGenerator(roomID);
             return bindings;
         }
 
         @Override
         protected void onPostExecute(Map<String, String> bindings) {
             super.onPostExecute(bindings);
-            TestClass test=new TestClass(context,json_rulers,bindings);
+            TestClass testRules=new TestClass(context,json_rulers,bindings);
 
         }
 
