@@ -16,26 +16,6 @@
         android:text="En El"
         android:id="@+id/btnenterFloor" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ex El"
-        android:id="@+id/btnexitFloor" />
 
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="En R"
-        android:id="@+id/btnenterRoom" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ex R"
-        android:id="@+id/btnexitRoom" />
 
 </LinearLayout>

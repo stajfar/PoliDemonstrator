@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -131,7 +132,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                         //send a message by service to handheld, requesting beacons of the room
                         sendMessageToHandheld_BeaconChange(newState);
 
-                        //Room room=new Room(MyApplication.this);
+                        //
                         //room.setRoomid("1");
                         //new BackgroundTaskGetMeasurementList(room,true).execute();
                     }
@@ -221,7 +222,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                 //Start the timer to do TimerTask after 2 minutes
                 timer.schedule(timerTask, 10 * 60 * 1000);
             }
-            //Room room=new Room(MyApplication.this);
+            //R
             //room.setRoomid("1");
             //new BackgroundTaskGetMeasurementList(room,true).execute();
             // sendMessage();
@@ -230,7 +231,7 @@ public class BeaconMonitoring  implements SensorEventListener {
 
     private void sendMessageToHandheld_BeaconChange(StateMachine.State newState) {
         //send a message by service to handheld, requesting beacons of the room
-        String myMessagePath=context.getResources().getString(R.string.messagepath_beacon_Change);
+
         String myMessage="";
         switch (newState){
             case FF:
@@ -243,8 +244,17 @@ public class BeaconMonitoring  implements SensorEventListener {
                 myMessage=context.getResources().getString(R.string.message_beaconChange_TT);
                 break;
         }
+
+        //new BackgroundTaskSendNewStateToHandheld(myMessage).execute();
+        String myMessagePath=context.getResources().getString(R.string.messagepath_beacon_Change);
         context.startService(new Intent(context,
-                SendMessageServiceToHandheld.class).putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage));
+                SendMessageServiceToHandheld.class)
+                .putExtra("myMessagePath",myMessagePath)
+                .putExtra("myMessage",myMessage)
+                .putExtra("myMessageType",SendMessageServiceToHandheld.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal())
+        );
+
+
     }
 
     List<Region> myRegionsList=null;
@@ -259,6 +269,22 @@ public class BeaconMonitoring  implements SensorEventListener {
                 isScanning=true;// we are scanning so do not try to connect again until we disconnect
                 beaconmanager.startMonitoring(region);
             }
+        }
+    }
+
+
+    //Async Task to fetch Sensors Class list of a given room ID
+    public class BackgroundTaskSendNewStateToHandheld extends AsyncTask<Void, Void, Void> {
+
+        private String myMessage;
+        public BackgroundTaskSendNewStateToHandheld(String myMessage) {
+            this.myMessage=myMessage;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            return null;
         }
     }
 

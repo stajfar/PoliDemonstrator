@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.wearable.view.WatchViewStub;
@@ -15,29 +16,29 @@ import android.widget.Toast;
 
 import com.estimote.sdk.SystemRequirementsChecker;
 
+import java.util.List;
+
 import it.polimi.polidemonstrator.businessLogic.BeaconMonitoring;
+import it.polimi.polidemonstrator.businessLogic.MeasurementClass;
+import it.polimi.polidemonstrator.businessLogic.Room;
 import it.polimi.polidemonstrator.businessLogic.SendMessageServiceToHandheld;
 import it.polimi.polidemonstrator.businessLogic.StateMachine;
 
 public class MainActivity extends Activity {
 
 
-    private Button btnEnterFloor,btnExitFloor,btnEnterRoom,btnExitRoom;
+    private Button btnEnterFloor;
+    //,btnExitFloor,btnEnterRoom,btnExitRoom;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context=this.getApplicationContext();
+        context=this;
 
-       // new BeaconMonitoring(this);
 
-        //send a message by service to handheld, requesting beacons of the room
-        String myMessagePath=getResources().getString(R.string.messagepath_beacon);
-        String myMessage=getResources().getString(R.string.message_fetchBeaconList);
-        startService(new Intent(context,
-                SendMessageServiceToHandheld.class).putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage));
+
 
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
@@ -45,15 +46,15 @@ public class MainActivity extends Activity {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                // mTextView = (TextView) stub.findViewById(R.id.text);
-                btnEnterFloor = (Button) stub.findViewById(R.id.btnenterFloor);
-                btnExitFloor = (Button) stub.findViewById(R.id.btnexitFloor);
-                btnEnterRoom = (Button) stub.findViewById(R.id.btnenterRoom);
-                btnExitRoom = (Button) stub.findViewById(R.id.btnexitRoom);
+               btnEnterFloor = (Button) stub.findViewById(R.id.btnenterFloor);
+               // btnExitFloor = (Button) stub.findViewById(R.id.btnexitFloor);
+               // btnEnterRoom = (Button) stub.findViewById(R.id.btnenterRoom);
+                //btnExitRoom = (Button) stub.findViewById(R.id.btnexitRoom);
 
-                btnEnterFloor.setOnClickListener(new btnEnterFloorClicked());
-                btnExitFloor.setOnClickListener(new btnExitFloorClicked());
-                btnEnterRoom.setOnClickListener(new btnEnterRoomClicked());
-                btnExitRoom.setOnClickListener(new btnExitRoomClicked());
+               btnEnterFloor.setOnClickListener(new btnEnterFloorClicked());
+              //  btnExitFloor.setOnClickListener(new btnExitFloorClicked());
+              //  btnEnterRoom.setOnClickListener(new btnEnterRoomClicked());
+              //  btnExitRoom.setOnClickListener(new btnExitRoomClicked());
             }
         });
 
@@ -67,16 +68,19 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        SystemRequirementsChecker.checkWithDefaultDialogs(this);
+       // SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
 
 
-    StateMachine.State oldState=StateMachine.State.FF;
+   // StateMachine.State oldState=StateMachine.State.FF;
     private class btnEnterFloorClicked implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Toast.makeText(context,
+            // new BeaconMonitoring(this);
+            new BackgroundTaskGetBeaconList().execute();
+
+            /*Toast.makeText(context,
                     "Enter elv",
                     Toast.LENGTH_SHORT).show();
             //happened event
@@ -92,18 +96,18 @@ public class MainActivity extends Activity {
 
 
 
-                //Room room=new Room(MyApplication.this);
+
                 //room.setRoomid("1");
                 //new BackgroundTaskGetMeasurementList(room,true).execute();
             }
 
             //ok everything is down and we have to update old state by new state
-            oldState=newState;
+            oldState=newState;   */
         }
     }
 
 
-
+/*
 
     private class btnExitFloorClicked implements View.OnClickListener {
         @Override
@@ -146,5 +150,33 @@ public class MainActivity extends Activity {
             oldState=newState;
 
         }
+    }
+
+*/
+
+    //Async Task to fetch Sensors Class list of a given room ID
+    public class BackgroundTaskGetBeaconList extends AsyncTask<Void, Void, Void> {
+
+
+        public BackgroundTaskGetBeaconList() {
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //send a message by service to handheld, requesting beacons of the room
+            String myMessagePath=getResources().getString(R.string.messagepath_beacon);
+            String myMessage=getResources().getString(R.string.message_fetchBeaconList);
+            startService(new Intent(context,
+                    SendMessageServiceToHandheld.class)
+                    .putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage)
+                    .putExtra("myMessageType",SendMessageServiceToHandheld.MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()));
+
+
+            return null;
+        }
+
+
+
     }
 }

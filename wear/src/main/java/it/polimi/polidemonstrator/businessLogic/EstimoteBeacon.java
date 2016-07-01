@@ -118,8 +118,8 @@ public class EstimoteBeacon implements Serializable {
 
         private String getRoomCorrelatedBeaconsJson(int roomID,boolean isRefresh) {
             String JSON_STRING;
-            //// TODO: 6/6/2016 complete the url
-            String beaconClassVariablesURL="https://api.myjson.com/bins/4vpga"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
+            //// TODO: 6/6/2016 complete the url by room id
+            String beaconClassVariablesURL=""; //serverURL+"/beacons/room/"+String.valueOf(roomID);
             try {
                 URL url = new URL(beaconClassVariablesURL);
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
