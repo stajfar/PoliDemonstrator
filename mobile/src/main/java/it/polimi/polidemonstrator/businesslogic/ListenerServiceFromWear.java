@@ -1,19 +1,24 @@
 package it.polimi.polidemonstrator.businesslogic;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.content.Context;
-import android.content.Intent;
+
 import android.os.AsyncTask;
 
+import com.google.android.gms.common.data.FreezableUtils;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import it.polimi.polidemonstrator.MainActivity;
+
 import it.polimi.polidemonstrator.R;
 import it.polimi.polidemonstrator.businesslogic.businessrules.JSON_Ruler;
 import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
@@ -26,6 +31,33 @@ public class ListenerServiceFromWear extends WearableListenerService {
 
     Context context;
 
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        super.onDataChanged(dataEvents);
+
+           /*
+         * Receive the datachange from wear
+         */
+        context=getApplicationContext();
+
+        final ArrayList<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
+
+        for (DataEvent event : events) {
+            PutDataMapRequest putDataMapRequest =
+                    PutDataMapRequest.createFromDataMapItem(DataMapItem.fromDataItem(event.getDataItem()));
+
+            String path = event.getDataItem().getUri().getPath();
+            if (event.getType() == DataEvent.TYPE_CHANGED) {
+                if (path.equals(getResources().getString(R.string.messagepath_beacon_Change))) {
+                    DataMap dataMap = putDataMapRequest.getDataMap();
+                    String myMessage = dataMap.getString(getResources().getString(R.string.messagepath_beacon_Change));
+                    evaluateUserState(myMessage);
+                }
+            }
+
+
+        }
+    }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
@@ -40,17 +72,28 @@ public class ListenerServiceFromWear extends WearableListenerService {
             String myMessage=new String(messageEvent.getData());
             if(myMessage.equals(getResources().getString(R.string.message_fetchBeaconList))){
                 //fetch the list of beacons from internet and send it back to wearble
-                EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
-                //call async task to fetch beacon lists
+                //EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
+                //call async task to fetch beacon lists and send it to wear
                 //// TODO: 6/22/2016  replace the rooom id
-                estimoteBeacon.new BackgroundTaskGetRoomCorrelatedBeacons(1,false,context).execute();
+                //estimoteBeacon.new BackgroundTaskGetRoomCorrelatedBeacons(1,false,context).execute();
 
             }
 
-        }else if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_beacon_Change))) {
+        }else if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_latest_measurements))){
             //message is related to beacons
             String myMessage=new String(messageEvent.getData());
-            evaluateUserState(myMessage);
+            if(myMessage.equals(getResources().getString(R.string.message_latestMeasurementValues))){
+               //fetch the latest measurement values and then send it by Data API to watch
+                //// TODO: 7/8/2016 modify the room id
+                Room room=new Room();
+                room.setRoomid("1");
+                MeasurementClass measurementClass =new MeasurementClass(context);
+                measurementClass.new BackgroundTaskGetLatestMeasurementClassValues(context,room,true);
+
+
+
+
+            }
 
         }
 

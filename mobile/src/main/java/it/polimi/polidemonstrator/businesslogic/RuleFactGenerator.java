@@ -3,10 +3,10 @@ package it.polimi.polidemonstrator.businesslogic;
 import android.content.Context;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class RuleFactGenerator {
         Map<String, String> mapBindings = new HashMap<>();
         for(String mapkeyVariableLabel: mapVariablesLabelsWithVariableIDs.keySet()){
             List<Integer> variableIDs=mapVariablesLabelsWithVariableIDs.get(mapkeyVariableLabel);
-            MesurementClass measurementClass=new MesurementClass(context);
+            MeasurementClass measurementClass=new MeasurementClass(context);
 
             Float measurementInstantValue=0f;
             int count=0;

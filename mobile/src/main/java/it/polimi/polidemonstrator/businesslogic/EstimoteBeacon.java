@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -93,10 +93,10 @@ public class EstimoteBeacon {
 
     //Async Task to fetch API server url form web server
     public class BackgroundTaskGetRoomCorrelatedBeacons extends AsyncTask<String, Void, String> {
-        int roomID;
+        String roomID;
         boolean isRefresh;
         Context context;
-        public BackgroundTaskGetRoomCorrelatedBeacons(int roomID, boolean isReferesh, Context context) {
+        public BackgroundTaskGetRoomCorrelatedBeacons(String roomID, boolean isReferesh, Context context) {
             this.roomID=roomID;
             this.isRefresh=isReferesh;
             this.context=context;
@@ -111,10 +111,10 @@ public class EstimoteBeacon {
             return null;
         }
 
-        private String getRoomCorrelatedBeaconsJson(int roomID,boolean isRefresh) {
+        private String getRoomCorrelatedBeaconsJson(String roomID,boolean isRefresh) {
             String JSON_STRING;
             //// TODO: 6/6/2016 complete the url
-            String beaconClassVariablesURL="https://api.myjson.com/bins/36dyu"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
+            String beaconClassVariablesURL="https://api.myjson.com/bins/2xxo5"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
             try {
                 URL url = new URL(beaconClassVariablesURL);
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
@@ -151,15 +151,13 @@ public class EstimoteBeacon {
         protected void onPostExecute(String listestimotebeacons_result_Json) {
 
             if(listestimotebeacons_result_Json != null){
-                String MyMessagePath=context.getResources().getString(R.string.messagepath_beacon);
+                String myMessagePath=context.getResources().getString(R.string.messagepath_beacon);
                 String myMessage=listestimotebeacons_result_Json;
-
-                Bundle basket=new Bundle();
-                basket.putString("myMessagePath", MyMessagePath);
-                basket.putString("myMessage", myMessage);
-
                 context.startService(new Intent(context,
-                        SendMessageServiceToWearble.class).putExtras(basket));
+                        SendMessageServiceToWearble.class)
+                        .putExtra("myMessagePath",myMessagePath)
+                        .putExtra("myListEstimoteBeaconsJson", myMessage)
+                        .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
             }else {
                 Toast.makeText(context,
@@ -167,10 +165,6 @@ public class EstimoteBeacon {
                                 " fetch failed!",
                         Toast.LENGTH_SHORT).show();
             }
-
         }
-
-
-
     }
 }

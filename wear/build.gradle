@@ -23,7 +23,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.support:wearable:1.4.0'
-    compile 'com.google.android.gms:play-services-wearable:9.2.+'
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
 
     //required libraries for estimote
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -34,4 +34,15 @@ dependencies {
     //   https://github.com/Estimote/Android-SDK/releases
     compile 'com.estimote:sdk:0.10.6@aar'
     compile 'com.android.support:support-v4:23.3.0'
+
+
+    //to add chart libraries to the project
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    compile 'com.android.support:design:23.3.0'
+}
+//to add chart libraries to the project
+repositories {
+    maven { url "https://jitpack.io" }
 }

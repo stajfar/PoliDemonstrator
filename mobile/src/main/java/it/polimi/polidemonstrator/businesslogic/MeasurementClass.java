@@ -2,7 +2,8 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,20 +27,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.polimi.polidemonstrator.Chart_LineChart;
+
 import it.polimi.polidemonstrator.MyApplication;
 import it.polimi.polidemonstrator.R;
 
 /**
  * Created by saeed on 4/26/2016.
  */
-public class MesurementClass implements Serializable {
+public class MeasurementClass implements Serializable {
 
     private static String serverURL;
     //correlated to sensor classes
@@ -69,7 +70,7 @@ public class MesurementClass implements Serializable {
 
 
 
-    public MesurementClass() {
+    public MeasurementClass() {
     }
 
     public int getSensorClassImage() {
@@ -93,13 +94,13 @@ public class MesurementClass implements Serializable {
     }
 
     public static void setServerURL(String serverURL) {
-        MesurementClass.serverURL = serverURL;
+        MeasurementClass.serverURL = serverURL;
     }
 
 
 
 
-    public MesurementClass(Context context) {
+    public MeasurementClass(Context context) {
         final MyApplication myApplication=(MyApplication)context.getApplicationContext();
         this.serverURL= myApplication.getJsonServerURL();
     }
@@ -618,9 +619,9 @@ public class MesurementClass implements Serializable {
         return sum/hashMapParsedResults.size();
     }
 
-    public static List<MesurementClass> getMeasurementlatestValues(List<MesurementClass> resultsParsed, String roomid,boolean isRefresh) {
+    public static List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> resultsParsed, String roomid, boolean isRefresh) {
 
-        for(MesurementClass meaurementClassItem : resultsParsed){
+        for(MeasurementClass meaurementClassItem : resultsParsed){
             //json Query for each measurement class
             String measurementLatestValue=getMeasurementLatestValue(roomid,meaurementClassItem.getSensorClasseId(),isRefresh);
             meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
@@ -677,25 +678,25 @@ public class MesurementClass implements Serializable {
 
     //SpinAddapter for room sensor classes
     //A custom adapter for spinner which makes it more flexible to work with complex data types
-    public static class SpinAdapterSensorClasses extends ArrayAdapter<MesurementClass> {
+    public static class SpinAdapterSensorClasses extends ArrayAdapter<MeasurementClass> {
         private Context context;
 
 
-        private List<MesurementClass> mesurementClasses;
+        private List<MeasurementClass> measurementClasses;
 
-        public SpinAdapterSensorClasses(Context context, int resource, List<MesurementClass> mesurementClasses) {
-            super(context, resource, mesurementClasses);
+        public SpinAdapterSensorClasses(Context context, int resource, List<MeasurementClass> measurementClasses) {
+            super(context, resource, measurementClasses);
             this.context = context;
-            this.mesurementClasses=mesurementClasses;
+            this.measurementClasses = measurementClasses;
 
         }
 
         public int getCount(){
-            return mesurementClasses.size();
+            return measurementClasses.size();
         }
 
-        public MesurementClass getItem(int position){
-            return mesurementClasses.get(position);
+        public MeasurementClass getItem(int position){
+            return measurementClasses.get(position);
         }
 
         public long getItemId(int position){
@@ -712,7 +713,7 @@ public class MesurementClass implements Serializable {
             label.setTextColor(Color.BLACK);
             // Then you can get the current item using the values array (Users array) and the current position
             // You can NOW reference each method you has created in your bean object (User class)
-           // label.setText(mesurementClasses.get(position).getSensorClassLabel());
+           // label.setText(measurementClasses.get(position).getSensorClassLabel());
 
             // And finally return your dynamic (or custom) view for each spinner item
             return label;
@@ -724,7 +725,7 @@ public class MesurementClass implements Serializable {
         public View getDropDownView(int position, View convertView,ViewGroup parent) {
             TextView label = new TextView(context);
             label.setTextColor(Color.BLACK);
-            label.setText(mesurementClasses.get(position).getSensorClassLabel());
+            label.setText(measurementClasses.get(position).getSensorClassLabel());
 
             return label;
         }
@@ -733,26 +734,26 @@ public class MesurementClass implements Serializable {
 
 
 
-    public static class AdapterSensorClasses extends ArrayAdapter<MesurementClass> {
+    public static class AdapterSensorClasses extends ArrayAdapter<MeasurementClass> {
         private Context context;
         private int resource;
 
-        private List<MesurementClass> mesurementClasses;
+        private List<MeasurementClass> measurementClasses;
 
-        public AdapterSensorClasses(Context context, int resource, List<MesurementClass> mesurementClasses) {
-            super(context, resource, mesurementClasses);
+        public AdapterSensorClasses(Context context, int resource, List<MeasurementClass> measurementClasses) {
+            super(context, resource, measurementClasses);
             this.context = context;
-            this.mesurementClasses=mesurementClasses;
+            this.measurementClasses = measurementClasses;
             this.resource=resource;
 
         }
 
         public int getCount(){
-            return mesurementClasses.size();
+            return measurementClasses.size();
         }
 
-        public MesurementClass getItem(int position){
-            return mesurementClasses.get(position);
+        public MeasurementClass getItem(int position){
+            return measurementClasses.get(position);
         }
 
         public long getItemId(int position){
@@ -770,9 +771,9 @@ public class MesurementClass implements Serializable {
             TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
             TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
 
-            textViewSensorClass.setText(mesurementClasses.get(position).getSensorClassLabel());
-            textViewSensorLatestValue.setText(mesurementClasses.get(position).getSensorClassSensorLatestValue());
-            imageView.setImageResource(mesurementClasses.get(position).getSensorClassImage());
+            textViewSensorClass.setText(measurementClasses.get(position).getSensorClassLabel());
+            textViewSensorLatestValue.setText(measurementClasses.get(position).getSensorClassSensorLatestValue());
+            imageView.setImageResource(measurementClasses.get(position).getSensorClassImage());
             // And finally return your dynamic (or custom) view for each spinner item
             return listView_row;
         }
@@ -787,7 +788,7 @@ public class MesurementClass implements Serializable {
             TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
             TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
 
-            textViewSensorClass.setText(mesurementClasses.get(position).getSensorClassLabel());
+            textViewSensorClass.setText(measurementClasses.get(position).getSensorClassLabel());
             // And finally return your dynamic (or custom) view for each spinner item
             return listView_row;
 
@@ -924,6 +925,43 @@ public class MesurementClass implements Serializable {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+
+    public class BackgroundTaskGetLatestMeasurementClassValues extends AsyncTask<Void,Void,List<MeasurementClass>>{
+
+        Room room;
+        boolean isRefresh;
+        Context context;
+        List<MeasurementClass> listMeasurementClassesParesed;
+        MeasurementClass measurementClass;
+
+        public BackgroundTaskGetLatestMeasurementClassValues(Context context,Room room, boolean isRefresh) {
+            this.room=room;
+            this.isRefresh=isRefresh;
+            this.context=context;
+        }
+
+        @Override
+        protected List<MeasurementClass> doInBackground(Void... params) {
+            String roomMeasurementClasslistJSON = room.getRoomMeasurementlist(room.getRoomid());
+            if (roomMeasurementClasslistJSON != null){
+                int[] UnwantedMeasurementIdentifiers = context.getResources().getIntArray(R.array.UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed = room.parsRoomSensorClassesJSON(roomMeasurementClasslistJSON,UnwantedMeasurementIdentifiers);
+                listMeasurementClassesParesed=measurementClass.getMeasurementlatestValues(listMeasurementClassesParesed,room.getRoomid(),isRefresh);
+            }
+            return listMeasurementClassesParesed;
+        }
+
+
+        @Override
+        protected void onPostExecute(List<MeasurementClass> measurementClasses) {
+            super.onPostExecute(measurementClasses);
+
+
+
+        }
     }
 
 

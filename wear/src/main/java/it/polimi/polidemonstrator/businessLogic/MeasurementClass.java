@@ -1,6 +1,12 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,9 +22,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.polimi.polidemonstrator.R;
 
 /**
  * Created by saeed on 5/20/2016.
@@ -32,6 +41,15 @@ public class MeasurementClass implements Serializable {
     private String sensorClassSensorLatestValue;
 
     public MeasurementClass() {
+    }
+
+
+    public int getSensorClassImage() {
+        return sensorClassImage;
+    }
+
+    public void setSensorClassImage(int sensorClassImage) {
+        this.sensorClassImage = sensorClassImage;
     }
 
 
@@ -171,6 +189,34 @@ public List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> 
             isMeasurementAllowed=false;
         }
         return isMeasurementAllowed;
+    }
+
+
+
+
+
+    private static final HashMap<String, String[]> measurementLookUpTable = new HashMap<String,String[]>() {{
+        put("1", new String[]{"Temperature",String.valueOf(R.drawable.ic_temperature),"°C"});
+        put("2", new String[]{"Humidity", String.valueOf(R.drawable.ic_humidity),"%"});
+        put("3", new String[]{"Luminosity", String.valueOf(R.drawable.ic_luminosity)," "});
+        put("4", new String[]{"CO2", String.valueOf(R.drawable.ic_co2),"V"});
+        put("5", new String[]{"Current", String.valueOf(R.drawable.ic_information)," "});
+        put("6", new String[]{"Active Power", String.valueOf(R.drawable.ic_active_power)," "});
+        put("7", new String[]{"adb Sensors", String.valueOf(R.drawable.ic_information)," "});
+        put("8", new String[]{"??", String.valueOf(R.drawable.ic_information)," "});
+        put("9",new String[]{"Power Cons.",String.valueOf(R.drawable.ic_powercunsumption),"W"});
+        put("10", new String[]{"Active Energy Meter", String.valueOf(R.drawable.ic_information)," "});
+    }};
+
+    public static String[] getMeasurementGridViewPagerItem(String measurementId) {
+        String[] measurementResource;
+        try {
+            measurementResource=measurementLookUpTable.get(measurementId);
+        }catch (Exception e)
+        {
+            measurementResource=null;
+        }
+        return measurementResource;
     }
 
 

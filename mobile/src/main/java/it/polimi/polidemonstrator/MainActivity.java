@@ -1,20 +1,11 @@
 package it.polimi.polidemonstrator;
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.net.http.HttpResponseCache;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import it.polimi.polidemonstrator.businesslogic.RuleFactGenerator;
-import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
 
 public class MainActivity extends AppCompatActivity {
     @Override

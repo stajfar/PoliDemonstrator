@@ -1,4 +1,4 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 

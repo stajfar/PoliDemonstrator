@@ -1,7 +1,7 @@
 package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
-import android.graphics.Color;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.data.Entry;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,12 +100,12 @@ public class Room {
 
             JSONArray jsonArray=new JSONArray(json_results);
 
-            MesurementClass measurementItem=null;
+            MeasurementClass measurementItem=null;
 
             for(String mesurementVariable: instantMeasurementVariables) {
                 int count=0;
                 List<Integer> listJsonMeasurementVariables=new ArrayList<>();
-                measurementItem = new MesurementClass();
+                measurementItem = new MeasurementClass();
                 while (count < jsonArray.length()) {
                     JSONObject jsonObject = jsonArray.getJSONObject(count);
                     if (mesurementVariable.equals(jsonObject.getString("label")) && jsonObject.getJSONObject("fksensor").getBoolean("indoor") == true) {
@@ -161,19 +161,19 @@ public class Room {
 
 
 
-    public List<MesurementClass> parsRoomSensorClassesJSON(String json_results, int[] unwantedMeasurementIdentifiers) {
+    public List<MeasurementClass> parsRoomSensorClassesJSON(String json_results, int[] unwantedMeasurementIdentifiers) {
         try {
-             List<MesurementClass> listMeasurementClasses=new ArrayList<>();
+             List<MeasurementClass> listMeasurementClasses=new ArrayList<>();
             JSONArray jsonArray=new JSONArray(json_results);
             int count=0;
             while (count< jsonArray.length())
             {
-                MesurementClass measurementItem=new MesurementClass();
+                MeasurementClass measurementItem=new MeasurementClass();
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
                 measurementItem.setSensorClasseId(jsonObject.getString("identifier"));
                 measurementItem.setSensorClassLabel(jsonObject.getString("name"));
 
-               if(MesurementClass.iswantedMeasurementsIdentifier(jsonObject.getString("identifier"),unwantedMeasurementIdentifiers)){
+               if(MeasurementClass.iswantedMeasurementsIdentifier(jsonObject.getString("identifier"),unwantedMeasurementIdentifiers)){
                    listMeasurementClasses.add(measurementItem);
                }
                 count++;

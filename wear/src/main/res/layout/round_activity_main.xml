@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="it.polimi.polidemonstrator.MainActivity"
-    tools:deviceIds="wear_round">
+    tools:deviceIds="wear_round"
+    android:orientation="vertical">
 
 
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+
+    <android.support.wearable.view.GridViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+
+    <android.support.wearable.view.DotsPageIndicator
+        android:id="@+id/indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:text="En El"
-        android:id="@+id/btnenterFloor"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="30dp" />
+        android:layout_gravity="center_horizontal|bottom"/>
 
 
 
@@ -24,4 +31,12 @@
 
 
 
-</RelativeLayout>
+
+
+
+
+
+
+
+
+</LinearLayout>

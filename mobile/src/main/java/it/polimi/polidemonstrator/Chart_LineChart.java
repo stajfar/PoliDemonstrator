@@ -44,7 +44,7 @@ import java.util.Map;
 
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
 import it.polimi.polidemonstrator.businesslogic.InternetConnection;
-import it.polimi.polidemonstrator.businesslogic.MesurementClass;
+import it.polimi.polidemonstrator.businesslogic.MeasurementClass;
 
 public class Chart_LineChart extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DialogInterface.OnClickListener {
@@ -52,7 +52,7 @@ public class Chart_LineChart extends AppCompatActivity
     String JSON_STRING;
     LineChart lineChart;
     HashMap<String,List<String> > hashMapJsonUrlsLineColors;
-    List<MesurementClass> listMeasurementClassesParsed;
+    List<MeasurementClass> listMeasurementClassesParsed;
     String buildingID,roomID,measurementClassID;
     String SelectedDate;
 
@@ -63,7 +63,7 @@ public class Chart_LineChart extends AppCompatActivity
     DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
     DateTimeObj.TimeIntervals timeIntervals;
     DatePicker datePicker;
-    MesurementClass measurementClass;
+    MeasurementClass measurementClass;
 
     boolean isChartinDetailMode;//determines if watch shows average values of details of each specific sensor
 
@@ -77,7 +77,7 @@ public class Chart_LineChart extends AppCompatActivity
 
         Bundle gotBasket=getIntent().getExtras();
 
-        listMeasurementClassesParsed=(List<MesurementClass>)gotBasket.getSerializable("listMeasuremetClasses");
+        listMeasurementClassesParsed=(List<MeasurementClass>)gotBasket.getSerializable("listMeasuremetClasses");
         buildingID=gotBasket.getString("buildingID");
         roomID=gotBasket.getString("roomID");
         measurementClassID=gotBasket.getString("measuermentClassID");
@@ -103,7 +103,7 @@ public class Chart_LineChart extends AppCompatActivity
         measurementTimeWindow= DateTimeObj.MeasurementTimeWindow.Today;
         timeIntervals= DateTimeObj.TimeIntervals.FifteenMins;
 
-        measurementClass=new MesurementClass(Chart_LineChart.this);
+        measurementClass=new MeasurementClass(Chart_LineChart.this);
         hashMapJsonUrlsLineColors=  measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
 
         isChartinDetailMode=false;//at the beginning we want to display average values
@@ -145,20 +145,20 @@ public class Chart_LineChart extends AppCompatActivity
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate, false).execute();
     }
 
-    private void buildAlterDialog(List<MesurementClass> listMeasurementClassesParsed) {
-        ArrayList<MesurementClass> arrayList = new ArrayList<>();
-        for(MesurementClass item : listMeasurementClassesParsed){
-            MesurementClass msurementClass=new MesurementClass(Chart_LineChart.this);
+    private void buildAlterDialog(List<MeasurementClass> listMeasurementClassesParsed) {
+        ArrayList<MeasurementClass> arrayList = new ArrayList<>();
+        for(MeasurementClass item : listMeasurementClassesParsed){
+            MeasurementClass msurementClass=new MeasurementClass(Chart_LineChart.this);
             msurementClass.setSensorClasseId(item.getSensorClasseId());
             msurementClass.setSensorClassLabel(item.getSensorClassLabel());
-            String[] listViewItem=MesurementClass.getMeasurementListViewItem(item.getSensorClasseId());
+            String[] listViewItem= MeasurementClass.getMeasurementListViewItem(item.getSensorClasseId());
             if (listViewItem != null) {
                 msurementClass.setSensorClassLabel(listViewItem[0]);
                 msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
             }
             arrayList.add(msurementClass);
         }
-        MesurementClass.AdapterSensorClasses sensorClassesAdapter=new MesurementClass.AdapterSensorClasses(Chart_LineChart.this,R.layout.list_singlerow,arrayList);
+        MeasurementClass.AdapterSensorClasses sensorClassesAdapter=new MeasurementClass.AdapterSensorClasses(Chart_LineChart.this,R.layout.list_singlerow,arrayList);
 
         listViewMeasurements=new ListView(this);
         listViewMeasurements.setAdapter(sensorClassesAdapter);
@@ -233,13 +233,13 @@ public class Chart_LineChart extends AppCompatActivity
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        MesurementClass mesurementClass=(MesurementClass)listViewMeasurements.getItemAtPosition(which);
-        measurementClassID=mesurementClass.getSensorClasseId();
-        hashMapJsonUrlsLineColors=  mesurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
+        MeasurementClass measurementClass =(MeasurementClass)listViewMeasurements.getItemAtPosition(which);
+        measurementClassID= measurementClass.getSensorClasseId();
+        hashMapJsonUrlsLineColors=  measurementClass.jsonURL_Generator(measurementClassID, buildingID, roomID, measurementTimeWindow, SelectedDate);
         new BackgroudTask(hashMapJsonUrlsLineColors,timeIntervals, measurementTimeWindow, SelectedDate, false).execute();
 
         Toast.makeText(Chart_LineChart.this,
-                mesurementClass.getSensorClasseId()+" "+mesurementClass.getSensorClassLabel(),
+                measurementClass.getSensorClasseId()+" "+ measurementClass.getSensorClassLabel(),
                 Toast.LENGTH_SHORT).show();
         dialog.cancel();
 
@@ -248,7 +248,7 @@ public class Chart_LineChart extends AppCompatActivity
 
 
 
-    public  class BackgroundTaskGetMeasurementClassVariables extends AsyncTask<Void, Void, List<MesurementClass.ChartLine>> {
+    public  class BackgroundTaskGetMeasurementClassVariables extends AsyncTask<Void, Void, List<MeasurementClass.ChartLine>> {
         private String roomID;
         private  String measurementClassID;
         private  DateTimeObj.MeasurementTimeWindow measurementTimeWindow;
@@ -266,20 +266,20 @@ public class Chart_LineChart extends AppCompatActivity
 
 
         @Override
-        protected List<MesurementClass.ChartLine> doInBackground(Void... params) {
+        protected List<MeasurementClass.ChartLine> doInBackground(Void... params) {
 
             String  measurementClassVariablesURL=measurementClass.jsonURL_GeneratorMeasurenetClassVariables(roomID, measurementClassID);
-            HashMap<Integer, String[]> parsed_MeasurementClassVariables=MesurementClass.getListofMeasurementVariables(measurementClassVariablesURL);//String[]==variableDescription,variableUnit,sensorID
+            HashMap<Integer, String[]> parsed_MeasurementClassVariables= MeasurementClass.getListofMeasurementVariables(measurementClassVariablesURL);//String[]==variableDescription,variableUnit,sensorID
 
             List<String[]> measurementVariableURLsLabelNames=measurementClass.jsonURL_GeneratorMeasurementVariables(parsed_MeasurementClassVariables,measurementTimeWindow);
             // now the measurement variable urls are ready, fetch related json data
-            List<MesurementClass.ChartLine> parsed_MeasurementVariables=MesurementClass.getListofMeasurementVariableData(measurementVariableURLsLabelNames,Chart_LineChart.this,refreshCacheData);
+            List<MeasurementClass.ChartLine> parsed_MeasurementVariables= MeasurementClass.getListofMeasurementVariableData(measurementVariableURLsLabelNames,Chart_LineChart.this,refreshCacheData);
 
             return parsed_MeasurementVariables;
         }
 
         @Override
-        protected void onPostExecute(List<MesurementClass.ChartLine> measurementClassVariablesParsed) {
+        protected void onPostExecute(List<MeasurementClass.ChartLine> measurementClassVariablesParsed) {
             super.onPostExecute(measurementClassVariablesParsed);
             if (measurementClassVariablesParsed != null) {
                 ArrayList<ILineDataSet> datasets = new ArrayList<>();
@@ -332,7 +332,7 @@ public class Chart_LineChart extends AppCompatActivity
         @Override
         protected HashMap<String,List<String>> doInBackground(Void... params) {
 
-            HashMap<String,List<String>> hashMapJson_results=MesurementClass.getListofMeasurementClassData(hashMapUrlsColors,isRefreshCachedData);
+            HashMap<String,List<String>> hashMapJson_results= MeasurementClass.getListofMeasurementClassData(hashMapUrlsColors,isRefreshCachedData);
             //now pars the results that are given by the API
             return  hashMapJson_results;
         }
@@ -344,7 +344,7 @@ public class Chart_LineChart extends AppCompatActivity
 
             if(hashMapJson_results !=null){
                 for (Map.Entry<String,List<String>> entry : hashMapJson_results.entrySet()) {//key is the label name of the line
-                    LinkedHashMap<Long, Float> hashMapParsedResults = MesurementClass.parsJSON_Measurement(entry.getValue().get(0));//get(0)is one record of un-parsed json
+                    LinkedHashMap<Long, Float> hashMapParsedResults = MeasurementClass.parsJSON_Measurement(entry.getValue().get(0));//get(0)is one record of un-parsed json
                     ArrayList<Entry> arrayListYvalues=addRecordsToChartData(hashMapParsedResults, arrayListXAxisValuesInMili, timeWindow);
                     LineDataSet lineInternalDataset=FillChartArrayListDataSets(arrayListYvalues, entry.getKey(), Integer.valueOf(entry.getValue().get(1)));
                     datasets.add(lineInternalDataset);
@@ -353,7 +353,7 @@ public class Chart_LineChart extends AppCompatActivity
                     {
                         Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-                        LimitLine ll1 = new LimitLine(MesurementClass.computeMeanMeasurementValue(hashMapParsedResults), "Mean Over Selected Time Window");
+                        LimitLine ll1 = new LimitLine(MeasurementClass.computeMeanMeasurementValue(hashMapParsedResults), "Mean Over Selected Time Window");
                         ll1.setLineWidth(4f);
                         ll1.enableDashedLine(10f, 10f, 0f);
                         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);

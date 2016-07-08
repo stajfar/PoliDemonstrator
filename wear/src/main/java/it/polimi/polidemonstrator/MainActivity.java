@@ -1,41 +1,84 @@
 package it.polimi.polidemonstrator;
 
 import android.app.Activity;
-import android.content.ComponentName;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.wearable.view.DotsPageIndicator;
+import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.AdapterView;
+
+import android.widget.GridView;
+
 import android.widget.Toast;
 
-import com.estimote.sdk.SystemRequirementsChecker;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.Wearable;
+
+import java.util.ArrayList;
 import java.util.List;
-
-import it.polimi.polidemonstrator.businessLogic.BeaconMonitoring;
-import it.polimi.polidemonstrator.businessLogic.MeasurementClass;
-import it.polimi.polidemonstrator.businessLogic.Room;
-import it.polimi.polidemonstrator.businessLogic.SendMessageServiceToHandheld;
-import it.polimi.polidemonstrator.businessLogic.StateMachine;
-
-public class MainActivity extends Activity {
+import java.util.Set;
 
 
-    private Button btnEnterFloor;
-    //,btnExitFloor,btnEnterRoom,btnExitRoom;
+import it.polimi.polidemonstrator.businesslogic.BeaconMonitoring;
+import it.polimi.polidemonstrator.businesslogic.EstimoteBeacon;
+import it.polimi.polidemonstrator.businesslogic.MeasurementClass;
+
+import it.polimi.polidemonstrator.businesslogic.SendMessageServiceToHandheld;
+
+
+public class MainActivity extends Activity  implements
+        DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
     Context context;
+
+
+    private GoogleApiClient mGoogleApiClient;
+    private boolean mResolvingError=false;
+
+    GridViewPager pager;
+    DotsPageIndicator dots;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context=this;
+
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        //fetch BeaconList to be monitored by watch from handheld
+       // new BackgroundTaskGetBeaconList().execute();
+
+
 
 
 
@@ -45,23 +88,40 @@ public class MainActivity extends Activity {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-               // mTextView = (TextView) stub.findViewById(R.id.text);
-               btnEnterFloor = (Button) stub.findViewById(R.id.btnenterFloor);
-               // btnExitFloor = (Button) stub.findViewById(R.id.btnexitFloor);
-               // btnEnterRoom = (Button) stub.findViewById(R.id.btnenterRoom);
-                //btnExitRoom = (Button) stub.findViewById(R.id.btnexitRoom);
 
-               btnEnterFloor.setOnClickListener(new btnEnterFloorClicked());
-              //  btnExitFloor.setOnClickListener(new btnExitFloorClicked());
-              //  btnEnterRoom.setOnClickListener(new btnEnterRoomClicked());
-              //  btnExitRoom.setOnClickListener(new btnExitRoomClicked());
+
+
+
+
+
+                pager = (GridViewPager) stub.findViewById(R.id.pager);
+                pager.setOnLongClickListener(new pagerOnLongListener());
+                dots = (DotsPageIndicator) stub.findViewById(R.id.indicator);
+
+
             }
         });
 
 
 
 
+
+
+
+
+
+
+
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mResolvingError) {
+            mGoogleApiClient.connect();
+        }
+    }
+
 
 
     @Override
@@ -72,87 +132,115 @@ public class MainActivity extends Activity {
     }
 
 
+    @Override
+    protected void onStop() {
+        if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
+            Wearable.DataApi.removeListener(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
 
-   // StateMachine.State oldState=StateMachine.State.FF;
-    private class btnEnterFloorClicked implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            // new BeaconMonitoring(this);
-            new BackgroundTaskGetBeaconList().execute();
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
 
-            /*Toast.makeText(context,
-                    "Enter elv",
-                    Toast.LENGTH_SHORT).show();
-            //happened event
-            StateMachine.Symbols newInputEvent=StateMachine.Symbols.Elv_in;
+        //read previously stored data
+        readPreviousStoredDataAPI();
 
-            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInputEvent.ordinal()];
-
-            if(oldState== StateMachine.State.TF && newState == StateMachine.State.FF){
-                //this means that user is going to leave the building monitor if everything is fine
-               startService(new Intent(context,SendMessageServiceToHandheld.class).putExtra("myMessage","userLeaving"));
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
 
 
 
+    }
+
+    private void readPreviousStoredDataAPI() {
+        PendingResult<DataItemBuffer> results = Wearable.DataApi.getDataItems(mGoogleApiClient);
 
 
+        results.setResultCallback(new ResultCallback<DataItemBuffer>() {
+            @Override
+            public void onResult(DataItemBuffer dataItems) {
 
-                //room.setRoomid("1");
-                //new BackgroundTaskGetMeasurementList(room,true).execute();
+                    for(DataItem dataitem: dataItems){
+                        String path = dataitem.getUri().getPath();
+                        if (path.equals(getResources().getString(R.string.messagepath_latest_measurements))) {
+                            DataMapItem dataMapItem = DataMapItem.fromDataItem(dataitem);
+                            DataMap dataMap = dataMapItem.getDataMap();
+                            Set<String> dataMapKeySet=dataMap.keySet();
+                            List<MeasurementClass> listMeasurementClass=new ArrayList<MeasurementClass>();
+                            for(String key : dataMapKeySet)
+                            {
+                                String[] gridViewViewItemLookupTable= MeasurementClass.getMeasurementGridViewPagerItem(key);
+                                String[] dataMapValueStringArray=  dataMap.getStringArray(key);
+                                MeasurementClass measurementClass=new MeasurementClass();
+                                measurementClass.setSensorClasseId(key);
+                                measurementClass.setSensorClassLabel(gridViewViewItemLookupTable[0]);
+                                measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItemLookupTable[1]));
+                                measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]+gridViewViewItemLookupTable[2]);
+                                listMeasurementClass.add(measurementClass);
+                            }
+                            pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
+
+                            dots.setPager(pager);
+                        } else if(path.equals(getResources().getString(R.string.messagepath_beacon))) {
+                            DataMapItem dataMapItem = DataMapItem.fromDataItem(dataitem);
+                            DataMap dataMap = dataMapItem.getDataMap();
+                            String myListEstimoteBeacons= dataMap.getString("myListEstimoteBeaconsJson");
+                            final List<EstimoteBeacon> listBeacons=EstimoteBeacon.parsJSON_Beacons(myListEstimoteBeacons);
+                            BeaconMonitoring beaconMonitoring=new BeaconMonitoring(context);
+                            beaconMonitoring.initializeBeaconManager(listBeacons);
+
+                        }
+                    }
+                dataItems.release();
             }
-
-            //ok everything is down and we have to update old state by new state
-            oldState=newState;   */
-        }
+        });
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
 
-/*
-
-    private class btnExitFloorClicked implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(context,
-                    "Exit floor",
-                    Toast.LENGTH_SHORT).show();
-
-            StateMachine.Symbols newInput=StateMachine.Symbols.Elv_out;
-            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
-
-            oldState=newState;
-        }
     }
 
-    private class btnEnterRoomClicked implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(context,
-                    "Enter room",
-                    Toast.LENGTH_SHORT).show();
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_DELETED) {
+               // Log.d(TAG, "DataItem deleted: " + event.getDataItem().getUri());
+            } else if (event.getType() == DataEvent.TYPE_CHANGED) {
+                PutDataMapRequest putDataMapRequest =
+                        PutDataMapRequest.createFromDataMapItem(DataMapItem.fromDataItem(event.getDataItem()));
 
-            StateMachine.Symbols newInput=StateMachine.Symbols.Rm_in;
-            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
-            oldState=newState;
+                String path = event.getDataItem().getUri().getPath();
+                if (path.equals(getResources().getString(R.string.messagepath_latest_measurements))) {
+                    DataMap dataMap = putDataMapRequest.getDataMap();
+                    Set<String> dataMapKeySet=dataMap.keySet();
+                    List<MeasurementClass> listMeasurementClass=new ArrayList<MeasurementClass>();
+                    for(String key : dataMapKeySet)
+                    {
+                        String[] gridViewViewItem= MeasurementClass.getMeasurementGridViewPagerItem(key);
+                        String[] dataMapValueStringArray=  dataMap.getStringArray(key);
+                        MeasurementClass measurementClass=new MeasurementClass();
+                        measurementClass.setSensorClassLabel(gridViewViewItem[0]);
+                        measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItem[1]));
+                        measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]+gridViewViewItem[2]);
+                        listMeasurementClass.add(measurementClass);
+                    }
+                    pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
+                    dots.setPager(pager);
+                }
 
-
+            }
         }
+
     }
 
-    private class btnExitRoomClicked implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(context,
-                    "Exit room",
-                    Toast.LENGTH_SHORT).show();
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mResolvingError = true;
 
-            StateMachine.Symbols newInput=StateMachine.Symbols.Rm_out;
-            StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
-            oldState=newState;
-
-        }
     }
 
-*/
 
     //Async Task to fetch Sensors Class list of a given room ID
     public class BackgroundTaskGetBeaconList extends AsyncTask<Void, Void, Void> {
@@ -178,5 +266,13 @@ public class MainActivity extends Activity {
 
 
 
+    }
+
+
+    private class pagerOnLongListener implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
+        }
     }
 }

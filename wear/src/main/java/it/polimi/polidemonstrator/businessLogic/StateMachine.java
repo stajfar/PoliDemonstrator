@@ -1,4 +1,4 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
 /**
  * Created by saeed on 6/1/2016.

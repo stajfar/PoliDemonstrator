@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import it.polimi.polidemonstrator.MainActivity;
+import it.polimi.polidemonstrator.R;
 
 /**
  * Created by saeed on 6/13/2016.

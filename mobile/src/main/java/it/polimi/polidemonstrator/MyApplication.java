@@ -1,7 +1,9 @@
 package it.polimi.polidemonstrator;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.http.HttpResponseCache;
+
 import android.widget.Toast;
 
 import java.io.File;
@@ -18,8 +20,6 @@ public class MyApplication extends Application {
     public String getJsonServerURL() {
         return jsonServerURL;
     }
-
-
 
 
 

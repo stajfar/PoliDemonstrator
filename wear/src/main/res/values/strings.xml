@@ -16,13 +16,17 @@
     </array>
 
     <!-- message paths between wearble and handheld -->
-    <string name="messagepath_beacon">/poliDemonstrator-beacon</string>
+    <string name="messagepath_roomId">/poliDemonstrator-roomid</string>
+    <string name="messagepath_beacon">/poliDemonstrator-beaconListJson</string>
     <string name="messagepath_beacon_Change">/poliDemonstrator-beaconChange</string>
+    <string name="messagepath_latest_measurements">/poliDemonstrator-latestMeasurements</string>
 
     <!-- messages between wearble and handheld -->
     <string name="message_fetchBeaconList">poliDemonstrator-beacon-fetch-beacons</string>
     <string name="message_beaconChange_FF">FF</string>
     <string name="message_beaconChange_TF">TF</string>
     <string name="message_beaconChange_TT">TT</string>
+
+    <string name="message_latestMeasurementValues">poliDemonstrator-latest-measurement-values</string>
 
 </resources>

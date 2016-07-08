@@ -1,6 +1,6 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
-import android.app.Service;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -8,9 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;

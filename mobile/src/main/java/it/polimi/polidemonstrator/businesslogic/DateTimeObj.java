@@ -3,13 +3,13 @@ package it.polimi.polidemonstrator.businesslogic;
 /**
  * Created by saeed on 4/1/2016.
  */
-import java.sql.Time;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 import java.util.TimeZone;
 
 

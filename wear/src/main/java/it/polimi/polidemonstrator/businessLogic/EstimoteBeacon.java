@@ -1,11 +1,11 @@
-package it.polimi.polidemonstrator.businessLogic;
+package it.polimi.polidemonstrator.businesslogic;
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.estimote.sdk.Region;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
