@@ -72,12 +72,12 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
         if (!mResolvingError) {
             mGoogleApiClient.connect();
            // resolveNode();
-            Toast.makeText(this, "connecting", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(this, "connecting", Toast.LENGTH_SHORT).show();
         }
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
         if(myMessageType== MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
             resolveNodeAndRequestForMsgSend();
         }else if(myMessageType ==  MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal() ){
@@ -181,7 +181,7 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
             return;
         } else if (connectionResult.hasResolution()) {
-            Toast.makeText(this, "Conhas Resol" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Con. has Resol" , Toast.LENGTH_SHORT).show();
            /* try {
                 Activity mainAcitvity=new MainActivity();
                 mResolvingError = true;

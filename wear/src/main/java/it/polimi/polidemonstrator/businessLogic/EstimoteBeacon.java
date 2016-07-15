@@ -31,8 +31,7 @@ public class EstimoteBeacon implements Serializable {
     private String UUID;
     private int minor;
     private int major;
-    private static String serverURL;
-    private Context context;
+
 
     public int getMajor() {
         return major;
@@ -66,107 +65,11 @@ public class EstimoteBeacon implements Serializable {
         this.identifier = identifier;
     }
 
-    public static String getServerURL() {
-        return serverURL;
-    }
-
-    public static void setServerURL(String serverURL) {
-        EstimoteBeacon.serverURL = serverURL;
-    }
-
-
-    //list of functions
-    public EstimoteBeacon(Context context) {
-        this.context=context;
-        ServerURL serverURL=new ServerURL();
-        this.serverURL=serverURL.getServerURL(context);
-
-    }
-
 
     private EstimoteBeacon() {
 
     }
 
-    List<EstimoteBeacon> listestimoteBeacons;
-    public List<EstimoteBeacon> getRoomCorrelatedBeacons(int roomID,boolean isrefresh){
-       // new BackgroundTaskGetRoomCorrelatedBeacons(roomID,isrefresh).execute();
-        return listestimoteBeacons;
-    }
-
-
-    //Async Task to fetch API server url form web server
-    public class BackgroundTaskGetRoomCorrelatedBeacons extends AsyncTask<String, Void, List<EstimoteBeacon>> {
-        int roomID;
-        boolean isRefresh;
-        Context context;
-        public BackgroundTaskGetRoomCorrelatedBeacons(int roomID, boolean isReferesh, Context context) {
-            this.roomID=roomID;
-            this.isRefresh=isReferesh;
-            this.context=context;
-        }
-
-        @Override
-        protected List<EstimoteBeacon> doInBackground(String... params) {
-            String roomCorrelatedBeaconListJason=getRoomCorrelatedBeaconsJson(roomID, isRefresh);
-            if(roomCorrelatedBeaconListJason != null){
-                List<EstimoteBeacon> listEstimoteBeacon= parsJSON_Beacons(roomCorrelatedBeaconListJason);
-                return listEstimoteBeacon;
-            }
-           return null;
-        }
-
-        private String getRoomCorrelatedBeaconsJson(int roomID,boolean isRefresh) {
-            String JSON_STRING;
-            //// TODO: 6/6/2016 complete the url by room id
-            String beaconClassVariablesURL=""; //serverURL+"/beacons/room/"+String.valueOf(roomID);
-            try {
-                URL url = new URL(beaconClassVariablesURL);
-                HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-                if (isRefresh==true) {
-                    httpconnection.setUseCaches(false);
-                }
-                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
-                InputStream inputStream=httpconnection.getInputStream();
-                BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder stringBuilder=new StringBuilder();
-                while ((JSON_STRING = bufferedReader.readLine()) != null)
-                {
-                    stringBuilder.append(JSON_STRING+"\n");
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpconnection.disconnect();
-
-                String json_String=stringBuilder.toString().trim();
-
-                return json_String;
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(List<EstimoteBeacon> listestimotebeacons_result) {
-
-            if(listestimotebeacons_result != null){
-               // BeaconMonitoring beaconMonitoring=new BeaconMonitoring(context);
-               // beaconMonitoring.initializeBeaconManager(listestimotebeacons_result);
-            }else {
-                Toast.makeText(context,
-                        "Beacon list \n" +
-                                " fetch failed!",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
 
     public  static   List<EstimoteBeacon> parsJSON_Beacons(String json_results) {
         List<EstimoteBeacon> listEstimoteBeacon=new ArrayList<>();

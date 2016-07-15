@@ -116,23 +116,19 @@ public class BeaconMonitoring  implements SensorEventListener {
             switch(region.getIdentifier()) {
                 case "elevator":
                     //happened event
-                    MyNotification.showNotification(context, MainActivity.class,"Enter  elevator", "");
+                   // MyNotification.showNotification(context, MainActivity.class,"Enter  elevator", "");
                     StateMachine.Symbols newInputEvent=StateMachine.Symbols.Elv_in;
                     StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInputEvent.ordinal()];
                     if(oldState== StateMachine.State.TF && newState == StateMachine.State.FF ||
                             oldState== StateMachine.State.TT && newState == StateMachine.State.FF){
                         //this means that user is going to leave the building monitor if everything is fine
                         //context.startService(new Intent(context, SendMessageServiceToHandheld.class).putExtra("myMessage", "userLeaving"));
-                        MyNotification.showNotification(context, MainActivity.class,
-                                "Leaving?",
-                                newState.toString());
+                        //MyNotification.showNotification(context, MainActivity.class, "Leaving?", newState.toString());
                         //Send TT message to handheld
                         //send a message by service to handheld, requesting beacons of the room
                         sendMessageToHandheld_BeaconChange(newState);
 
-                        //
-                        //room.setRoomid("1");
-                        //new BackgroundTaskGetMeasurementList(room,true).execute();
+
                     }
                     //ok everything is down and we have to update old state by new state
                     oldState=newState;
@@ -141,7 +137,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                     StateMachine.Symbols newInput=StateMachine.Symbols.Rm_in;
                     StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
                     oldState=newState2;
-                    MyNotification.showNotification(context, MainActivity.class,"Enter  room", newState2.toString());
+                   // MyNotification.showNotification(context, MainActivity.class,"Enter  room", newState2.toString());
                     //Send TT message to handheld
                     //send a message by service to handheld, requesting beacons of the room
                     sendMessageToHandheld_BeaconChange(newState2);
@@ -192,7 +188,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                         StateMachine.State newState = StateMachine.transition[oldState.ordinal()][newInput.ordinal()];
 
                         oldState = newState;
-                        MyNotification.showNotification(context, MainActivity.class, "Exiting  elevator", newState.toString());
+                       // MyNotification.showNotification(context, MainActivity.class, "Exiting  elevator", newState.toString());
                         sendMessageToHandheld_BeaconChange(newState);
                     }
                     break;
@@ -201,7 +197,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                         StateMachine.Symbols newInput2 = StateMachine.Symbols.Rm_out;
                         StateMachine.State newState2 = StateMachine.transition[oldState.ordinal()][newInput2.ordinal()];
                         oldState = newState2;
-                        MyNotification.showNotification(context, MainActivity.class, "Exiting  room", newState2.toString());
+                        //MyNotification.showNotification(context, MainActivity.class, "Exiting  room", newState2.toString());
                         sendMessageToHandheld_BeaconChange(newState2);
                     }
                     break;
@@ -220,10 +216,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                 //Start the timer to do TimerTask after 2 minutes
                 timer.schedule(timerTask, 10 * 60 * 1000);
             }
-            //R
-            //room.setRoomid("1");
-            //new BackgroundTaskGetMeasurementList(room,true).execute();
-            // sendMessage();
+
         }
     }
 

@@ -121,7 +121,6 @@ public class MainActivity extends Activity  implements
     private void readPreviousStoredDataAPI() {
         PendingResult<DataItemBuffer> results = Wearable.DataApi.getDataItems(mGoogleApiClient);
 
-
         results.setResultCallback(new ResultCallback<DataItemBuffer>() {
             @Override
             public void onResult(DataItemBuffer dataItems) {
@@ -197,7 +196,7 @@ public class MainActivity extends Activity  implements
                         measurementClass.setSensorClassLabel(gridViewViewItem[0]);
                         measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItem[1]));
                         measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]);
-                        measurementClass.setSensorClassMeasurementUnit(dataMapValueStringArray[2]);
+                        measurementClass.setSensorClassMeasurementUnit(gridViewViewItem[2]);
                         listMeasurementClass.add(measurementClass);
                     }
                     pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
