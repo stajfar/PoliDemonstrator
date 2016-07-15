@@ -159,9 +159,11 @@ public class RoomSelector extends Activity {
         Room room;
         boolean isRefresh;
 
+
         public BackgroundTaskGetMeasurementList(Room room, boolean isRefresh) {
             this.room=room;
             this.isRefresh=isRefresh;
+
         }
 
 

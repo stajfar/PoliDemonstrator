@@ -185,7 +185,15 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
 
                 }
 
+            } else if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_last7days_measurements))){
+                String json_MeasurementsLast7Days= gotBasket.getString("myMessage_json_Measurement7DaysValues");
+                String measurementClassID= gotBasket.getString("myMessage_MeasurementClassID");
+
+                putDataMapReq.getDataMap().putString("myMessage_json_Measurement7DaysValues",json_MeasurementsLast7Days);
+                putDataMapReq.getDataMap().putString("myMessage_MeasurementClassID",measurementClassID);
             }
+
+
             PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
             putDataReq.setUrgent();
             PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
@@ -196,6 +204,9 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
                     if (!dataItemResult.getStatus().isSuccess()) {
                         Log.e("TAG", "Failed to put DataItem"
                                 + dataItemResult.getStatus().getStatusCode());
+                    }
+                    else {
+                        Toast.makeText(context, "DataAPI Updated.", Toast.LENGTH_LONG).show();
                     }
                 }
             });

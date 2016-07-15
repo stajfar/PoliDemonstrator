@@ -40,6 +40,7 @@
                 <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-beaconListJson" />
                 <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-beaconChange" />
                 <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-latestMeasurements" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/poliDemonstrator-last7DaysMeasurements" />
             </intent-filter>
         </service>
 

@@ -118,12 +118,29 @@ public class DateTimeObj {
         return  mMonth;
     }
 
-    public static Integer getDayofWeek(long timeStamp)
+    public static String getDayofWeek(long timeStamp)
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeStamp);
         int mDay = calendar.get(Calendar.DAY_OF_WEEK);
-        return  mDay;
+        switch (mDay) {
+            case Calendar.MONDAY:
+                return "Mon";
+            case Calendar.TUESDAY:
+                return "Tue";
+            case Calendar.WEDNESDAY:
+                return "Wed";
+            case Calendar.THURSDAY:
+                return "Thu";
+            case Calendar.FRIDAY:
+                return "Fri";
+            case Calendar.SATURDAY:
+                return "Sat";
+            case Calendar.SUNDAY:
+                return "Sun";
+        }
+
+        return  null;
     }
 
     public static String getTime(long timeStamp)

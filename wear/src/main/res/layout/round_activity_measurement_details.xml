@@ -4,17 +4,7 @@
     android:layout_height="match_parent"
     >
 
-    <TextView
-        android:id="@+id/tVMeasurementLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="#000000"
-        android:textColor="#FFFFFF"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:text="Average Vals."></TextView>
+
 
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,35 +19,48 @@
             android:background="#474B4D"
             >
 
+                <TextView
+                    android:id="@+id/tVTodaysTrend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:background="#000000"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:text="Today's Trend"
+                    android:layout_marginBottom="2dp"
+                    android:layout_gravity="center_horizontal" />
 
 
 
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chart"
+                    android:layout_width="210dp"
+                    android:layout_height="195dp"
+                    android:layout_gravity="center_horizontal|center_vertical" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+                <TextView
+                    android:id="@+id/tVLast7DaysAvg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:background="#000000"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:text="Last 7-Day Average"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_gravity="center_horizontal" />
 
-        android:layout_gravity="center_horizontal|center_vertical"
-        />
-
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/textViewd2"
-            android:layout_gravity="center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Large Text"
-                android:id="@+id/textViewdd2"
-                android:layout_gravity="center_horizontal" />
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barchart"
+                    android:layout_width="210dp"
+                    android:layout_height="195dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginBottom="10dp"
+                    />
 
         </LinearLayout>
     </ScrollView>

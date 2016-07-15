@@ -4,6 +4,8 @@ package it.polimi.polidemonstrator.businesslogic;
  * Created by saeed on 5/20/2016.
  */
 
+import com.estimote.sdk.internal.utils.L;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +73,18 @@ public class DateTimeObj {
         return dateTimeMili;
     }
 
+    public static Long getDateTimeInMilli(String simpleDateFormat){
+        SimpleDateFormat dfDate  = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        try {
+            Date date=dfDate.parse(simpleDateFormat);
+            long dateTimeMilli=date.getTime();
+            return dateTimeMilli;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 
@@ -117,12 +131,29 @@ public class DateTimeObj {
         return  mMonth;
     }
 
-    public static Integer getDayofWeek(long timeStamp)
+    public static String getDayofWeek(long timeStamp)
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeStamp);
         int mDay = calendar.get(Calendar.DAY_OF_WEEK);
-        return  mDay;
+        switch (mDay) {
+            case Calendar.MONDAY:
+                return "M";
+            case Calendar.TUESDAY:
+                return "T";
+            case Calendar.WEDNESDAY:
+                return "W";
+            case Calendar.THURSDAY:
+                return "Th";
+            case Calendar.FRIDAY:
+                return "F";
+            case Calendar.SATURDAY:
+                return "Sa";
+            case Calendar.SUNDAY:
+                return "Su";
+        }
+
+        return  null;
     }
 
     public static String getTime(long timeStamp)

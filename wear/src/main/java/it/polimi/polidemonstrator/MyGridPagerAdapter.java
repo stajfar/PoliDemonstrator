@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.GridPagerAdapter;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,11 +49,15 @@ public class MyGridPagerAdapter extends GridPagerAdapter {
         final TextView textView = (TextView) view.findViewById(R.id.tVMeasurementValueLatestValue);
         final TextView textView2=(TextView) view.findViewById(R.id.tVMeasurementLabel);
         final CircledImageView imageView = (CircledImageView) view.findViewById(R.id.imgvMeasurementImage);
-        textView.setText(listMeasurementClass.get(row).getSensorClassSensorLatestValue());
+
+        textView.setText(listMeasurementClass.get(row).getSensorClassSensorLatestValue()+listMeasurementClass.get(row).getSensorClassMeasurementUnit());
         textView2.setText(listMeasurementClass.get(row).getSensorClassLabel());
         imageView.setImageResource(listMeasurementClass.get(row).getSensorClassImage());
-        view.setTag(listMeasurementClass.get(row).getSensorClasseId());
+        view.setTag(R.id.TAG_Measurement_ID,listMeasurementClass.get(row).getSensorClasseId());
+        view.setTag(R.id.TAG_Measurement_Label,listMeasurementClass.get(row).getSensorClassLabel());
+        view.setTag(R.id.TAG_Measurement_Unit,listMeasurementClass.get(row).getSensorClassMeasurementUnit());
         view.setOnClickListener(new viewOnClickListener());
+        view.setLongClickable(true);
         container.addView(view);
         return view;
     }
@@ -70,12 +76,19 @@ public class MyGridPagerAdapter extends GridPagerAdapter {
     private class viewOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            String measurementClassId=(String)v.getTag();
+            String measurementClassId=(String)v.getTag(R.id.TAG_Measurement_ID);
+            String measurementClassLabel=(String)v.getTag(R.id.TAG_Measurement_Label);
+            String measurementClassMeasurementUnit=(String)v.getTag(R.id.TAG_Measurement_Unit);
             Bundle basket=new Bundle();
             basket.putString("measurementClassId",measurementClassId);
+            basket.putString("measurementClassLabel",measurementClassLabel);
+            basket.putString("measurementClassMeasurementUnit",measurementClassMeasurementUnit);
             Intent openChartActivity = new Intent("android.intent.action.MEASUREMENTDETAIL");
             openChartActivity.putExtras(basket);
             mContext.startActivity(openChartActivity);
         }
     }
+
+
+
 }

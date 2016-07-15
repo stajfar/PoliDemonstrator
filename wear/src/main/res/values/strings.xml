@@ -20,6 +20,7 @@
     <string name="messagepath_beacon">/poliDemonstrator-beaconListJson</string>
     <string name="messagepath_beacon_Change">/poliDemonstrator-beaconChange</string>
     <string name="messagepath_latest_measurements">/poliDemonstrator-latestMeasurements</string>
+    <string name="messagepath_last7days_measurements">/poliDemonstrator-last7DaysMeasurements</string>
 
     <!-- messages between wearble and handheld -->
     <string name="message_fetchBeaconList">poliDemonstrator-beacon-fetch-beacons</string>
@@ -28,5 +29,11 @@
     <string name="message_beaconChange_TT">TT</string>
 
     <string name="message_latestMeasurementValues">poliDemonstrator-latest-measurement-values</string>
+
+
+    <!-- unique id for setting view.setTag in MyGridPagerAdapter -->
+    <item type="id" name="TAG_Measurement_ID"/>
+    <item type="id" name="TAG_Measurement_Label"/>
+    <item type="id" name="TAG_Measurement_Unit"/>
 
 </resources>

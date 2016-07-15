@@ -3,6 +3,7 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.android.gms.common.data.FreezableUtils;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 
 import it.polimi.polidemonstrator.R;
+import it.polimi.polidemonstrator.RoomSelector;
 import it.polimi.polidemonstrator.businesslogic.businessrules.JSON_Ruler;
 import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
 
@@ -30,6 +32,11 @@ public class ListenerServiceFromWear extends WearableListenerService {
 
 
     Context context;
+
+
+
+
+
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
@@ -81,19 +88,21 @@ public class ListenerServiceFromWear extends WearableListenerService {
 
         }else if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_latest_measurements))){
             //message is related to beacons
-            String myMessage=new String(messageEvent.getData());
-            if(myMessage.equals(getResources().getString(R.string.message_latestMeasurementValues))){
-               //fetch the latest measurement values and then send it by Data API to watch
-                //// TODO: 7/8/2016 modify the room id
-                Room room=new Room();
-                room.setRoomid("1");
-                MeasurementClass measurementClass =new MeasurementClass(context);
-                measurementClass.new BackgroundTaskGetLatestMeasurementClassValues(context,room,true);
+            String myMessage_roomID=new String(messageEvent.getData());
+            Room room=new Room();
+            room.setRoomid(myMessage_roomID);
 
+            MeasurementClass measurementClass =new MeasurementClass(context);
+            measurementClass.new BackgroundTaskGetLatestMeasurementClassValues(context,room,false).execute();
+        }else if(messageEvent.getPath().equals(getResources().getString(R.string.messagepath_last7days_measurements))){
+            //message is related to MeasurementID
+            String myMessage_RoomID_MeasurementID=new String(messageEvent.getData());
+            String[] roomID_MeasurementID=myMessage_RoomID_MeasurementID.split(",");
+            //Call a Background Task to select the json form cloud and to put it into DataAPI
+            MeasurementClass measurementClass =new MeasurementClass(context);
+            measurementClass. new BackgroundTaskGetLast7DaysMeasurementClassValues(roomID_MeasurementID[0],
+                    roomID_MeasurementID[1],false).execute();
 
-
-
-            }
 
         }
 

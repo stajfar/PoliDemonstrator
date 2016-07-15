@@ -1,6 +1,7 @@
 package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -48,6 +50,7 @@ public class MeasurementClass implements Serializable {
     private String sensorClassLabel;
     private int sensorClassImage;
     private String sensorClassSensorLatestValue;
+    private Context context;
 
     private String sensorVariableLabel;
     private List<Integer> listSensorVariable;
@@ -101,6 +104,7 @@ public class MeasurementClass implements Serializable {
 
 
     public MeasurementClass(Context context) {
+        this.context=context;
         final MyApplication myApplication=(MyApplication)context.getApplicationContext();
         this.serverURL= myApplication.getJsonServerURL();
     }
@@ -958,10 +962,96 @@ public class MeasurementClass implements Serializable {
         @Override
         protected void onPostExecute(List<MeasurementClass> measurementClasses) {
             super.onPostExecute(measurementClasses);
+            // put results on DataAPI
+            if (listMeasurementClassesParesed != null) {
+
+                //put latest values to DATA API Message path
+                String myMessagePath=context.getResources().getString(R.string.messagepath_latest_measurements);
+                //String myMessage=context.getResources().getString(R.string.message_fetchBeaconList);
+                context.startService(new Intent(context,
+                        SendMessageServiceToWearble.class)
+                        .putExtra("myMessagePath",myMessagePath)
+                        .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
+                        .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+
+            }
+
+
+        }
+    }
+
+
+    public class BackgroundTaskGetLast7DaysMeasurementClassValues extends AsyncTask<Void,Void,String>{
+        String roomID;
+        String measurementClassID;
+        boolean isRefreshData;
+
+
+        public BackgroundTaskGetLast7DaysMeasurementClassValues(String roomID,String measurementClassID, boolean isRefreshData) {
+            this.roomID=roomID;
+            this.measurementClassID = measurementClassID;
+            this.isRefreshData=isRefreshData;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            //use json url generator to generate the related url
+            String jsonUrls= serverURL+"/measurements/60min/room/"+roomID+"/variableclass/"+measurementClassID+"/"+ DateTimeObj.getCurrentDate()+"?weekly=true";
+            String json_Measurement7DaysValues=json_Downloader(jsonUrls,isRefreshData,60*40);
+            //put results to DataApi
+            //put latest values to DATA API Message path
+            return json_Measurement7DaysValues;
+        }
+
+        @Override
+        protected void onPostExecute(String json_Measurement7DaysValues) {
+            super.onPostExecute(json_Measurement7DaysValues);
+
+
+            String myMessagePath=context.getResources().getString(R.string.messagepath_last7days_measurements);
+            //String myMessage=context.getResources().getString(R.string.message_fetchBeaconList);
+            context.startService(new Intent(context,
+                    SendMessageServiceToWearble.class)
+                    .putExtra("myMessagePath",myMessagePath)
+                    .putExtra("myMessage_json_Measurement7DaysValues", json_Measurement7DaysValues)
+                    .putExtra("myMessage_MeasurementClassID",measurementClassID)
+                    .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
 
 
         }
+    }
+
+
+    private String json_Downloader(String stringUrl,boolean isRefreshCachedData,int maxStale){
+        String JSON_STRING;
+        try {
+            URL url = new URL(stringUrl);
+            HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
+            if (isRefreshCachedData==true) {
+                httpconnection.setUseCaches(false);
+            }
+
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            InputStream inputStream=httpconnection.getInputStream();
+            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder=new StringBuilder();
+            while ((JSON_STRING = bufferedReader.readLine()) != null)
+            {
+                stringBuilder.append(JSON_STRING+"\n");
+            }
+            bufferedReader.close();
+            inputStream.close();
+            httpconnection.disconnect();
+
+            return  stringBuilder.toString().trim();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+      return null;
     }
 
 

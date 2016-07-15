@@ -52,15 +52,10 @@ public class MainActivity extends Activity  implements
         DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     Context context;
-
-
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingError=false;
-
     GridViewPager pager;
     DotsPageIndicator dots;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,40 +70,14 @@ public class MainActivity extends Activity  implements
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        //fetch BeaconList to be monitored by watch from handheld
-       // new BackgroundTaskGetBeaconList().execute();
-
-
-
-
-
-
-
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-
-
-
-
-
-
                 pager = (GridViewPager) stub.findViewById(R.id.pager);
-                pager.setOnLongClickListener(new pagerOnLongListener());
                 dots = (DotsPageIndicator) stub.findViewById(R.id.indicator);
-
-
             }
         });
-
-
-
-
-
-
-
-
 
 
 
@@ -146,11 +115,7 @@ public class MainActivity extends Activity  implements
 
         //read previously stored data
         readPreviousStoredDataAPI();
-
         Wearable.DataApi.addListener(mGoogleApiClient, this);
-
-
-
     }
 
     private void readPreviousStoredDataAPI() {
@@ -176,7 +141,8 @@ public class MainActivity extends Activity  implements
                                 measurementClass.setSensorClasseId(key);
                                 measurementClass.setSensorClassLabel(gridViewViewItemLookupTable[0]);
                                 measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItemLookupTable[1]));
-                                measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]+gridViewViewItemLookupTable[2]);
+                                measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]);
+                                measurementClass.setSensorClassMeasurementUnit(gridViewViewItemLookupTable[2]);
                                 listMeasurementClass.add(measurementClass);
                             }
                             pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
@@ -189,6 +155,13 @@ public class MainActivity extends Activity  implements
                             final List<EstimoteBeacon> listBeacons=EstimoteBeacon.parsJSON_Beacons(myListEstimoteBeacons);
                             BeaconMonitoring beaconMonitoring=new BeaconMonitoring(context);
                             beaconMonitoring.initializeBeaconManager(listBeacons);
+
+                        } else if(path.equals(getResources().getString(R.string.messagepath_roomId))){
+                            DataMapItem dataMapItem = DataMapItem.fromDataItem(dataitem);
+                            DataMap dataMap = dataMapItem.getDataMap();
+                            String roomID= dataMap.getString("myRoomID");
+                            //send a message to handheld to update DataApi about latest measurements
+                            new BackgroundTaskGetUpdatedLatestMeasurementValues(roomID).execute();
 
                         }
                     }
@@ -223,7 +196,8 @@ public class MainActivity extends Activity  implements
                         MeasurementClass measurementClass=new MeasurementClass();
                         measurementClass.setSensorClassLabel(gridViewViewItem[0]);
                         measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItem[1]));
-                        measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]+gridViewViewItem[2]);
+                        measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]);
+                        measurementClass.setSensorClassMeasurementUnit(dataMapValueStringArray[2]);
                         listMeasurementClass.add(measurementClass);
                     }
                     pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
@@ -243,24 +217,25 @@ public class MainActivity extends Activity  implements
 
 
     //Async Task to fetch Sensors Class list of a given room ID
-    public class BackgroundTaskGetBeaconList extends AsyncTask<Void, Void, Void> {
+    public class BackgroundTaskGetUpdatedLatestMeasurementValues extends AsyncTask<Void, Void, Void> {
+        String roomId;
 
-
-        public BackgroundTaskGetBeaconList() {
-
+        public BackgroundTaskGetUpdatedLatestMeasurementValues(String roomID) {
+            this.roomId=roomID;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            //send a message by service to handheld, requesting beacons of the room
-            String myMessagePath=getResources().getString(R.string.messagepath_beacon);
-            String myMessage=getResources().getString(R.string.message_fetchBeaconList);
-            startService(new Intent(context,
-                    SendMessageServiceToHandheld.class)
-                    .putExtra("myMessagePath",myMessagePath).putExtra("myMessage",myMessage)
-                    .putExtra("myMessageType",SendMessageServiceToHandheld.MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()));
+            if(roomId != null) {
+                //send a message by service to handheld, requesting beacons of the room
+                String myMessagePath = getResources().getString(R.string.messagepath_latest_measurements);
+                String myMessage = roomId;
+                startService(new Intent(context,
+                        SendMessageServiceToHandheld.class)
+                        .putExtra("myMessagePath", myMessagePath).putExtra("myMessage", myMessage)
+                        .putExtra("myMessageType", SendMessageServiceToHandheld.MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()));
 
-
+            }
             return null;
         }
 
@@ -269,10 +244,5 @@ public class MainActivity extends Activity  implements
     }
 
 
-    private class pagerOnLongListener implements View.OnLongClickListener {
-        @Override
-        public boolean onLongClick(View v) {
-            return false;
-        }
-    }
+
 }

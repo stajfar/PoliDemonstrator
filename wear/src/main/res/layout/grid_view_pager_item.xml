@@ -16,17 +16,21 @@
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         />
+
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
+
         android:background="#474B4D">
 
-    <android.support.wearable.view.CircledImageView
+
+        <android.support.wearable.view.CircledImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_humidity"
@@ -35,7 +39,7 @@
         app:circle_color="@color/white"
         app:circle_radius="50dp"
         app:circle_radius_pressed="40dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="10dp"/>
     <TextView
         android:id="@+id/tVMeasurementValueLatestValue"
         android:layout_width="match_parent"
@@ -43,7 +47,7 @@
         android:gravity="center_horizontal"
 
         android:textColor="#FFFFFF"
-        android:textSize="35dp"
+        android:textSize="30dp"
         android:textStyle="bold"
        />
 

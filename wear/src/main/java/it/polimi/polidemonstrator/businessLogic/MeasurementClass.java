@@ -40,6 +40,10 @@ public class MeasurementClass implements Serializable {
     private int sensorClassImage;
     private String sensorClassSensorLatestValue;
 
+
+
+    private String sensorClassMeasurementUnit;
+
     public MeasurementClass() {
     }
 
@@ -50,6 +54,15 @@ public class MeasurementClass implements Serializable {
 
     public void setSensorClassImage(int sensorClassImage) {
         this.sensorClassImage = sensorClassImage;
+    }
+
+
+    public String getSensorClassMeasurementUnit() {
+        return sensorClassMeasurementUnit;
+    }
+
+    public void setSensorClassMeasurementUnit(String sensorClassMeasurementUnit) {
+        this.sensorClassMeasurementUnit = sensorClassMeasurementUnit;
     }
 
 
