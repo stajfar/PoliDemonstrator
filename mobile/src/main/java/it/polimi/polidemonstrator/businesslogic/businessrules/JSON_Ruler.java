@@ -176,8 +176,8 @@ public class JSON_Ruler {
 
         private  String getRoomCorrelatedRulesJson(int roomID,boolean isRefresh) {
             String JSON_STRING;
-            //// TODO: 6/6/2016 complete the url by roomID
-            String rulesURL="https://api.myjson.com/bins/1cgrl"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
+            //// TODO: 6/6/2016 complete the rules url by roomID
+            String rulesURL="https://api.myjson.com/bins/2vze5"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
             try {
                 URL url = new URL(rulesURL);
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();

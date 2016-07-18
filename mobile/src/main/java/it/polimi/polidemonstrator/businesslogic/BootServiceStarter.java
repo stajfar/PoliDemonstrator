@@ -13,8 +13,7 @@ public class BootServiceStarter  extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             Intent pushIntent = new Intent(context, ListenerServiceFromWear.class);
-            Toast.makeText(context, "Starting Service" , Toast.LENGTH_LONG).show();
-           // context.startService(pushIntent);
+            //Toast.makeText(context, "Starting PoliDemonstrator" , Toast.LENGTH_LONG).show();
         }
     }
 }

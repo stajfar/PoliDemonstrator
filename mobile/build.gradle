@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
 
 
@@ -19,6 +20,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dexOptions {
+        javaMaxHeapSize "2g"
     }
 }
 
@@ -33,6 +37,8 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.android.support:design:23.3.0'
+    //to support multidex file in compile time to avoid build errors
+    compile 'com.android.support:multidex:1.0.1'
 }
 //to add chart libraries to the project
 repositories {

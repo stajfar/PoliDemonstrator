@@ -25,9 +25,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+
 import java.util.List;
 
 import it.polimi.polidemonstrator.MainActivity;
@@ -85,7 +83,7 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
         this.myMessageType=gotBasket.getInt("myMessageType");
         if(myMessageType== MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
             resolveNodeAndRequestForMsgSend();
@@ -117,7 +115,6 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
                 }
                 else {
                     //wearble  is not connected to handheld and can connect to internet directly to fetch data
-
 
                 }
 
@@ -206,7 +203,7 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
                                 + dataItemResult.getStatus().getStatusCode());
                     }
                     else {
-                        Toast.makeText(context, "DataAPI Updated.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "DataPath Updated.", Toast.LENGTH_LONG).show();
                     }
                 }
             });

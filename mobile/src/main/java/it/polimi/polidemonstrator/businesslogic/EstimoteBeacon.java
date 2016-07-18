@@ -28,7 +28,7 @@ public class EstimoteBeacon {
     private int minor;
     private int major;
     private static String serverURL;
-    private Context context;
+
 
     public int getMajor() {
         return major;
@@ -73,22 +73,15 @@ public class EstimoteBeacon {
 
     //list of functions
     public EstimoteBeacon(Context context) {
-        this.context=context;
         final MyApplication myApplication=(MyApplication)context.getApplicationContext();
         this.serverURL= myApplication.getJsonServerURL();
 
     }
 
 
-    private EstimoteBeacon() {
 
-    }
 
-    List<EstimoteBeacon> listestimoteBeacons;
-    public List<EstimoteBeacon> getRoomCorrelatedBeacons(int roomID,boolean isrefresh){
-        // new BackgroundTaskGetRoomCorrelatedBeacons(roomID,isrefresh).execute();
-        return listestimoteBeacons;
-    }
+
 
 
     //Async Task to fetch API server url form web server
@@ -157,6 +150,7 @@ public class EstimoteBeacon {
                         SendMessageServiceToWearble.class)
                         .putExtra("myMessagePath",myMessagePath)
                         .putExtra("myListEstimoteBeaconsJson", myMessage)
+
                         .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
             }else {

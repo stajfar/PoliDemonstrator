@@ -33,16 +33,11 @@ public class ListenerServiceFromWear extends WearableListenerService {
 
     Context context;
 
-
-
-
-
-
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         super.onDataChanged(dataEvents);
 
-           /*
+         /*
          * Receive the datachange from wear
          */
         context=getApplicationContext();
@@ -62,7 +57,6 @@ public class ListenerServiceFromWear extends WearableListenerService {
                 }
             }
 
-
         }
     }
 
@@ -74,19 +68,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
         context=getApplicationContext();
 
 
-        if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_beacon))) {
-            //message is related to beacons
-            String myMessage=new String(messageEvent.getData());
-            if(myMessage.equals(getResources().getString(R.string.message_fetchBeaconList))){
-                //fetch the list of beacons from internet and send it back to wearble
-                //EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
-                //call async task to fetch beacon lists and send it to wear
-                //// TODO: 6/22/2016  replace the rooom id
-                //estimoteBeacon.new BackgroundTaskGetRoomCorrelatedBeacons(1,false,context).execute();
-
-            }
-
-        }else if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_latest_measurements))){
+        if (messageEvent.getPath().equals(getResources().getString(R.string.messagepath_latest_measurements))){
             //message is related to beacons
             String myMessage_roomID=new String(messageEvent.getData());
             Room room=new Room();
@@ -107,31 +89,6 @@ public class ListenerServiceFromWear extends WearableListenerService {
         }
 
 
-        /*
-        if (messageEvent.getPath().equals(POLI_DEMONSTRATOR_WEAR_PATH)) {
-            //do something when you receive the message
-            //fetch data from internet and push it back to wear
-            String myMessage=new String(messageEvent.getData());
-
-        context=this;
-        Class<MainActivity> activityClass= MainActivity.class;
-        Intent notifyIntent = new Intent(context,activityClass);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(context, 0,
-                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        android.app.Notification notification = new android.app.Notification.Builder(context)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(myMessage)
-                .setContentText("message recieved!!!")
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build();
-        notification.defaults |= android.app.Notification.DEFAULT_SOUND;
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
-        }
-        */
 
     }
 
@@ -146,10 +103,9 @@ public class ListenerServiceFromWear extends WearableListenerService {
             //Watch says user is just Entered the elevator from floor(Leaving?)  AND
 
             //// TODO: 6/27/2016  correct the room number and isrefresh
-           JSON_Ruler.fetchCorrelatedUserRulesFromCloud(context,1,false,myMessage);
+           JSON_Ruler.fetchCorrelatedUserRulesFromCloud(context,2,false,myMessage);
 
         }
-
 
     }
 

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.http.HttpResponseCache;
 
+import android.support.multidex.MultiDex;
 import android.widget.Toast;
 
 import java.io.File;
@@ -43,7 +44,7 @@ public class MyApplication extends Application {
         //install the http response cache for the application
         try {
             File httpCacheDir = new File(MyApplication.this.getCacheDir(), "http");
-            long httpCacheSize = 5 * 1024 * 1024; // 5 MiB of cache space
+            long httpCacheSize = 8 * 1024 * 1024; // 5 MiB of cache space
             HttpResponseCache.install(httpCacheDir, httpCacheSize);}
         catch(IOException e){
             Toast.makeText(this,
@@ -51,6 +52,15 @@ public class MyApplication extends Application {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
+
+
 
 
 }

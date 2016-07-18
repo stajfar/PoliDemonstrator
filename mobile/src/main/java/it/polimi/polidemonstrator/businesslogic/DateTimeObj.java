@@ -16,7 +16,7 @@ import java.util.TimeZone;
 public class DateTimeObj {
 
     public DateTimeObj() {
-        // TODO Auto-generated constructor stub
+
     }
     public static String getCurrentDate(){
 

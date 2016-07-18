@@ -391,7 +391,7 @@ public class MeasurementClass implements Serializable {
         put("6", new String[]{"Active Power", String.valueOf(R.drawable.ic_active_power)," "});
         put("7", new String[]{"adb Sensors", String.valueOf(R.drawable.ic_information)," "});
         put("8", new String[]{"??", String.valueOf(R.drawable.ic_information)," "});
-        put("9",new String[]{"Power Consumption",String.valueOf(R.drawable.ic_powercunsumption),"W"});
+        put("9",new String[]{"Power Cons.",String.valueOf(R.drawable.ic_powercunsumption),"W"});
         put("10", new String[]{"Active Energy Meter", String.valueOf(R.drawable.ic_active_energy_meter)," "});
     }};
     public static String[] getMeasurementListViewItem(String measurementId) {
@@ -645,9 +645,13 @@ public class MeasurementClass implements Serializable {
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
             if (isRefresh==true) {
                 httpconnection.setUseCaches(false);
+
+
             }
-            int maxStale = 60 * 60 ; // tolerate 60 minutes stale
-            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+                int maxStale = 60 * 60; // tolerate 60 minutes stale
+                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+
+
 
             InputStream inputStream=httpconnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));

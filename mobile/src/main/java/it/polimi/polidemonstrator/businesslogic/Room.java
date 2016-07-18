@@ -115,7 +115,9 @@ public class Room {
                     }
                     count++;
                 }
-                mapParsedResults.put(measurementItem.getSensorVariableLabel(),listJsonMeasurementVariables);
+                if(listJsonMeasurementVariables.size() >0) {
+                    mapParsedResults.put(measurementItem.getSensorVariableLabel(), listJsonMeasurementVariables);
+                }
             }
             return mapParsedResults;
 

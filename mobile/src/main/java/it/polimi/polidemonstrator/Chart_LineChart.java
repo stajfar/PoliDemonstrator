@@ -284,7 +284,7 @@ public class Chart_LineChart extends AppCompatActivity
             if (measurementClassVariablesParsed != null) {
                 ArrayList<ILineDataSet> datasets = new ArrayList<>();
                 //prepare X values in miliseconds for the x-axis of the chart
-                ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, SelectedDate);//// TODO: 5/5/2016 selectedDate last parameter
+                ArrayList<Long> arrayListXAxisValuesInMili = DateTimeObj.getDateTimeMiliRange(measurementTimeWindow, intervals, SelectedDate);
                 for (int i = 0; i < measurementClassVariablesParsed.size(); i++) {
                     ArrayList<Entry> arrayListYvalues = addRecordsToChartData(measurementClassVariablesParsed.get(i).getLinexyvalues(), arrayListXAxisValuesInMili, measurementTimeWindow);
 
