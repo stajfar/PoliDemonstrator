@@ -1,9 +1,6 @@
 package it.polimi.polidemonstrator.businesslogic;
 
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.widget.Toast;
 
 
 
@@ -11,14 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +72,7 @@ public class EstimoteBeacon implements Serializable {
             {
                 EstimoteBeacon estimoteBeacon=new EstimoteBeacon();
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
-                if (jsonObject.getString("UUID") != "null") {
+                if (!jsonObject.getString("UUID").equals("null")) {
                     estimoteBeacon.setIdentifier(jsonObject.getString("identifier"));
                     estimoteBeacon.setUUID(jsonObject.getString("UUID"));
                     estimoteBeacon.setMajor(jsonObject.getInt("major"));

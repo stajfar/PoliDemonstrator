@@ -86,10 +86,7 @@ public class MeasurementClass implements Serializable {
 
 
 
-    public MeasurementClass(Context context) {
-        ServerURL serverURL=new ServerURL();
-        this.serverURL=serverURL.getServerURL(context);
-    }
+
 
 
 
@@ -133,7 +130,7 @@ public List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> 
         try {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-            if (isRefresh==true) {
+            if (isRefresh) {
                 httpconnection.setUseCaches(false);
             }
             int maxStale = 60 * 60 ; // tolerate 60 minutes stale
@@ -175,12 +172,12 @@ public List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> 
             int count=0;
             float value;
             long timestamp;
-            LinkedHashMap<Long,Float> hashMapParsedResult=new LinkedHashMap<Long,Float>();
+            LinkedHashMap<Long,Float> hashMapParsedResult=new LinkedHashMap<>();
 
             while (count< jsonArray.length())
             {
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
-                if (jsonObject.getString("value") != "null") {
+                if (!jsonObject.getString("value").equals("null")) {
                     value = Float.valueOf(jsonObject.getString("value"));
                     timestamp = Long.valueOf(jsonObject.getString("timestamp"));
                     hashMapParsedResult.put(timestamp, value);

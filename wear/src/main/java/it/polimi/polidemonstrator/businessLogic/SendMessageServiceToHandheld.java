@@ -1,9 +1,11 @@
 package it.polimi.polidemonstrator.businesslogic;
 
+import android.app.Activity;
 import android.app.Service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -24,6 +26,8 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+
+import it.polimi.polidemonstrator.MainActivity;
 
 
 /**
@@ -70,10 +74,11 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
     private void connectToGoogleClientAPIandSendMessage() {
         if (!mResolvingError) {
-            mGoogleApiClient.connect();
-           // resolveNode();
-          //  Toast.makeText(this, "connecting", Toast.LENGTH_SHORT).show();
+            if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
+                mGoogleApiClient.connect();
+            }
         }
+
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -169,6 +174,7 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
     @Override
     public void onConnectionSuspended(int i) {
+        Toast.makeText(this, "ConSuspended" , Toast.LENGTH_LONG).show();
 
     }
 
@@ -182,18 +188,16 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
             return;
         } else if (connectionResult.hasResolution()) {
             Toast.makeText(this, "Con. has Resol" , Toast.LENGTH_SHORT).show();
-           /* try {
-                Activity mainAcitvity=new MainActivity();
+            try {
                 mResolvingError = true;
-                connectionResult.startResolutionForResult(mainAcitvity,REQUEST_RESOLVE_ERROR);
+                Activity mainAcitvity=new MainActivity();
+                connectionResult.startResolutionForResult(mainAcitvity, REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
-                // There was an error with the resolution intent. Try again.
-                mGoogleApiClient.connect();
+                e.printStackTrace();
             }
-            */
         } else {
             // Show dialog using GoogleApiAvailability.getErrorDialog()
-
+            Toast.makeText(this, connectionResult.getErrorMessage() , Toast.LENGTH_LONG).show();
             mResolvingError = true;
         }
     }

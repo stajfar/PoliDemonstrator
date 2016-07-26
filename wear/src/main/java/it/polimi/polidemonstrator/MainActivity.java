@@ -14,14 +14,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.GridViewPager;
 import android.support.wearable.view.WatchViewStub;
-import android.view.View;
-import android.widget.AdapterView;
-
-import android.widget.GridView;
-
-import android.widget.Toast;
 
 
+
+import com.estimote.sdk.SystemRequirementsChecker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -97,7 +93,7 @@ public class MainActivity extends Activity  implements
     protected void onResume() {
         super.onResume();
 
-       // SystemRequirementsChecker.checkWithDefaultDialogs(this);
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
 
@@ -151,9 +147,11 @@ public class MainActivity extends Activity  implements
                             DataMapItem dataMapItem = DataMapItem.fromDataItem(dataitem);
                             DataMap dataMap = dataMapItem.getDataMap();
                             String myListEstimoteBeacons= dataMap.getString("myListEstimoteBeaconsJson");
-                            final List<EstimoteBeacon> listBeacons=EstimoteBeacon.parsJSON_Beacons(myListEstimoteBeacons);
-                            BeaconMonitoring beaconMonitoring=new BeaconMonitoring(context);
-                            beaconMonitoring.initializeBeaconManager(listBeacons);
+                            if(myListEstimoteBeacons != null) {
+                                final List<EstimoteBeacon> listBeacons = EstimoteBeacon.parsJSON_Beacons(myListEstimoteBeacons);
+                                BeaconMonitoring beaconMonitoring = new BeaconMonitoring(context);
+                                beaconMonitoring.initializeBeaconManager(listBeacons);
+                            }
 
                         } else if(path.equals(getResources().getString(R.string.messagepath_roomId))){
                             DataMapItem dataMapItem = DataMapItem.fromDataItem(dataitem);
@@ -201,8 +199,15 @@ public class MainActivity extends Activity  implements
                     }
                     pager.setAdapter(new MyGridPagerAdapter(context,R.layout.grid_view_pager_item,listMeasurementClass));
                     dots.setPager(pager);
+                }else if(path.equals(getResources().getString(R.string.messagepath_beacon))) {
+                    DataMap dataMap = putDataMapRequest.getDataMap();
+                    String myListEstimoteBeacons = dataMap.getString("myListEstimoteBeaconsJson");
+                    if (myListEstimoteBeacons != null) {
+                        final List<EstimoteBeacon> listBeacons = EstimoteBeacon.parsJSON_Beacons(myListEstimoteBeacons);
+                        BeaconMonitoring beaconMonitoring = new BeaconMonitoring(context);
+                        beaconMonitoring.initializeBeaconManager(listBeacons);
+                    }
                 }
-
             }
         }
 
@@ -213,6 +218,8 @@ public class MainActivity extends Activity  implements
         mResolvingError = true;
 
     }
+
+
 
 
     //Async Task to fetch Sensors Class list of a given room ID
@@ -237,9 +244,6 @@ public class MainActivity extends Activity  implements
             }
             return null;
         }
-
-
-
     }
 
 

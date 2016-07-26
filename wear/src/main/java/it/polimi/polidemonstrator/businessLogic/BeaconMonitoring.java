@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 
+import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
@@ -62,7 +63,7 @@ public class BeaconMonitoring  implements SensorEventListener {
     public  void initializeBeaconManager(List<EstimoteBeacon> listEstimoteBeacons_result) {
 
 
-
+       //this will execute when user runs the app
         if(listEstimoteBeacons_result != null){
             Toast.makeText(context, "Be list Recved", Toast.LENGTH_SHORT).show();
             this.listCorrelatedEstimoteBeacons=listEstimoteBeacons_result;
@@ -88,7 +89,8 @@ public class BeaconMonitoring  implements SensorEventListener {
             //reduce sleep time of beacon manager
             //set background monitoring interval
            //this means that currently we are not scanning and we are discunnected from beacon manager
-            if(listCorrelatedEstimoteBeacons != null && isScanning==false) {
+            //to save battery it is better to inactivate monitoring between 21.00 pm to 08.00 AM, too
+            if(listCorrelatedEstimoteBeacons != null && isScanning==false && isOfficeTime()) {
                 beaconmanager = new BeaconManager(context);
                 //set background monitoring interval
                 beaconmanager.setBackgroundScanPeriod(5 * 1000, 15 * 1000);
@@ -98,6 +100,16 @@ public class BeaconMonitoring  implements SensorEventListener {
             }
         }
         oldStepsValue=newStepsValue;
+    }
+
+    private boolean isOfficeTime() {
+        //check to see if it is office time or not( 08.00  to 21.00)
+        int currentTimeHour=Integer.valueOf(DateTimeObj.getCurrentTimeHour());
+
+        if(currentTimeHour>= 8 && currentTimeHour<=21){
+            return  true;
+        }
+        return false;
     }
 
     @Override

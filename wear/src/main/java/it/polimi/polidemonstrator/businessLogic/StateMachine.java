@@ -22,7 +22,7 @@ public class StateMachine {
         static public final Integer length = 1 + Rm_out.ordinal();
     }
 
-  public static  State transition[][] ={//FF means Floor=false,Room=False, etc.
+  public static  State transition[][] ={//FF means Floor=false,room=False, etc.
         //      Elv_in    Elv_out     Room_in    Room_out
        /*FF*/ {State.FF,  State.FF,   State.TT,    State.FF },
        /*TT*/ {State.FF,  State.FF,   State.TT,    State.TF },
