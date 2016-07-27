@@ -100,7 +100,7 @@ public class Room {
 
             JSONArray jsonArray=new JSONArray(json_results);
 
-            MeasurementClass measurementItem=null;
+            MeasurementClass measurementItem;
 
             for(String mesurementVariable: instantMeasurementVariables) {
                 int count=0;

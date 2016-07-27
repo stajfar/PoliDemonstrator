@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -53,15 +53,9 @@ public class MeasurementClass implements Serializable {
     private Context context;
 
     private String sensorVariableLabel;
-    private List<Integer> listSensorVariable;
 
-    public List<Integer> getListSensorVariable() {
-        return listSensorVariable;
-    }
 
-    public void setListSensorVariable(List<Integer> listSensorVariable) {
-        this.listSensorVariable = listSensorVariable;
-    }
+
 
     public String getSensorVariableLabel() {
         return sensorVariableLabel;
@@ -92,13 +86,7 @@ public class MeasurementClass implements Serializable {
         this.sensorClassSensorLatestValue = sensorClassSensorLatestValue;
     }
 
-    public static String getServerURL() {
-        return serverURL;
-    }
 
-    public static void setServerURL(String serverURL) {
-        MeasurementClass.serverURL = serverURL;
-    }
 
 
 
@@ -453,7 +441,7 @@ public class MeasurementClass implements Serializable {
             String variableUnit;
             String sensorID;
 
-            String isVariableIndoor;
+            //String isVariableIndoor;
             HashMap<Integer, String[]> hashMapParsedResult=new HashMap<>();
 
             while (count< jsonArray.length())            {
@@ -523,7 +511,7 @@ public class MeasurementClass implements Serializable {
                  URL  url = new URL(measurementVariableURLs.get(i)[0]);//the first index of array is the url
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
                 if (isrefreshCacheData==true) {
-                    httpconnection.setUseCaches(false);
+                    httpconnection.addRequestProperty("Cache-Control", "no-cache");
                 }
                 int maxStale = 60 * 45 ; // tolerate 45 minutes stale
                 httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
@@ -577,7 +565,7 @@ public class MeasurementClass implements Serializable {
                 URL url=new URL(entry.getValue().get(0));
                 HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
                 if (isRefreshCachedData==true) {
-                    httpconnection.setUseCaches(false);
+                    httpconnection.addRequestProperty("Cache-Control", "no-cache");
                 }
                 int maxStale = 60 * 45 ; // tolerate 45 minutes stale
                 httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
@@ -644,12 +632,10 @@ public class MeasurementClass implements Serializable {
             URL url = new URL(measurementClassVariablesURL);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
             if (isRefresh==true) {
-                httpconnection.setUseCaches(false);
-
-
+                httpconnection.addRequestProperty("Cache-Control", "no-cache");
             }
-                int maxStale = 60 * 60; // tolerate 60 minutes stale
-                httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
+            int maxStale = 60 * 60; // tolerate 60 minutes stale
+            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
 
 
 
@@ -792,9 +778,9 @@ public class MeasurementClass implements Serializable {
         public View getDropDownView(int position, View convertView,ViewGroup parent) {
             LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View listView_row= inflater.inflate(resource,parent,false);
-            ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
+           //ImageView imageView=(ImageView)listView_row.findViewById(R.id.imageViewlistItem);
             TextView textViewSensorClass=(TextView)listView_row.findViewById(R.id.tvListSensorClass);
-            TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
+           // TextView textViewSensorLatestValue=(TextView)listView_row.findViewById(R.id.tvListSensorLatestValue);
 
             textViewSensorClass.setText(measurementClasses.get(position).getSensorClassLabel());
             // And finally return your dynamic (or custom) view for each spinner item
@@ -818,7 +804,7 @@ public class MeasurementClass implements Serializable {
             while (count< jsonArray.length())
             {
                 JSONObject jsonObject=jsonArray.getJSONObject(count);
-                if (jsonObject.getString("value") != "null") {
+                if (!jsonObject.getString("value").equals("null")) {
                     value = Float.valueOf(jsonObject.getString("value"));
                     timestamp = Long.valueOf(jsonObject.getString("timestamp"));
                     hashMapParsedResult.put(timestamp, value);
@@ -972,12 +958,22 @@ public class MeasurementClass implements Serializable {
                 //put latest values to DATA API Message path
                 String myMessagePath=context.getResources().getString(R.string.messagepath_latest_measurements);
                 //String myMessage=context.getResources().getString(R.string.message_fetchBeaconList);
+
+                new SendMessageServiceToWearble2(context,new Intent(context,
+                        SendMessageServiceToWearble2.class)
+                        .putExtra("myMessagePath",myMessagePath)
+                        .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
+                        .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+
+
+                     /*
                 context.startService(new Intent(context,
                         SendMessageServiceToWearble.class)
                         .putExtra("myMessagePath",myMessagePath)
                         .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
                         .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
+                 */
             }
 
 
@@ -1014,13 +1010,20 @@ public class MeasurementClass implements Serializable {
 
             String myMessagePath=context.getResources().getString(R.string.messagepath_last7days_measurements);
             //String myMessage=context.getResources().getString(R.string.message_fetchBeaconList);
+            new SendMessageServiceToWearble2(context,new Intent(context,
+                    SendMessageServiceToWearble2.class)
+                    .putExtra("myMessagePath",myMessagePath)
+                    .putExtra("myMessage_json_Measurement7DaysValues", json_Measurement7DaysValues)
+                    .putExtra("myMessage_MeasurementClassID",measurementClassID)
+                    .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+            /*
             context.startService(new Intent(context,
                     SendMessageServiceToWearble.class)
                     .putExtra("myMessagePath",myMessagePath)
                     .putExtra("myMessage_json_Measurement7DaysValues", json_Measurement7DaysValues)
                     .putExtra("myMessage_MeasurementClassID",measurementClassID)
                     .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
-
+*/
 
 
         }
@@ -1033,7 +1036,7 @@ public class MeasurementClass implements Serializable {
             URL url = new URL(stringUrl);
             HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
             if (isRefreshCachedData==true) {
-                httpconnection.setUseCaches(false);
+                httpconnection.addRequestProperty("Cache-Control", "no-cache");
             }
 
             httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);

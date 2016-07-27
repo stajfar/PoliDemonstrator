@@ -12,12 +12,10 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.WearableListenerService;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
 
 import it.polimi.polidemonstrator.R;
 
@@ -99,31 +97,7 @@ public class ListenerServiceFromHandheld extends WearableListenerService {
 
 
 
-/*
-        if (messageEvent.getPath().equals(myMessagePath)) {
-            //do something when you receive the message
-            //fetch data from internet and push it back to wear
-            String myMessage=new String(messageEvent.getData());
 
-            context=this;
-            Class<MainActivity> activityClass= MainActivity.class;
-            Intent notifyIntent = new Intent(context,activityClass);
-            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivities(context, 0,
-                    new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-            android.app.Notification notification = new android.app.Notification.Builder(context)
-                    .setSmallIcon(android.R.drawable.ic_dialog_info)
-                    .setContentTitle(myMessage)
-                    .setContentText("message recieved!!!")
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .build();
-            notification.defaults |= android.app.Notification.DEFAULT_SOUND;
-            NotificationManager notificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(1, notification);
-        }
-*/
     }
 
 }

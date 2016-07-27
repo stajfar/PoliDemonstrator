@@ -1,9 +1,9 @@
 package it.polimi.polidemonstrator.businesslogic.businessrules;
 
-import android.app.Service;
+
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.StringBuilderPrinter;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;

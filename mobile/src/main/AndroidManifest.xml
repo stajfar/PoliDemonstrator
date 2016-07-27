@@ -44,7 +44,7 @@
 
     </receiver>
 
-    <service android:enabled="true" android:name=".businesslogic.SendMessageServiceToWearble"/>
+
 
         <service android:name=".businesslogic.ListenerServiceFromWear">
             <intent-filter>

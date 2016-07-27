@@ -17,7 +17,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
+
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -42,9 +42,6 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
     private String POLI_DEMONSTRATOR_MESSAGE_PATH ;
     private boolean mResolvingError=false;
     Context context;
-    private String myTextMessage;
-    private List<MeasurementClass> myMeasurementClassesLatestValueMessage;
-    private int myMessageType;
 
     Bundle gotBasket;
 
@@ -84,13 +81,11 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
     @Override
     public void onConnected(@Nullable Bundle bundle) {
        // Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
-        this.myMessageType=gotBasket.getInt("myMessageType");
-        if(myMessageType== MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
+        int myMessageType = gotBasket.getInt("myMessageType");
+        if(myMessageType == MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
             resolveNodeAndRequestForMsgSend();
         }else if(myMessageType ==  MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal() ){
-
                 sendData();
-
         }
         //then Destroy the service
         stopSelf();
@@ -131,7 +126,7 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
 
         if (mNode != null && mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
             this.POLI_DEMONSTRATOR_MESSAGE_PATH=gotBasket.getString("myMessagePath");
-            this.myTextMessage = gotBasket.getString("myMessage");
+            String myTextMessage = gotBasket.getString("myMessage");
 
 
             Wearable.MessageApi.sendMessage(
@@ -174,7 +169,7 @@ public class SendMessageServiceToWearble extends Service implements GoogleApiCli
             } else if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_latest_measurements))) {
                 //means latest measurements average values should be sent to watch to be shown on its main Activity
 
-                this.myMeasurementClassesLatestValueMessage = (List<MeasurementClass>) gotBasket
+                List<MeasurementClass> myMeasurementClassesLatestValueMessage = (List<MeasurementClass>) gotBasket
                         .getSerializable("myMeasurementClassesLatestValueMessage");
                 for (MeasurementClass measurementClass : myMeasurementClassesLatestValueMessage) {
                     putDataMapReq.getDataMap().putStringArray(measurementClass.getSensorClasseId(), new String[]{

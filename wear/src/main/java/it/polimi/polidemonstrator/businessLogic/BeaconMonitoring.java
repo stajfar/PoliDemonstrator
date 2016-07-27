@@ -9,7 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 
-import android.provider.ContactsContract;
+
 import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
@@ -23,8 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import it.polimi.polidemonstrator.MainActivity;
-import it.polimi.polidemonstrator.MyNotification;
+
 import it.polimi.polidemonstrator.R;
 
 /**
@@ -35,17 +34,14 @@ public class BeaconMonitoring  implements SensorEventListener {
     private Context context;
     List<EstimoteBeacon> listCorrelatedEstimoteBeacons;
 
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-
     public  BeaconMonitoring(Context context) {
         this.context = context;
 
 
-        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        SensorManager mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if(mSensor != null){
-            mSensorManager.registerListener(this,mSensor,mSensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
         }
 
         //EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
@@ -157,7 +153,7 @@ public class BeaconMonitoring  implements SensorEventListener {
             }
             //stop monitoring beacon manager to save battery
             //stop beacon monitoring to save battery
-           ;
+           //;
            // beaconmanager.stopMonitoring(region);
 
            // isScanning=false;//so you can connect to beacon manager after user start walking

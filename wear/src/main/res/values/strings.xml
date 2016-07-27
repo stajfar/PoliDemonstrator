@@ -1,19 +1,12 @@
 <resources>
     <string name="app_name">PoliDemonstrator</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
 
 
-    <string name="server_url">http://eis.deib.polimi.it/ScuolaPolimi/cloudsetting.json</string>
 
 
-    <array name="UnwantedMeasurementIdentifiers"> <!-- make sure this list is sorted, because of binary search -->
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>10</item>
-    </array>
+
+
+
 
     <!-- message paths between wearble and handheld -->
     <string name="messagepath_roomId">/poliDemonstrator-roomid</string>
@@ -23,12 +16,12 @@
     <string name="messagepath_last7days_measurements">/poliDemonstrator-last7DaysMeasurements</string>
 
     <!-- messages between wearble and handheld -->
-    <string name="message_fetchBeaconList">poliDemonstrator-beacon-fetch-beacons</string>
+
     <string name="message_beaconChange_FF">FF</string>
     <string name="message_beaconChange_TF">TF</string>
     <string name="message_beaconChange_TT">TT</string>
 
-    <string name="message_latestMeasurementValues">poliDemonstrator-latest-measurement-values</string>
+
 
 
     <!-- unique id for setting view.setTag in MyGridPagerAdapter -->

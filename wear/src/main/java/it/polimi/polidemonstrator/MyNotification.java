@@ -5,7 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.estimote.sdk.BeaconManager;
+
 
 /**
  * Created by saeed on 5/19/2016.

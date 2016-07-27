@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.WatchViewStub;
-import android.util.Range;
+
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.charts.PieChart;
+
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -22,11 +22,10 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
+
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -43,10 +42,9 @@ import com.google.android.gms.wearable.Wearable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
+
 import java.util.NavigableMap;
-import java.util.Set;
-import java.util.SortedMap;
+
 import java.util.TreeMap;
 
 import it.polimi.polidemonstrator.businesslogic.DateTimeObj;
@@ -172,7 +170,7 @@ public class MeasurementDetailActivity extends Activity implements
                 if (path.equals(getResources().getString(R.string.messagepath_last7days_measurements))) {
                     DataMap dataMap = putDataMapRequest.getDataMap();
                     String json_MeasurementLast7Days= dataMap.getString("myMessage_json_Measurement7DaysValues");
-                    String measurementID=dataMap.getString("myMessage_MeasurementClassID");
+                    //String measurementID=dataMap.getString("myMessage_MeasurementClassID");
                     //here you have to pars the json results and feed the Charts
                     if(json_MeasurementLast7Days != null) {
                        analyzeChartByGivenJson(json_MeasurementLast7Days);

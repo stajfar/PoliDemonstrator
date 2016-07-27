@@ -4,7 +4,7 @@ package it.polimi.polidemonstrator.businesslogic;
  * Created by saeed on 5/20/2016.
  */
 
-import com.estimote.sdk.internal.utils.L;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

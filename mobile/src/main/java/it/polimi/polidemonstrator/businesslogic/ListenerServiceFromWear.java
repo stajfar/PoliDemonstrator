@@ -3,7 +3,7 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.content.Context;
 
-import android.content.Intent;
+
 import android.os.AsyncTask;
 
 import com.google.android.gms.common.data.FreezableUtils;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 
 import it.polimi.polidemonstrator.R;
-import it.polimi.polidemonstrator.RoomSelector;
+
 import it.polimi.polidemonstrator.businesslogic.businessrules.JSON_Ruler;
 import it.polimi.polidemonstrator.businesslogic.businessrules.TestClass;
 
@@ -75,7 +75,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
             room.setRoomid(myMessage_roomID);
 
             MeasurementClass measurementClass =new MeasurementClass(context);
-            measurementClass.new BackgroundTaskGetLatestMeasurementClassValues(context,room,false).execute();
+            measurementClass.new BackgroundTaskGetLatestMeasurementClassValues(context,room,true).execute();
         }else if(messageEvent.getPath().equals(getResources().getString(R.string.messagepath_last7days_measurements))){
             //message is related to MeasurementID
             String myMessage_RoomID_MeasurementID=new String(messageEvent.getData());
@@ -102,8 +102,9 @@ public class ListenerServiceFromWear extends WearableListenerService {
         if (myMessage.equals(FF) || myMessage.equals(TF) || myMessage.equals(TT) ){
             //Watch says user is just Entered the elevator from floor(Leaving?)  AND
 
-            //// TODO: 6/27/2016  correct the room number and isrefresh
-           JSON_Ruler.fetchCorrelatedUserRulesFromCloud(context,2,false,myMessage);
+            //  room id,take it from preferences?yes!!
+            int roomID=MyPreferences.getPreferenceRoomID(context);
+           JSON_Ruler.fetchCorrelatedUserRulesFromCloud(context,roomID,false,myMessage);
 
         }
 
@@ -137,7 +138,7 @@ public class ListenerServiceFromWear extends WearableListenerService {
         @Override
         protected void onPostExecute(Map<String, String> bindings) {
             super.onPostExecute(bindings);
-            TestClass testRules=new TestClass(context,json_rulers,bindings);
+            new TestClass(context,json_rulers,bindings);
 
         }
 

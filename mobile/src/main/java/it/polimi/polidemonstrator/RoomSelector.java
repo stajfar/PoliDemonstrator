@@ -28,7 +28,7 @@ import it.polimi.polidemonstrator.businesslogic.InternetConnection;
 import it.polimi.polidemonstrator.businesslogic.MeasurementClass;
 import it.polimi.polidemonstrator.businesslogic.MyPreferences;
 import it.polimi.polidemonstrator.businesslogic.Room;
-import it.polimi.polidemonstrator.businesslogic.SendMessageServiceToWearble;
+import it.polimi.polidemonstrator.businesslogic.SendMessageServiceToWearble2;
 
 
 /**
@@ -187,14 +187,21 @@ public class RoomSelector extends Activity {
                 //put latest values to DATA API Message path
                 String myMessagePath=context.getResources().getString(R.string.messagepath_latest_measurements);
                 //String myMessage=context.getResources().getString(R.string.message_fetchBeaconList);
-                context.startService(new Intent(context,
+
+                new SendMessageServiceToWearble2(context,new Intent(context,
+                        SendMessageServiceToWearble2.class)
+                        .putExtra("myMessagePath",myMessagePath)
+                        .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
+                        .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+
+
+               /* context.startService(new Intent(context,
                         SendMessageServiceToWearble.class)
                         .putExtra("myMessagePath",myMessagePath)
                         .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
                         .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
-
-
+*/
 
             }else{
                 Toast.makeText(RoomSelector.this,
@@ -321,19 +328,29 @@ public class RoomSelector extends Activity {
 
             //put selected roomid on DataApi
             String myMessagePath=context.getResources().getString(R.string.messagepath_roomId);
+            new SendMessageServiceToWearble2(context,new Intent(context,
+                    SendMessageServiceToWearble2.class)
+                    .putExtra("myMessagePath",myMessagePath)
+                    .putExtra("myRoomID", room.getRoomid())
+                    .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+            /*
             context.startService(new Intent(context,
                     SendMessageServiceToWearble.class)
                     .putExtra("myMessagePath",myMessagePath)
                     .putExtra("myRoomID", room.getRoomid())
                     .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
+            */
 
             //fetch the list of beacons from internet and send it back to wearble
             EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);
             //call async task to fetch beacon lists and send it to wear
             estimoteBeacon.new BackgroundTaskGetRoomCorrelatedBeacons(room.getRoomid(),false,context).execute();
 
+            //save the current Building and Room Selection into preferences
 
 
+            MyPreferences.savePreferencesRoomSelector(context,spinnerBuilding.getSelectedItemPosition(),
+                    spinnerRoom.getSelectedItemPosition(),room.getRoomid());
 
         }
 
@@ -411,8 +428,6 @@ public class RoomSelector extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        //save the current Building and Room Selection into preferences
-        MyPreferences.savePreferencesRoomSelector(context,spinnerBuilding.getSelectedItemPosition(),
-                spinnerRoom.getSelectedItemPosition());
+
     }
 }

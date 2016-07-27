@@ -2,7 +2,6 @@ package it.polimi.polidemonstrator.businesslogic;
 
 import android.app.Activity;
 import android.app.Service;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,9 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import android.util.Log;
-
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,69 +24,61 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.List;
+
 import it.polimi.polidemonstrator.MainActivity;
+import it.polimi.polidemonstrator.R;
 
 
 /**
- * Created by saeed on 5/31/2016.
+ * Created by saeed on 6/7/2016.
  */
-public class SendMessageServiceToHandheld extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class SendMessageServiceToWearble2  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     //to send message from wearable to handheld
     Node mNode; // the connected device to send the message to
     GoogleApiClient mGoogleApiClient;
     private String POLI_DEMONSTRATOR_MESSAGE_PATH ;
     private boolean mResolvingError=false;
     Context context;
-    private String myMessage;
-    private int myMessageType;
+    Bundle gotBasket;
 
 
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        context=this.getApplicationContext();
+    public SendMessageServiceToWearble2(Context context, Intent intent) {
+       this.context=context;
         //Connect the GoogleApiClient
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle extras = intent.getExtras();
-        this.myMessageType=extras.getInt("myMessageType");
-        this.myMessage = extras.getString("myMessage");
-        this.POLI_DEMONSTRATOR_MESSAGE_PATH=extras.getString("myMessagePath");
-
-
-
+        gotBasket = intent.getExtras();
         connectToGoogleClientAPIandSendMessage();
-
-        return START_STICKY;
     }
+
+
+
+
 
     private void connectToGoogleClientAPIandSendMessage() {
         if (!mResolvingError) {
-            if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.connect();
-            }
+            mGoogleApiClient.connect();
         }
-
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
-        if(myMessageType== MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
+        // Toast.makeText(this, "connected", Toast.LENGTH_LONG).show();
+        int myMessageType = gotBasket.getInt("myMessageType");
+        if (myMessageType == MyWear_HandheldMessageAPIType.SendThroughMessageAPI.ordinal()) {
             resolveNodeAndRequestForMsgSend();
-        }else if(myMessageType ==  MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal() ){
+        } else if (myMessageType == MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()) {
             sendData();
         }
-        //then Destroy the service
-        stopSelf();
+        //Release connection to GoogleAPI
+        if (!mResolvingError) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     /*
@@ -104,12 +93,15 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
                     mNode = node;
                 }
                 if (mNode != null) {
-                  sendMessage();//send a message to the detected connected device
+                    sendMessage();//send a message to the detected connected device
+
                 }
                 else {
                     //wearble  is not connected to handheld and can connect to internet directly to fetch data
-                    //don't forget about google cloud messeging which is embedded in Android Wear APP
+
                 }
+
+
             }
         });
     }
@@ -120,9 +112,13 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
      */
     private void sendMessage() {
 
-        if (mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
+        if (mNode != null && mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
+            this.POLI_DEMONSTRATOR_MESSAGE_PATH=gotBasket.getString("myMessagePath");
+            String myTextMessage = gotBasket.getString("myMessage");
+
+
             Wearable.MessageApi.sendMessage(
-                    mGoogleApiClient,mNode.getId(), POLI_DEMONSTRATOR_MESSAGE_PATH, myMessage.getBytes()).setResultCallback(
+                    mGoogleApiClient, mNode.getId(), POLI_DEMONSTRATOR_MESSAGE_PATH, myTextMessage.getBytes()).setResultCallback(
 
                     new ResultCallback<MessageApi.SendMessageResult>() {
                         @Override
@@ -143,15 +139,44 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
 
 
-    private void sendData(){
+    private void sendData() {
         if (mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
+            this.POLI_DEMONSTRATOR_MESSAGE_PATH = gotBasket.getString("myMessagePath");
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(POLI_DEMONSTRATOR_MESSAGE_PATH);
-            putDataMapReq.getDataMap().putString(POLI_DEMONSTRATOR_MESSAGE_PATH, myMessage);
+            //check the message path to see which bundle keys should be read
+            if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_beacon))) {
+                //Means we have to put given beacon list into Shared Path
+                String myListEstimoteBeaconsJson =  gotBasket.getString("myListEstimoteBeaconsJson");
+                putDataMapReq.getDataMap().putString("myListEstimoteBeaconsJson",myListEstimoteBeaconsJson);
+
+            } else if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_roomId))) {
+                //means watch should be notified of room ID changes
+                String roomID =  gotBasket.getString("myRoomID");
+                putDataMapReq.getDataMap().putString("myRoomID",roomID);
+
+            } else if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_latest_measurements))) {
+                //means latest measurements average values should be sent to watch to be shown on its main Activity
+
+                List<MeasurementClass> myMeasurementClassesLatestValueMessage = (List<MeasurementClass>) gotBasket
+                        .getSerializable("myMeasurementClassesLatestValueMessage");
+                for (MeasurementClass measurementClass : myMeasurementClassesLatestValueMessage) {
+                    putDataMapReq.getDataMap().putStringArray(measurementClass.getSensorClasseId(), new String[]{
+                            measurementClass.getSensorClassLabel(), measurementClass.getSensorClassSensorLatestValue()});
+
+                }
+
+            } else if (POLI_DEMONSTRATOR_MESSAGE_PATH.equals(context.getResources().getString(R.string.messagepath_last7days_measurements))){
+                String json_MeasurementsLast7Days= gotBasket.getString("myMessage_json_Measurement7DaysValues");
+                String measurementClassID= gotBasket.getString("myMessage_MeasurementClassID");
+
+                putDataMapReq.getDataMap().putString("myMessage_json_Measurement7DaysValues",json_MeasurementsLast7Days);
+                putDataMapReq.getDataMap().putString("myMessage_MeasurementClassID",measurementClassID);
+            }
+
+
             PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
             putDataReq.setUrgent();
-
             PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-
 
             pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                 @Override
@@ -160,13 +185,12 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
                         Log.e("TAG", "Failed to put DataItem"
                                 + dataItemResult.getStatus().getStatusCode());
                     }
-
+                    else {
+                        Toast.makeText(context, "DataPath Updated.", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
-        }else{
-            //Improve your code
         }
-
     }
 
 
@@ -174,7 +198,6 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "ConSuspended" , Toast.LENGTH_LONG).show();
 
     }
 
@@ -182,45 +205,37 @@ public class SendMessageServiceToHandheld extends Service implements GoogleApiCl
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, "ConFialed,\n"+connectionResult.getErrorMessage() , Toast.LENGTH_LONG).show();
         if (mResolvingError) {
-
+            // Already attempting to resolve an error.
             return;
         } else if (connectionResult.hasResolution()) {
-            Toast.makeText(this, "Con. has Resol" , Toast.LENGTH_SHORT).show();
             try {
-                mResolvingError = true;
                 Activity mainAcitvity=new MainActivity();
-                connectionResult.startResolutionForResult(mainAcitvity, REQUEST_RESOLVE_ERROR);
+                mResolvingError = true;
+                connectionResult.startResolutionForResult(mainAcitvity,REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
             }
         } else {
             // Show dialog using GoogleApiAvailability.getErrorDialog()
-            Toast.makeText(this, connectionResult.getErrorMessage(), Toast.LENGTH_LONG).show();
+
             mResolvingError = true;
         }
     }
 
 
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
 
-        if (!mResolvingError) {
-            mGoogleApiClient.disconnect();
 
-        }
 
-    }
+
+
+
+
+
 
 
 

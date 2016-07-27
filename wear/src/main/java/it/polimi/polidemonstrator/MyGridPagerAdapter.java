@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.support.wearable.view.GridPagerAdapter;
-import android.view.DragEvent;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
+
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
 import android.widget.TextView;
 
 import java.util.List;
@@ -50,7 +50,8 @@ public class MyGridPagerAdapter extends GridPagerAdapter {
         final TextView textView2=(TextView) view.findViewById(R.id.tVMeasurementLabel);
         final CircledImageView imageView = (CircledImageView) view.findViewById(R.id.imgvMeasurementImage);
 
-        textView.setText(listMeasurementClass.get(row).getSensorClassSensorLatestValue()+listMeasurementClass.get(row).getSensorClassMeasurementUnit());
+        String text=listMeasurementClass.get(row).getSensorClassSensorLatestValue()+listMeasurementClass.get(row).getSensorClassMeasurementUnit();
+        textView.setText(text);
         textView2.setText(listMeasurementClass.get(row).getSensorClassLabel());
         imageView.setImageResource(listMeasurementClass.get(row).getSensorClassImage());
         view.setTag(R.id.TAG_Measurement_ID,listMeasurementClass.get(row).getSensorClasseId());
