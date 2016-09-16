@@ -965,15 +965,6 @@ public class MeasurementClass implements Serializable {
                         .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
                         .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
-
-                     /*
-                context.startService(new Intent(context,
-                        SendMessageServiceToWearble.class)
-                        .putExtra("myMessagePath",myMessagePath)
-                        .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
-                        .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
-
-                 */
             }
 
 

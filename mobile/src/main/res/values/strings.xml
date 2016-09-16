@@ -69,6 +69,10 @@
         <item>Potenza attiva clima</item>
         <item>Finestra sinistra</item>
         <item>Finestra destra</item>
+        <item>Temperatura</item>
+        <item>CO2</item>
+        <item>Umidita</item>
+        <item>Luminosita</item>
     </array>
 
 

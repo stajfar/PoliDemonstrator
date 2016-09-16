@@ -23,52 +23,11 @@ import it.polimi.polidemonstrator.R;
  * Created by saeed on 6/7/2016.
  */
 public class EstimoteBeacon {
-    private String identifier;
-    private String UUID;
-    private int minor;
-    private int major;
+
     private static String serverURL;
 
 
-    public int getMajor() {
-        return major;
-    }
 
-    public void setMajor(int major) {
-        this.major = major;
-    }
-
-    public int getMinor() {
-        return minor;
-    }
-
-    public void setMinor(int minor) {
-        this.minor = minor;
-    }
-
-    public String getUUID() {
-        return UUID;
-    }
-
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public static String getServerURL() {
-        return serverURL;
-    }
-
-    public static void setServerURL(String serverURL) {
-        EstimoteBeacon.serverURL = serverURL;
-    }
 
 
     //list of functions
@@ -77,11 +36,6 @@ public class EstimoteBeacon {
         this.serverURL= myApplication.getJsonServerURL();
 
     }
-
-
-
-
-
 
 
     //Async Task to fetch API server url form web server

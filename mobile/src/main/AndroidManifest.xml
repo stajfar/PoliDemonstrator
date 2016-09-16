@@ -45,6 +45,16 @@
     </receiver>
 
 
+    <receiver
+        android:name=".businesslogic.businessrules.MyAlarmManagerReceiver"
+        android:process=":remote" >
+    </receiver>
+
+    <service
+        android:name=".businesslogic.businessrules.AlarmManagerService"
+        android:exported="false" />
+
+
 
         <service android:name=".businesslogic.ListenerServiceFromWear">
             <intent-filter>

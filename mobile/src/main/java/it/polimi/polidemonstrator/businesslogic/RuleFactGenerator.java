@@ -65,8 +65,6 @@ public class RuleFactGenerator {
             if(entry != null) {
                 mapBindings.put(entry.getKey(), entry.getValue());
             }
-
-
         }
 
         return mapBindings;
@@ -89,13 +87,21 @@ public class RuleFactGenerator {
 
 
     private Map.Entry<String,String> ruleBindignGenerator(String mapkeyVariableLabel, Float measurementInstantValue) {
-        Map.Entry<String, String> entry=null;
 
+        Map.Entry<String, String> entry=null;
+        if (measurementInstantValue != null) {
+            // if the value of the sonsor is higher than Zero it means it is Open "O"
+            entry = new AbstractMap.SimpleEntry<String, String>(mapkeyVariableLabel.replaceAll(" ","_"), measurementInstantValue.toString());
+        }
+        /*
+        Map.Entry<String, String> entry=null;
         if (measurementInstantValue != null && measurementInstantValue > 0) {
+            // if the value of the sonsor is higher than Zero it means it is Open "O"
             entry = new AbstractMap.SimpleEntry<String, String>(mapkeyVariableLabel.replaceAll(" ","_"), "'O'");
         } else if (measurementInstantValue != null && measurementInstantValue == 0) {
+            // if the value of the sonsor is higher than Zero it means it is Close "C"
             entry = new AbstractMap.SimpleEntry<String, String>(mapkeyVariableLabel.replaceAll(" ","_"), "'C'");
-        }
+        }*/
         return entry;
     }
 

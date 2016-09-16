@@ -280,7 +280,7 @@ public class DateTimeObj {
            this.timeInterval=i;
        }
    }
-    //this will be used in generationg API Urls
+    //this will be used in generationg API Urls that is used in the drawer of line chart activity
     public enum MeasurementTimeWindow{
         Today (0),
         Last7days (1),

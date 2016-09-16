@@ -10,7 +10,7 @@ public class And extends Operation
 {
     public And()
     {
-        super("And");
+        super("AND");
     }
 
     public And copy()

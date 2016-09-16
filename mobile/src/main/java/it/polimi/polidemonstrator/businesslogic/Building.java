@@ -58,13 +58,7 @@ public class Building {
     }
 
 
-    public static String getServerURL() {
-        return serverURL;
-    }
 
-    public static void setServerURL(String serverURL) {
-        Building.serverURL = serverURL;
-    }
 
 
 

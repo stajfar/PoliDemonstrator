@@ -84,8 +84,6 @@ public class ListenerServiceFromWear extends WearableListenerService {
             MeasurementClass measurementClass =new MeasurementClass(context);
             measurementClass. new BackgroundTaskGetLast7DaysMeasurementClassValues(roomID_MeasurementID[0],
                     roomID_MeasurementID[1],false).execute();
-
-
         }
 
 

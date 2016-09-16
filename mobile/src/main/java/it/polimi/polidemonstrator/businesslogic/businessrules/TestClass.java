@@ -20,6 +20,8 @@ public class TestClass {
         operations.registerOperation(new And());
         operations.registerOperation(new Equals());
         operations.registerOperation(new Not());
+        operations.registerOperation(new Greater());
+        operations.registerOperation(new LessThan());
 
 
         // add all rules to a single container
@@ -31,7 +33,7 @@ public class TestClass {
             if(json_ruler.getActionClass().equals("NotificationDispatcher")){
                 // define the possible actions for rules that fire
                 ActionDispatcher notificationDispatcher = new NotificationDispatcher(context,
-                        json_ruler.getActionMessageTitle(),json_ruler.getActionMessageText());
+                        json_ruler.getActionMessageTitle(),json_ruler.getActionMessageText(),json_ruler.getRuleID());
                 // create the rules and link them to the accoridng expression and action
                 Rule rule = new Rule.Builder()
                         .withExpression(ex)
