@@ -72,12 +72,6 @@ public class ListenerServiceFromHandheld extends WearableListenerService {
         }
     }
 
-
-
-
-
-
-
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
           /*
@@ -93,11 +87,6 @@ public class ListenerServiceFromHandheld extends WearableListenerService {
             }
 
         }
-
-
-
-
-
     }
 
 }

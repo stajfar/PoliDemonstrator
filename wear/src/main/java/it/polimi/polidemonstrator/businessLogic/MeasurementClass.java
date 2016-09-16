@@ -69,13 +69,6 @@ public class MeasurementClass implements Serializable {
         this.sensorClassSensorLatestValue = sensorClassSensorLatestValue;
     }
 
-    public static String getServerURL() {
-        return serverURL;
-    }
-
-    public static void setServerURL(String serverURL) {
-        MeasurementClass.serverURL = serverURL;
-    }
 
 
 
@@ -101,64 +94,10 @@ public class MeasurementClass implements Serializable {
     }
 
 
-//list of functions
-public List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> resultsParsed, String roomid, boolean isRefresh) {
 
 
-    for (MeasurementClass meaurementClassItem : resultsParsed) {
-        //json Query for each measurement class
-        String measurementLatestValue = getMeasurementLatestValue(roomid, meaurementClassItem.getSensorClasseId(), isRefresh);
-        meaurementClassItem.setSensorClassSensorLatestValue(measurementLatestValue);
-
-    }
-    return resultsParsed;
-}
 
 
-    private static String getMeasurementLatestValue(String roomid, String measurementClassKey,boolean isRefresh) {
-        String JSON_STRING;
-
-        String[] startEndHours= DateTimeObj.getTimeRangeForTwoHours();
-        String measurementClassVariablesURL=serverURL+"/measurements/60min/room/"+roomid+"/variableclass/"+measurementClassKey+"/"+
-                DateTimeObj.getCurrentDate()+"?from="+startEndHours[0]+":00&to="+startEndHours[1]+":00";
-        try {
-            URL url = new URL(measurementClassVariablesURL);
-            HttpURLConnection httpconnection=(HttpURLConnection)url.openConnection();
-            if (isRefresh) {
-                httpconnection.setUseCaches(false);
-            }
-            int maxStale = 60 * 60 ; // tolerate 60 minutes stale
-            httpconnection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
-
-            InputStream inputStream=httpconnection.getInputStream();
-            BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder stringBuilder=new StringBuilder();
-            while ((JSON_STRING = bufferedReader.readLine()) != null)
-            {
-                stringBuilder.append(JSON_STRING+"\n");
-            }
-            bufferedReader.close();
-            inputStream.close();
-            httpconnection.disconnect();
-
-            String json_String=stringBuilder.toString().trim();
-            LinkedHashMap<Long,Float> measurementData=parsJSON_Measurement(json_String);
-
-            List<Map.Entry<Long,Float>> entryList = new ArrayList<>(measurementData.entrySet());
-            if (entryList.size() > 0) {
-                Map.Entry<Long, Float> lastEntry = entryList.get(entryList.size() - 1);
-                return lastEntry.getValue().toString();
-            }else {
-                return "";
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public static LinkedHashMap<Long,Float> parsJSON_Measurement(String json_results) {
         try {
@@ -185,15 +124,6 @@ public List<MeasurementClass> getMeasurementlatestValues(List<MeasurementClass> 
         return null;
     }
 
-    public static boolean iswantedMeasurementsIdentifier(String measurementIdentifier,int[] unwantedMeasurementIdentifiersList) {
-
-        boolean isMeasurementAllowed=true;
-        if(Arrays.binarySearch(unwantedMeasurementIdentifiersList, Integer.valueOf(measurementIdentifier)) >= 0)//sort the array first!
-        {
-            isMeasurementAllowed=false;
-        }
-        return isMeasurementAllowed;
-    }
 
 
 

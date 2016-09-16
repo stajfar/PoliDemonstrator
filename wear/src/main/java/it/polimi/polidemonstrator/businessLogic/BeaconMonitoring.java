@@ -165,7 +165,7 @@ public class BeaconMonitoring  implements SensorEventListener {
                     isTimerstarted=false;
                 }
                 timerTask = new MyTimerTask();
-                //Start the timer to do TimerTask after 2 minutes
+                //Start the timer to do TimerTask after 15 minutes
                 timer.schedule(timerTask, 15 * 60 * 1000);
             }
         }

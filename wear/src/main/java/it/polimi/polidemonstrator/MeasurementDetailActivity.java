@@ -85,8 +85,6 @@ public class MeasurementDetailActivity extends Activity implements
 
 
         //send a message to handheld and ask it to update the DataAPI, (Handheld catches data for 60 mins)
-
-
     }
 
 
