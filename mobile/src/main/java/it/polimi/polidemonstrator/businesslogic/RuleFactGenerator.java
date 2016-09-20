@@ -46,8 +46,13 @@ public class RuleFactGenerator {
             int count=0;
             for(int variableID: variableIDs){
                 if(measurementClass.getInstantMeasurementVariableValue(variableID) != null) {
-                    measurementInstantValue += measurementClass.getInstantMeasurementVariableValue(variableID);
-                    count++;
+                    if (measurementInstantValue == null)
+                    {
+                        measurementInstantValue=0f;
+                    }
+                        measurementInstantValue += measurementClass.getInstantMeasurementVariableValue(variableID);
+                        count++;
+
                 }else if(count == 0){
                     //this means all the sensors are dead (no battery)
                     measurementInstantValue=null;

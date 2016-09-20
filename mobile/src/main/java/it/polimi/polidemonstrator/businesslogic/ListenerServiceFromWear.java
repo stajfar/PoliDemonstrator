@@ -53,7 +53,9 @@ public class ListenerServiceFromWear extends WearableListenerService {
                 if (path.equals(getResources().getString(R.string.messagepath_beacon_Change))) {
                     DataMap dataMap = putDataMapRequest.getDataMap();
                     String myMessage = dataMap.getString(getResources().getString(R.string.messagepath_beacon_Change));
+                    System.out.println("new State: " + myMessage+". Evaluating...");
                     evaluateUserState(myMessage);
+
                 }
             }
 

@@ -253,7 +253,7 @@ public class JSON_Ruler  implements Serializable {
         private  String getRoomCorrelatedRulesJson(int roomID,boolean isRefresh) {
             String JSON_STRING;
             //// TODO: 6/6/2016 complete the rules url by roomID
-            String rulesURL="https://api.myjson.com/bins/z0ia";
+            String rulesURL="https://api.myjson.com/bins/3g5rm";
             //"https://api.myjson.com/bins/2vze5"; //serverURL+"/beacons/room/"+String.valueOf(roomID);
             try {
                 URL url = new URL(rulesURL);

@@ -141,7 +141,7 @@ public class RoomSelector extends Activity {
                 msurementClass.setSensorClasseId(item.getSensorClasseId());
                 msurementClass.setSensorClassLabel(listViewItem[0]);
                 msurementClass.setSensorClassImage(Integer.valueOf(listViewItem[1]));
-                msurementClass.setSensorClassSensorLatestValue(item.getSensorClassSensorLatestValue()+" "+listViewItem[2]);//entry.getValue()[1] is the lates value of measurement Class
+                msurementClass.setSensorClassSensorLatestValue(measurementClass.roundDownMeasurementsValues(item.getSensorClassSensorLatestValue())+" "+listViewItem[2]);//entry.getValue()[1] is the lates value of measurement Class
             }
             arrayList.add(msurementClass);
         }
@@ -195,13 +195,7 @@ public class RoomSelector extends Activity {
                         .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
 
-               /* context.startService(new Intent(context,
-                        SendMessageServiceToWearble.class)
-                        .putExtra("myMessagePath",myMessagePath)
-                        .putExtra("myMeasurementClassesLatestValueMessage", (Serializable) listMeasurementClassesParesed)
-                        .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
 
-*/
 
             }else{
                 Toast.makeText(RoomSelector.this,
@@ -333,13 +327,7 @@ public class RoomSelector extends Activity {
                     .putExtra("myMessagePath",myMessagePath)
                     .putExtra("myRoomID", room.getRoomid())
                     .putExtra("myMessageType",SendMessageServiceToWearble2.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
-            /*
-            context.startService(new Intent(context,
-                    SendMessageServiceToWearble.class)
-                    .putExtra("myMessagePath",myMessagePath)
-                    .putExtra("myRoomID", room.getRoomid())
-                    .putExtra("myMessageType",SendMessageServiceToWearble.MyWear_HandheldMessageAPIType.SendThroughDataAPI.ordinal()));
-            */
+
 
             //fetch the list of beacons from internet and send it back to wearble
             EstimoteBeacon estimoteBeacon=new EstimoteBeacon(context);

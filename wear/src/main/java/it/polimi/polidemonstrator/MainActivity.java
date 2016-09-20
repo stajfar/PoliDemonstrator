@@ -136,7 +136,7 @@ public class MainActivity extends Activity  implements
                                 measurementClass.setSensorClasseId(key);
                                 measurementClass.setSensorClassLabel(gridViewViewItemLookupTable[0]);
                                 measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItemLookupTable[1]));
-                                measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]);
+                                measurementClass.setSensorClassSensorLatestValue(measurementClass.roundDownMeasurementsValues(dataMapValueStringArray[1]));
                                 measurementClass.setSensorClassMeasurementUnit(gridViewViewItemLookupTable[2]);
                                 listMeasurementClass.add(measurementClass);
                             }
@@ -193,7 +193,7 @@ public class MainActivity extends Activity  implements
                         MeasurementClass measurementClass=new MeasurementClass();
                         measurementClass.setSensorClassLabel(gridViewViewItem[0]);
                         measurementClass.setSensorClassImage(Integer.valueOf(gridViewViewItem[1]));
-                        measurementClass.setSensorClassSensorLatestValue(dataMapValueStringArray[1]);
+                        measurementClass.setSensorClassSensorLatestValue(measurementClass.roundDownMeasurementsValues(dataMapValueStringArray[1]));
                         measurementClass.setSensorClassMeasurementUnit(gridViewViewItem[2]);
                         listMeasurementClass.add(measurementClass);
                     }

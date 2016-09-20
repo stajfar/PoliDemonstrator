@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -125,24 +126,20 @@ public class MeasurementClass implements Serializable {
             case  Today:
                 switch (sensorClassID) {
                     case "1":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=airtemperature");
-                        //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,DateTimeObj.getCurrentDate(),"airtemperature", false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                       // UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,DateTimeObj.getCurrentDate(),"relativehumidity", false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
@@ -157,7 +154,7 @@ public class MeasurementClass implements Serializable {
                         break;
 
                     case "4":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                        // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
@@ -169,7 +166,7 @@ public class MeasurementClass implements Serializable {
                         hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate());
                         //UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
@@ -180,24 +177,22 @@ public class MeasurementClass implements Serializable {
             case Last7days:
                 switch (sensorClassID) {
                     case "1":
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+
                         UrlsColorsInternal.add(serverURL+"/measurements/60min/room/"+roomID+"/variableclass/"+sensorClassID+"/"+ DateTimeObj.getCurrentDate()+"?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
-                        UrlsColorsExternal.add(serverURL+"/weatherreports/60min/building/"+buildingID+"/" + DateTimeObj.getCurrentDate() + "?var=airtemperature&weekly=true");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,DateTimeObj.getCurrentDate(),"airtemperature", true));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
-                        // UrlsColorsInternal.add("");
+
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        // UrlsColorsExternal.add("");
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + DateTimeObj.getCurrentDate() + "?var=relativehumidity&weekly=true");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,DateTimeObj.getCurrentDate(),"relativehumidity", true));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
@@ -206,25 +201,25 @@ public class MeasurementClass implements Serializable {
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
-                        // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
+
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Luminosity", UrlsColorsInternal);
                         break;
                     case "4":
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
+
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "5"://office Smart plug
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
+
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Smart Plug", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + DateTimeObj.getCurrentDate() + "?weekly=true");
-                        // UrlsColorsInternal.add("");
+
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
@@ -233,41 +228,41 @@ public class MeasurementClass implements Serializable {
                 break;
             case ThisMonth:
                 String commonStringServerUrl=serverURL + "/measurements/60min/room/" + roomID + "/variableclass/";
-                String commonStringDates= "/" + DateTimeObj.getCurrentYear()+"/"+DateTimeObj.getCurrentMonth();
+                String commonStringDates=  DateTimeObj.getCurrentYear()+"/"+DateTimeObj.getCurrentMonth();
                 switch (sensorClassID) {
                     case "1"://temperature
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + commonStringDates + "?var=airtemperature");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,commonStringDates,"airtemperature",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2"://humidity
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + commonStringDates + "?var=relativehumidity");
-                        //UrlsColorsExternal.add("https://api.myjson.com/bins/4vsnu");
+
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,commonStringDates,"relativehumidity",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
                         break;
                     case "3"://limunisity
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
                     case "4"://co2
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
@@ -275,41 +270,40 @@ public class MeasurementClass implements Serializable {
                 break;
             case ThisYear:
                 commonStringServerUrl=serverURL + "/measurements/60min/room/" + roomID + "/variableclass/";
-                commonStringDates= "/" + DateTimeObj.getCurrentYear();
+                commonStringDates=  DateTimeObj.getCurrentYear();
                 switch (sensorClassID) {
                     case "1"://temperature
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + commonStringDates + "?var=airtemperature");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,commonStringDates,"airtemperature",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2"://humidity
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + commonStringDates + "?var=relativehumidity");
-                        //UrlsColorsExternal.add("https://api.myjson.com/bins/4vsnu");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,commonStringDates,"relativehumidity",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Humidity (%)", UrlsColorsExternal);
                         break;
                     case "3"://limunisity
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
                     case "4"://co2
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
                     case "9"://power consumption
-                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +commonStringDates);
+                        UrlsColorsInternal.add(commonStringServerUrl+ sensorClassID +"/" +commonStringDates);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
@@ -318,24 +312,20 @@ public class MeasurementClass implements Serializable {
             case  Custom:
                 switch (sensorClassID) {
                     case "1":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + selectedDate + "?var=airtemperature");
-                        //UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,selectedDate,"airtemperature",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Temperature (C)", UrlsColorsInternal);
                         hashMapJson_Urls.put("External Temperature (C)", UrlsColorsExternal);
                         break;
                     case "2":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/x9ng");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
 
-                        // UrlsColorsExternal.add("https://api.myjson.com/bins/55g1o");
-                        UrlsColorsExternal.add(serverURL + "/weatherreports/60min/building/" + buildingID + "/" + selectedDate + "?var=relativehumidity");
+                        UrlsColorsExternal.add(externalMeasurementUrlGenerator(buildingID,selectedDate,"relativehumidity",false));
                         UrlsColorsExternal.add(String.valueOf(Color.RED));
 
                         hashMapJson_Urls.put("Average Internal Humidity (%)", UrlsColorsInternal);
@@ -344,21 +334,21 @@ public class MeasurementClass implements Serializable {
                         break;
                     case "3":
                         UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
-                        // UrlsColorsInternal.add("https://api.myjson.com/bins/mjoq");
+
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Luminosity", UrlsColorsInternal);
                         break;
 
                     case "4":
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
-                        // UrlsColorsInternal.add("https://api.myjson.com/bins/55g1o");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
+
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Internal CO2 (V)", UrlsColorsInternal);
                         break;
 
                     case "9"://power consumption
-                        UrlsColorsInternal.add(serverURL + "/measurements/15min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
-                        //UrlsColorsInternal.add("https://api.myjson.com/bins/29y74");
+                        UrlsColorsInternal.add(serverURL + "/measurements/60min/room/" + roomID + "/variableclass/" + sensorClassID + "/" + selectedDate);
+
                         UrlsColorsInternal.add(String.valueOf(ColorTemplate.getHoloBlue()));
                         hashMapJson_Urls.put("Average Power Consumption (W)", UrlsColorsInternal);
                         break;
@@ -367,6 +357,17 @@ public class MeasurementClass implements Serializable {
                 break;
         }
         return hashMapJson_Urls;
+    }
+
+    private String externalMeasurementUrlGenerator(String buildingID, String selectedDate, String variableName, boolean isWeekly) {
+        String externalMeasurementUrl;
+
+        if(isWeekly == true) {
+            externalMeasurementUrl = serverURL + "/weatherreports/60min/building/" + buildingID + "/" + selectedDate + "?var=" + variableName + "&weekly=true";
+        }else {
+            externalMeasurementUrl = serverURL + "/weatherreports/60min/building/" + buildingID + "/" + selectedDate + "?var=" + variableName;
+        }
+        return externalMeasurementUrl;
     }
 
 
@@ -469,7 +470,7 @@ public class MeasurementClass implements Serializable {
         switch(measurementTimeWindow){
             case Today:
                 for (Map.Entry<Integer, String[]> entry : parsed_measurementClassVariables.entrySet()){
-                    String url=serverURL+"/measurements/15min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate();
+                    String url=serverURL+"/measurements/60min/sensor/variable/"+entry.getKey()+"/"+DateTimeObj.getCurrentDate();
                     jsonURL_MeasurementVariables.add(new String[]{url,entry.getValue()[0],entry.getValue()[1],entry.getValue()[2]});//entry.getValue()[0] --> indexes 0==description 1==measure Unit 2==sensorid
                 }
                 break;
@@ -1050,6 +1051,23 @@ public class MeasurementClass implements Serializable {
             e.printStackTrace();
         }
       return null;
+    }
+
+    //this function rounds the decimal portion of measurement values
+    public String roundDownMeasurementsValues(String rawMeasurementValue){
+        String roundedDownMeasurementValue="";
+       try{
+           float rawmeasurementval=Float.valueOf(rawMeasurementValue);
+           NumberFormat formatter = NumberFormat.getNumberInstance();
+           formatter.setMinimumFractionDigits(1);
+           formatter.setMaximumFractionDigits(1);
+           roundedDownMeasurementValue = formatter.format(rawmeasurementval);
+       }
+       catch (Exception e){
+           e.printStackTrace();
+       }
+
+        return  roundedDownMeasurementValue;
     }
 
 

@@ -6,20 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+
+
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
 
 import it.polimi.polidemonstrator.R;
 
@@ -151,6 +145,23 @@ public class MeasurementClass implements Serializable {
             measurementResource=null;
         }
         return measurementResource;
+    }
+
+    //this function rounds the decimal portion of measurement values
+    public static String roundDownMeasurementsValues(String rawMeasurementValue){
+        String roundedDownMeasurementValue="";
+        try{
+            float rawmeasurementval=Float.valueOf(rawMeasurementValue);
+            NumberFormat formatter = NumberFormat.getNumberInstance();
+            formatter.setMinimumFractionDigits(1);
+            formatter.setMaximumFractionDigits(1);
+            roundedDownMeasurementValue = formatter.format(rawmeasurementval);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return  roundedDownMeasurementValue;
     }
 
 
