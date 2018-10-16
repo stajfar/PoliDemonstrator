@@ -69,7 +69,7 @@ public class Chart_LineChart extends AppCompatActivity
 
 
 
-//this file updated by editor changed by branch
+//this file updated by editor changed by branch second version
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
