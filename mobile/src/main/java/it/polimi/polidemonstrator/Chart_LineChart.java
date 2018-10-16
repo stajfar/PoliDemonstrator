@@ -69,7 +69,7 @@ public class Chart_LineChart extends AppCompatActivity
 
 
 
-//someone wants to fix me
+//someone wants to fix me again
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
